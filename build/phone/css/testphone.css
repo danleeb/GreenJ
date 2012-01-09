@@ -1,0 +1,114 @@
+@font-face {
+        font-family: "ledreali";
+        src: url("ledreali.ttf"); /* non-IE */
+}
+/* jquery-ui */
+.ui-button {margin: 1px 0;}
+.ui-button-text { min-width: 1em; }
+.ui-state-default.accept { border: 1px solid #a1d496; background: #b5e8b7 url(../images/ui-bg_glass_green_normal.png) 50% 50% repeat-x; font-weight: normal; color: #333333; }
+.ui-state-default.hangup { border: 1px solid #ff8084; background: #ffaeb1 url(../images/ui-bg_glass_red_normal.png) 50% 50% repeat-x; font-weight: normal; color: #333333; }
+.button-list .ui-state-default, .button-history.ui-state-default { border: 1px solid #ff9d2e; background: #ffb766 url(../images/ui-bg_glass_orange_normal.png) 50% 50% repeat-x; font-weight: normal; color: #333333; }
+.ui-state-hover.accept { border: 1px solid #478f38; background: #dadada url(../images/ui-bg_glass_green_hover.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+.ui-state-hover.hangup { border: 1px solid #ff0a13; background: #ff6b71 url(../images/ui-bg_glass_red_hover.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+.button-list .ui-state-hover, .button-history.ui-state-hover { border: 1px solid #f58100; background: #ff8905 url(../images/ui-bg_glass_orange_hover.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+.ui-state-active.accept { border: 1px solid #a1d496; background: #dadada url(../images/ui-bg_glass_green_active.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+.ui-state-active.hangup { border: 1px solid #ffccce; background: #ffdbdd url(../images/ui-bg_glass_red_active.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+.button-list .ui-state-active, .button-history.ui-state-active { border: 1px solid #ffbf75; background: #ffd9ad url(../images/ui-bg_glass_orange_active.png) 50% 50% repeat-x; font-weight: normal; color: #212121; }
+.ui-state-error .ui-widget-header { 
+background: #feecec; /* Old browsers */
+background: -moz-linear-gradient(top, #feecec 0%, #cd0a0a 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#feecec), color-stop(100%,#cd0a0a)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #feecec 0%,#cd0a0a 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #feecec 0%,#cd0a0a 100%); /* Opera11.10+ */
+background: -ms-linear-gradient(top, #feecec 0%,#cd0a0a 100%); /* IE10+ */
+background: linear-gradient(top, #feecec 0%,#cd0a0a 100%); /* W3C */
+border: 1px solid #cd0a0a; color: #eeeeee; font-weight: bold; }
+.button-list .ui-button-text { width:300px; padding: 7px 5px;}
+.button-history { width:300px; }
+
+.accept, .hangup { width:140px; }
+
+#container {display: none;width:900px; margin-top: 50px; margin-left: auto;margin-right:auto;}
+
+h1 { font-size:20px; font-weight:bold; }
+#incoming {
+    font-size:15px;
+    height:150px;
+    width:400px;
+}
+#log {
+    font-size:11px;
+    width:400px;
+    border-top:1px solid #000;
+    float:left;
+}
+#numstring {
+    font-size:16px;
+    border:0;
+    text-align:center;
+}
+.inputadditional { color: #333333; }
+
+#quickflip-wrapper {
+    width: 400px;
+    height: 600px;
+    padding: 30px;
+    float:left;
+}
+
+.phonebox {
+    background: url(../images/phone.png) 0% 0% repeat;
+    width: 350px;
+    height: 550px;
+    padding: 30px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px; 
+    text-align:center;
+}
+#display {
+    background-color: #ffffff;
+    /* font-family:ledreali; */
+    font-size: 16px;
+    width:280px;
+    height: 1.5em;
+    margin:auto;
+    padding: 10px;
+    border: 1px solid #333333;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    cursor:text;
+}
+.phonebox-content {
+    padding: 30px;
+    text-align:center;
+}
+
+.wrapper {
+    margin: 10px;
+    position: relative;
+    height: 230px;
+    overflow: auto;
+}
+
+.history-wrapper {
+    margin: 10px;
+    position: relative;
+    height: 490px;
+    overflow: auto;
+}
+
+.history-number {
+    width: 250px;
+    vertical-align:middle;
+}
+.history-image {
+    width: 32px;
+    padding:0 8px;
+    float:right;
+}
+.time {
+    font-size:12px;
+    vertical-align:middle;
+}
