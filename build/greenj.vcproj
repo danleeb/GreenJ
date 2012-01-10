@@ -59,7 +59,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmain.lib QtCore4.lib QtGui4.lib QtWebKit4.lib QtNetwork4.lib Iphlpapi.lib dsound.lib dxguid.lib netapi32.lib mswsock.lib ws2_32.lib odbc32.lib odbccp32.lib ole32.lib user32.lib gdi32.lib advapi32.lib pjlib-i386-Win32-vc8-Release.lib pjlib-util-i386-Win32-vc8-Release.lib pjmedia-i386-Win32-vc8-Release.lib pjmedia-codec-i386-Win32-vc8-Release.lib pjmedia-audiodev-i386-Win32-vc8-Release.lib pjnath-i386-Win32-vc8-Release.lib pjsua-lib-i386-Win32-vc8-Release.lib pjsip-ua-i386-Win32-vc8-Release.lib pjsip-simple-i386-Win32-vc8-Release.lib pjsip-core-i386-Win32-vc8-Release.lib libilbccodec-i386-Win32-vc8-Release.lib libgsmcodec-i386-Win32-vc8-Release.lib libg7221codec-i386-Win32-vc8-Release.lib libmilenage-i386-Win32-vc8-Release.lib libportaudio-i386-Win32-vc8-Release.lib libresample-i386-Win32-vc8-Release.lib libspeex-i386-Win32-vc8-Release.lib libsrtp-i386-Win32-vc8-Release.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
-				AdditionalLibraryDirectories="..\lib\win32\third_party\lib;..\lib\win32\pjsip\lib;..\lib\win32\pjnath\lib;..\lib\win32\pjmedia\lib;&quot;..\lib\win32\pjlib-util\lib&quot;;..\lib\win32\pjlib\lib;&quot;$(QTDIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(PJSIP_INCLUDE_DIR)\third_party\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\lib&quot;;&quot;$(QTDIR)\lib&quot;"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 			/>
@@ -129,7 +129,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="qtmaind.lib QtCored4.lib QtGuid4.lib QtWebKitd4.lib QtNetworkd4.lib Iphlpapi.lib dsound.lib dxguid.lib netapi32.lib mswsock.lib ws2_32.lib odbc32.lib odbccp32.lib ole32.lib user32.lib gdi32.lib advapi32.lib pjlib-i386-Win32-vc8-Debug.lib pjlib-util-i386-Win32-vc8-Debug.lib pjmedia-i386-Win32-vc8-Debug.lib pjmedia-codec-i386-Win32-vc8-Debug.lib pjmedia-audiodev-i386-Win32-vc8-Debug.lib pjnath-i386-Win32-vc8-Debug.lib pjsua-lib-i386-Win32-vc8-Debug.lib pjsip-ua-i386-Win32-vc8-Debug.lib pjsip-simple-i386-Win32-vc8-Debug.lib pjsip-core-i386-Win32-vc8-Debug.lib libilbccodec-i386-Win32-vc8-Debug.lib libgsmcodec-i386-Win32-vc8-Debug.lib libg7221codec-i386-Win32-vc8-Debug.lib libmilenage-i386-Win32-vc8-Debug.lib libportaudio-i386-Win32-vc8-Debug.lib libresample-i386-Win32-vc8-Debug.lib libspeex-i386-Win32-vc8-Debug.lib libsrtp-i386-Win32-vc8-Debug.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
-				AdditionalLibraryDirectories="..\lib\win32\third_party\lib;..\lib\win32\pjsip\lib;..\lib\win32\pjnath\lib;..\lib\win32\pjmedia\lib;&quot;..\lib\win32\pjlib-util\lib&quot;;..\lib\win32\pjlib\lib;&quot;$(QTDIR)\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(PJSIP_INCLUDE_DIR)\third_party\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\lib&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\lib&quot;;&quot;$(QTDIR)\lib&quot;"
 				IgnoreDefaultLibraryNames="MSVCRT.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
