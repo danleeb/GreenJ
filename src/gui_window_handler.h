@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,10 +9,11 @@
 **
 ****************************************************************************/
 
-#ifndef GUI_WINDOW_HANDLER_H
-#define GUI_WINDOW_HANDLER_H
+#ifndef GUIWINDOWHANDLER_INCLUDE_H
+#define GUIWINDOWHANDLER_INCLUDE_H
 
 class Gui;
+
 
 /**
  * Manages the position, size and restriction of the window-appearence
@@ -20,9 +21,6 @@ class Gui;
  */
 class GuiWindowHandler
 {
-private:
-    Gui &the_gui_;
-
 public:
     /**
      * Constructor taking reference to the GUI-Instance to manipulate it
@@ -40,7 +38,9 @@ public:
      * Saving the values from the GUI to the config-file
      */
     void saveToConfig();
+
+private:
+    Gui &gui_;
 };
 
-
-#endif
+#endif // GUIWINDOWHANDLER_INCLUDE_H

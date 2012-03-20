@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,19 +9,17 @@
 **
 ****************************************************************************/
 
-#ifndef SIP_PHONE_H
-#define SIP_PHONE_H
-
-#include "phone_api.h"
+#ifndef SIPPHONE_INCLUDE_H
+#define SIPPHONE_INCLUDE_H
 
 #include <pjsua-lib/pjsua.h>
-
 #include <QVector>
+#include "phone_api.h"
 
-#include "sound.h"
 
 class Gui;
 class Phone;
+
 
 /**
  * This class is an implementation of PhoneApi for sip-Protocol
@@ -30,7 +28,44 @@ class SipPhone : public PhoneApi
 {
     Q_OBJECT
 
-    private:
+public:
+    SipPhone();
+    ~SipPhone(void);
+
+    virtual void init();
+
+    virtual bool checkAccountStatus();
+    virtual int registerUser(const Account &acc);
+    virtual void getAccountInfo(QVariantMap &account_info);
+
+    virtual int makeCall(const QString &url);
+    virtual void answerCall(int call_id = -1);
+    virtual void hangUp(const int call_id);
+    virtual void hangUpAll();
+
+    virtual bool addCallToConference(const int call_src, const int call_dest);
+    virtual bool removeCallFromConference(const int call_src, const int call_dest);
+
+    virtual int redirectCall(const int call_id, const QString &dest_uri);
+
+    virtual void getCallInfo(const int call_id, QVariantMap &call_info);
+
+    virtual void muteSound(const bool mute);
+    virtual void muteSoundForCall(const int call_id, const float mute);
+    virtual void muteMicrophone(const bool mute);
+    virtual void muteMicrophoneForCall(const int call_id, const float mute);
+    virtual void getSignalInformation(QVariantMap &signal_info);
+
+    virtual void unregister();
+    
+    /**
+     * Get the sip-address of a given call
+     * @param call_id int, the id of the call
+     * @return QString the sip-address
+     */
+    QString getCallUrl(const int call_id);
+    
+private:
     /**
      * Pointer to the instance for using static methods
      */
@@ -71,141 +106,6 @@ class SipPhone : public PhoneApi
      * @param acc pjsua_acc_id, the id of account which changes
      */
     static void regStateCb(pjsua_acc_id acc);
-
-
-public:
-    SipPhone();
-    ~SipPhone(void);
-
-    /**
-     * Initializing the SIP-API
-     */
-    void init();
-
-    /**
-     * checks if acc_id is valid or not
-     * @return bool true if acc_id is valid
-     */
-    bool checkAccountStatus();
-
-    /**
-     * Registers the user at the given Asterisk server
-     * @param acc Account, the object with user data
-     * @return bool true if registering was successful
-     *         false if registering failed
-     */
-    int registerUser(const Account &acc);
-
-    /**
-     * Get some information about account
-     * @param &account_info QVariantMap, which holds account information
-     */
-    void getAccountInfo(QVariantMap &account_info);
-
-    /**
-     * Starting a SIP-Call to the given address
-     * @param url string, The SIP-Adress. E.g. "SIP:user@domain"
-     * @return int The CallId of the started call
-     */
-    int makeCall(const QString &url);
-
-    /**
-     * Answering an incoming call
-     * @param call_id int, CallId of the incoming call
-     * If call_id is not set, the method takes the IncomingCall struct
-     * for answering the call
-     */
-    void answerCall(int call_id=-1);
-
-    /**
-     * Hanging up a specific call
-     * @param call_id int, The callID to hang up.
-     */
-    void hangUp(const int &call_id);
-
-    /**
-     * Hanging up incoming and all active calls
-     */
-    void hangUpAll();
-
-    /**
-     * Combining the callees of two specific calls.
-     * They get linked together and hear and can speak to each other
-     * as long as we don't hang up.
-     * @param call_src int, CallID of the first callee.
-     * @param call_dest int, CallID of the second callee.
-     * @return bool true if success else false;
-     */
-    bool addCallToConference(const int &call_src, const int &call_dest);
-
-    /**
-     * Remove one call of a conference
-     * @param call_src int, CallID of the first callee.
-     * @param call_dest int, CallID of the second callee.
-     * @return bool true if success else false;
-     */
-    bool removeCallFromConference(const int &call_src, const int &call_dest);
-
-    /**
-     * Redirecting an active call to a new destination.
-     * @param call_id int, The CallID of the call to be redirected.
-     * @param destUri_ string, SIP-Adress of the new Destination
-     * @return int the success-code
-     */
-    int redirectCall(const int &call_id, const QString &dest_uri);
-
-    /**
-     * Get the sip-address of a given call
-     * @param call_id int, the id of the call
-     * @return QString the sip-address
-     */
-    QString getCallUrl(const int &call_id);
-
-    /**
-     * Get information about call like sip-adress, state
-     * @param call_id int, the id of the call
-     * @param call_info QVariantMap, the object with the info to be written
-     */
-    void getCallInfo(const int &call_id, QVariantMap &call_info);
-
-    /**
-     * Switch sound on/off
-     * @param mute bool, true if callee should be muted
-     */
-    void muteSound(const bool &mute);
-
-    /**
-     * Adjust level of speaker
-     * @param call_id int, CallId of the call
-     * @param mute float, mute level
-     */
-    void muteSoundForCall(const int &call_id, const float &mute);
-
-    /**
-     * Switch microphone on/off
-     * @param mute bool, true if microphone should be muted
-     */
-    void muteMicrophone(const bool &mute);
-
-    /**
-     * Adjust level of microphone
-     * @param call_id int, CallId of the call
-     * @param mute float, mute level
-     */
-    void muteMicrophoneForCall(const int &call_id, const float &mute);
-
-    /**
-     * Get information about signal levels of sound and microphone
-     * @param signal_info QVariantMap, a map to save the mute level
-     */
-    void getSignalInformation(QVariantMap &signal_info);
-
-    /**
-     * Hanging up all active calls,
-     * Unregistering the user
-     * and destroying the pjsip instance
-     */
-    void unregister();
 };
 
-#endif // SIP_PHONE_H
+#endif // SIPPHONE_INCLUDE_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,61 +9,42 @@
 **
 ****************************************************************************/
 
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
+#ifndef ACCOUNT_INCLUDE_H
+#define ACCOUNT_INCLUDE_H
 
 #include <QString>
 #include <QXmlStreamReader>
 
+
 /**
- * This class handles account data, needed
- * to log in to voip-server
+ * This class stores account data used for logging into the server.
  */
 class Account
 {
+public:
+    /**
+     * Constructor
+     */
+    Account();
+
+    /**
+     * Destructor
+     */
+    virtual ~Account();
+
+    // Setters/Getters
+    void setUserName(const QString &user_name);
+    void setPassword(const QString &password);
+    void setHost(const QString &host);
+
+    const QString &getUserName() const;
+    const QString &getPassword() const;
+    const QString &getHost() const;
+
+private:
     QString user_name_;
     QString password_;
     QString host_;
-
-public:
-    Account();
-    ~Account();
-
-    /**
-     * set the user_name
-     * @param user_name QString, the user_name
-     */
-    void setUserName(const QString &user_name);
-
-    /**
-     * set the password
-     * @param password QString, the password
-     */
-    void setPassword(const QString &password);
-
-    /**
-     * set the host
-     * @param host_name QString, the host
-     */
-    void setHost(const QString &host);
-
-    /**
-     * get the user_name
-     * @return QString, the user_name
-     */
-    const QString &getUserName() const;
-
-    /**
-     * get the password
-     * @return QString, the password
-     */
-    const QString &getPassword() const;
-
-    /**
-     * get the host
-     * @return QString, the host
-     */
-    const QString &getHost() const;
 };
 
-#endif // ACCOUNT_H
+#endif // ACCOUNT_INCLUDE_H

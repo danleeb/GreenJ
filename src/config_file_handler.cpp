@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,338 +9,327 @@
 **
 ****************************************************************************/
 
-#include "config_file_handler.h"
-
 #include <QMessageBox>
 #include <QDir>
 #include "log_info.h"
+#include "config_file_handler.h"
 
-//----------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 ConfigFileHandler::ConfigFileHandler() :
-    file_name_(QDir::homePath()+"/.greenj/settings.conf"), url_(""),
-    my_settings_(file_name_,QSettings::IniFormat)
+    file_name_(QDir::homePath() + "/.greenj/settings.conf"), url_(""),
+    settings_(file_name_, QSettings::IniFormat)
 {
+    // Create basic config if file does not exist
+    if (!QFile::exists(file_name_)) {
+        settings_.beginGroup("application");
+        settings_.setValue("configversion", "1");
+        settings_.setValue("version", "1.0");
+        settings_.setValue("name", "GreenJ");
+        settings_.setValue("developer", "Lorem Ipsum");
+        settings_.setValue("log_level", LogInfo::STATUS_WARNING);
+        settings_.endGroup();
+        
+        settings_.beginGroup("window");
+        settings_.setValue("minimizable", "true");
+        settings_.setValue("maximizable", "true");
+        settings_.setValue("fullscreen", "true");
+        settings_.setValue("resizable", "true");
+        settings_.setValue("state", "2");
+        settings_.endGroup();
+
+        settings_.beginGroup("gui");
+        settings_.setValue("soundfile", "ring.wav");
+        settings_.setValue("sounddialfile", "dial_tone.wav");
+        settings_.endGroup();
+
+        settings_.beginGroup("server");
+        settings_.setValue("url", "phone/index.html");
+        settings_.setValue("stun", "");
+        settings_.endGroup();
+    }
+
+    settings_.beginGroup("application");
+    log_level_ = settings_.value("log_level").toUInt();
+    settings_.endGroup();
+
+    settings_.beginGroup("server");
+    url_ = settings_.value("url").toUrl();
+    stun_ = settings_.value("stun").toString();
+    settings_.endGroup();
+
+    settings_.beginGroup("gui");
+    sound_file_name_ = settings_.value("soundfile").toString();
+    sound_dial_file_name_ = settings_.value("sounddialfile").toString();
+    settings_.endGroup();
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 ConfigFileHandler::~ConfigFileHandler()
 {
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 ConfigFileHandler &ConfigFileHandler::getInstance()
 {
     static ConfigFileHandler instance;
     return instance;
 }
 
-
-//----------------------------------------------------------------------
-void ConfigFileHandler::init()
-{
-    if (!QFile::exists(file_name_))
-    {
-        // create basic config
-        my_settings_.beginGroup("application");
-        my_settings_.setValue("configversion", "1");
-        my_settings_.setValue("appversion", "1.0");
-        my_settings_.setValue("appname", "GreenJ");
-        my_settings_.setValue("developer", "Lorem Ipsum");
-        my_settings_.setValue("app_minimizeable", "true");
-        my_settings_.setValue("app_maximizeable", "true");
-        my_settings_.setValue("app_fullscreenable", "true");
-        my_settings_.setValue("app_resizeable", "true");
-        my_settings_.setValue("app_state", "2");
-        my_settings_.setValue("log_level", LogInfo::STATUS_WARNING);
-        my_settings_.endGroup();
-
-        my_settings_.beginGroup("gui");
-        my_settings_.setValue("soundfile", "ring.wav");
-        my_settings_.setValue("sounddialfile", "dial_tone.wav");
-        my_settings_.endGroup();
-
-        // url to the web-page
-        my_settings_.beginGroup("server");
-        my_settings_.setValue("url", "phone/index.html");
-        my_settings_.setValue("stun", "");
-        my_settings_.endGroup();
-    }
-
-    my_settings_.beginGroup("application");
-    log_level_ = my_settings_.value("log_level").toUInt();
-    my_settings_.endGroup();
-
-    my_settings_.beginGroup("server");
-    url_ = my_settings_.value("url").toUrl();
-    stun_ = my_settings_.value("stun").toString();
-    my_settings_.endGroup();
-
-    my_settings_.beginGroup("gui");
-    sound_file_name_ = my_settings_.value("soundfile").toString();
-    sound_dial_file_name_ = my_settings_.value("sounddialfile").toString();
-    my_settings_.endGroup();
-}
-
-//----------------------------------------------------------------------
-const QUrl &ConfigFileHandler::getServerUrl() const
+//-----------------------------------------------------------------------------
+const QUrl &ConfigFileHandler::getWebpageUrl() const
 {
     return url_;
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 const QString &ConfigFileHandler::getStunServer() const
 {
     return stun_;
 }
 
-//----------------------------------------------------------------------
-const QString &ConfigFileHandler::getSoundFilename() const
+//-----------------------------------------------------------------------------
+const QString &ConfigFileHandler::getRingSoundFilename() const
 {
     return sound_file_name_;
 }
 
-//----------------------------------------------------------------------
-const QString &ConfigFileHandler::getSoundDialFilename() const
+//-----------------------------------------------------------------------------
+const QString &ConfigFileHandler::getDialSoundFilename() const
 {
     return sound_dial_file_name_;
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 unsigned ConfigFileHandler::getLogLevel() const
 {
     return log_level_;
 }
 
-//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 int ConfigFileHandler::getConfigVersion()
 {
-    my_settings_.beginGroup("application");
-    int ret =  my_settings_.value("configversion").toInt();
-    my_settings_.endGroup();
+    settings_.beginGroup("application");
+    int ret = settings_.value("configversion").toInt();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QString ConfigFileHandler::getAppVersion()
 {
-    my_settings_.beginGroup("application");
-    QString ret =  my_settings_.value("appversion").toString();
-    my_settings_.endGroup();
+    settings_.beginGroup("application");
+    QString ret = settings_.value("version").toString();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QString ConfigFileHandler::getAppName()
 {
-    my_settings_.beginGroup("application");
-    QString ret =  my_settings_.value("appname").toString();
-    my_settings_.endGroup();
+    settings_.beginGroup("application");
+    QString ret = settings_.value("name").toString();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-QString ConfigFileHandler::getDeveloper()
+//-----------------------------------------------------------------------------
+QString ConfigFileHandler::getAppDeveloper()
 {
-    my_settings_.beginGroup("application");
-    QString ret =  my_settings_.value("developer").toString();
-    my_settings_.endGroup();
+    settings_.beginGroup("application");
+    QString ret = settings_.value("developer").toString();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-int ConfigFileHandler::getAppPosX()
+//-----------------------------------------------------------------------------
+int ConfigFileHandler::getWindowPosX()
 {
-    my_settings_.beginGroup("application");
-    int ret =  my_settings_.value("app_posx").toInt();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    int ret = settings_.value("posx").toInt();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-int ConfigFileHandler::getAppPosY()
+//-----------------------------------------------------------------------------
+int ConfigFileHandler::getWindowPosY()
 {
-    my_settings_.beginGroup("application");
-    int ret =  my_settings_.value("app_posy").toInt();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    int ret = settings_.value("posy").toInt();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-int ConfigFileHandler::getAppSizeX()
+//-----------------------------------------------------------------------------
+int ConfigFileHandler::getWindowSizeX()
 {
-    my_settings_.beginGroup("application");
-    int ret =  my_settings_.value("app_sizex").toInt();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    int ret = settings_.value("sizex").toInt();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-int ConfigFileHandler::getAppSizeY()
+//-----------------------------------------------------------------------------
+int ConfigFileHandler::getWindowSizeY()
 {
-    my_settings_.beginGroup("application");
-    int ret =  my_settings_.value("app_sizey").toInt();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    int ret = settings_.value("sizey").toInt();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-int ConfigFileHandler::getAppState()
+//-----------------------------------------------------------------------------
+int ConfigFileHandler::getWindowState()
 {
-    my_settings_.beginGroup("application");
-    int ret =  my_settings_.value("app_state").toInt();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    int ret = settings_.value("state").toInt();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-bool ConfigFileHandler::getAppIsMinimizeable()
+//-----------------------------------------------------------------------------
+bool ConfigFileHandler::getWindowIsMinimizable()
 {
-    my_settings_.beginGroup("application");
-    bool ret =  my_settings_.value("app_minimizeable").toBool();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    bool ret = settings_.value("minimizeable").toBool();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-bool ConfigFileHandler::getAppIsMaximizeable()
+//-----------------------------------------------------------------------------
+bool ConfigFileHandler::getWindowIsMaximizable()
 {
-    my_settings_.beginGroup("application");
-    bool ret =  my_settings_.value("app_maximizeable").toBool();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    bool ret = settings_.value("maximizeable").toBool();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-bool ConfigFileHandler::getAppIsResizeable()
+//-----------------------------------------------------------------------------
+bool ConfigFileHandler::getWindowIsResizable()
 {
-    my_settings_.beginGroup("application");
-    bool ret =  my_settings_.value("app_resizeable").toBool();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    bool ret = settings_.value("resizeable").toBool();
+    settings_.endGroup();
     return ret;
 }
 
-//-----------------------------------------------------------------------
-bool ConfigFileHandler::getAppIsFullscreen()
+//-----------------------------------------------------------------------------
+bool ConfigFileHandler::getWindowIsFullscreen()
 {
-    my_settings_.beginGroup("application");
-    bool ret =  my_settings_.value("app_fullscreen").toBool();
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    bool ret = settings_.value("fullscreen").toBool();
+    settings_.endGroup();
     return ret;
 }
 
-//----------------------------------------------------------------------
-void ConfigFileHandler::setLogLevel(const unsigned &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setLogLevel(const unsigned val)
 {
     log_level_ = val;
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("log_level", val);
-    my_settings_.endGroup();
+    settings_.beginGroup("application");
+    settings_.setValue("log_level", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppPosX(const int &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowPosX(const int val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_posx",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("posx", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppPosY(const int &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowPosY(const int val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_posy",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("posy", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppSizeX(const int &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowSizeX(const int val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_sizex",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("sizex", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppSizeY(const int &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowSizeY(const int val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_sizey",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("sizey", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppState(const int &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowState(const int val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_state",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("state", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppIsMinimizeable(const bool &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowIsMinimizable(const bool val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_minimizeable",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("minimizeable", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppIsMaximizeable(const bool &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowIsMaximizable(const bool val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_maximizeable",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("maximizeable", val);
+    settings_.endGroup();
 }
 
-//-----------------------------------------------------------------------
-void ConfigFileHandler::setAppIsResizeable(const bool &val)
+//-----------------------------------------------------------------------------
+void ConfigFileHandler::setWindowIsResizable(const bool val)
 {
-    my_settings_.beginGroup("application");
-    my_settings_.setValue("app_resizeable",val);
-    my_settings_.endGroup();
+    settings_.beginGroup("window");
+    settings_.setValue("resizeable", val);
+    settings_.endGroup();
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 QVariant ConfigFileHandler::getOption(const QString &name)
 {
     QVariant result(0);
 
-    if (name == "url")
-        result.setValue(getServerUrl());
-
-    if (name == "stun")
+    if (name == "url") {
+        result.setValue(getWebpageUrl());
+    } else if (name == "stun") {
         result.setValue(getStunServer());
-
-    if (name == "log_level")
+    } else if (name == "log_level") {
         result.setValue(log_level_);
+    }
 
     return result;
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void ConfigFileHandler::setOption(const QString &name, const QVariant &option)
 {
-    if (name == "url")
-    {
-        url_ =  option.toString();
-        my_settings_.beginGroup("server");
-        my_settings_.setValue("url",url_);
-        my_settings_.endGroup();
+    if (name == "url") {
+        url_ = option.toString();
+        settings_.beginGroup("server");
+        settings_.setValue("url", url_);
+        settings_.endGroup();
         signalWebPageChanged();
-    }
-    if (name == "stun")
-    {
-        stun_ =  option.toString();
-        my_settings_.beginGroup("server");
-        my_settings_.setValue("stun",stun_);
-        my_settings_.endGroup();
-    }
-    if (name == "log_level")
-    {
+    } else if (name == "stun") {
+        stun_ = option.toString();
+        settings_.beginGroup("server");
+        settings_.setValue("stun", stun_);
+        settings_.endGroup();
+    } else if (name == "log_level") {
         log_level_ = option.toInt();
-        my_settings_.beginGroup("application");
-        my_settings_.setValue("log_level",log_level_);
-        my_settings_.endGroup();
+        settings_.beginGroup("application");
+        settings_.setValue("log_level", log_level_);
+        settings_.endGroup();
     }
 }

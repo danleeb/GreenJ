@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,66 +9,67 @@
 **
 ****************************************************************************/
 
+#include <QFile>
+#include "config_file_handler.h"
 #include "sound.h"
 
-#include <QFile>
 
-#include "config_file_handler.h"
-
-//----------------------------------------------------------------------
-Sound::Sound(void) :
-    ring_(0), dial_(0)
+//-----------------------------------------------------------------------------
+Sound::Sound() : ring_(0), dial_(0)
 {
+    ConfigFileHandler &config = ConfigFileHandler::getInstance();
 
-    if (QFile::exists(ConfigFileHandler::getInstance().getSoundFilename()))
-    {
-        ring_ = new QSound(ConfigFileHandler::getInstance().getSoundFilename());
+    if (QFile::exists(config.getRingSoundFilename())) {
+        ring_ = new QSound(config.getRingSoundFilename());
         ring_->setLoops(-1);
     }
-    if (QFile::exists(ConfigFileHandler::getInstance().getSoundDialFilename()))
-    {
-        dial_ = new QSound(ConfigFileHandler::getInstance().getSoundDialFilename());
+    if (QFile::exists(config.getDialSoundFilename())) {
+        dial_ = new QSound(config.getDialSoundFilename());
         dial_->setLoops(-1);
     }
 }
 
-//----------------------------------------------------------------------
-Sound::~Sound(void)
+//-----------------------------------------------------------------------------
+Sound::~Sound()
 {
-    if (ring_)
+    if (ring_) {
         delete ring_;
-    if (dial_)
+    }
+    if (dial_) {
         delete dial_;
+    }
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Sound &Sound::getInstance()
 {
     static Sound instance;
     return instance;
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void Sound::startRing()
 {
-    if (ring_)
+    if (ring_) {
         ring_->play();
+    }
 }
 
-
-//----------------------------------------------------------------------
-void Sound::startDialRing()
+//-----------------------------------------------------------------------------
+void Sound::startDial()
 {
-    if (dial_)
+    if (dial_) {
         dial_->play();
+    }
 }
 
-
-//----------------------------------------------------------------------
-void Sound::stopRing()
+//-----------------------------------------------------------------------------
+void Sound::stop()
 {
-    if (ring_)
+    if (ring_) {
         ring_->stop();
-    if (dial_)
+    }
+    if (dial_) {
         dial_->stop();
+    }
 }

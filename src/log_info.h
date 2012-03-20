@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,24 +9,23 @@
 **
 ****************************************************************************/
 
-#ifndef LOG_INFO_H
-#define LOG_INFO_H
+#ifndef LOGINFO_INCLUDE_H
+#define LOGINFO_INCLUDE_H
 
 #include <QMetaType>
 #include <QDateTime>
 #include <QString>
 
+
 /**
- * This class stores information to log like status, message and log_time
+ * This class stores log information (status, message, time, etc)
  */
 class LogInfo
 {
 public:
     /**
      * \name Log Status Codes
-     * Statuscodes are some kind of priority of writing log messages.
-     * These codes here are constants to simplify use of the status
-     * and to recognize the severity of the log message more easily.
+     * Status codes are priorities of writing log messages.
      */
     //@{
     /**
@@ -52,57 +51,57 @@ public:
     //@}
 
     /**
-     * translation of status code 
+     * Translations of status codes
      */
     static const QString STATUS_STRING[];
 
     /**
-     * the log_message status code
+     * Status code
      */
     unsigned status_;
 
     /**
-     * the domain, where log_message is from
+     * The domain of the log message
      */
     QString domain_;
 
     /**
-     * the log code like 200 when all worked well
+     * Log message code
      */
     int code_;
 
     /**
-     * the log message
+     * Log message
      */
     QString msg_;
 
     /**
-     * the log time
+     * Log time
      */
     QDateTime time_;
 
     /**
-     * basic constructor, not really used but Q_DECLARE_METATYPE needs it
+     * Basic constructor, not really used but Q_DECLARE_METATYPE needs it
      */
-    LogInfo(){}
+    LogInfo() {}
 
     /**
-     * Constructor of the class
-     * @param status unsigned. the status of the log message (debug ... fatal_error)
-     * @param domain QString, used to identify where the log_message came from
-     * @param code int, some log messages use an error code
-     * @param msg QString, the log text
+     * Constructor
+     * @param status The status of the log message (STATUS_*)
+     * @param domain Used to identify where the log message came from
+     * @param code Some log messages use an error code
+     * @param msg Log message text
      */
-    LogInfo(const unsigned &status, const QString &domain, const int &code,
+    LogInfo(const unsigned int status, const QString &domain, const int code,
             const QString &msg);
 
     /**
-     * Convert the status_ var of the class into a readable string
-     * @return QString the name of current status_
+     * Convert the status code into a string
+     * @return The text of current status_
      */
     QString getStatusString() const;
 };
 
 Q_DECLARE_METATYPE(LogInfo)
 
-#endif // LOG_INFO_H
+#endif // LOGINFO_INCLUDE_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,8 +9,8 @@
 **
 ****************************************************************************/
 
-#ifndef JAVASCRIPT_HANDLER_H
-#define JAVASCRIPT_HANDLER_H
+#ifndef JAVASCRIPTHANDLER_INCLUDE_H
+#define JAVASCRIPTHANDLER_INCLUDE_H
 
 #include <QObject>
 #include <QString>
@@ -18,260 +18,280 @@
 #include <QWebView>
 #include <QUrl>
 
+
 class Phone;
 class PrintHandler;
 class LogInfo;
 class Call;
 
+
 /**
- * This class should be the bridge between Qt and website-javascript
+ * This class is the bridge between Qt and website-javascript
  */
 class JavascriptHandler : public QObject
 {
     Q_OBJECT
 
-    private:
-    Phone &phone_;
-    PrintHandler *print_handler_;
-    QWebView *web_view_;
-    QString js_class_handler_;
-
-    /**
-     * this function do the communication with website-javascript
-     * @param func QString, the name of the function to be called
-     */
-    QVariant callJavascriptFunc(const QString &func);
-
 public:
     /**
      * Constructor
-     * @param phone Phone&, to access the phone-function 
+     * @param phone To access the phone methods
      */
     JavascriptHandler(Phone &phone);
-    ~JavascriptHandler(){}
 
     /**
-     * Initmethode, because web_view can't be set in Constructor
-     * @param web_view QWebView*, needed to call the Js-funcion
+     * Init method, because web_view can't be set in constructor
+     * @param web_view WebView needed to call the JS functions
+     * @param print_handler
      */
     void init(QWebView *web_view, PrintHandler *print_handler);
 
     /**
-     * Gets a status code by the Phone::callbackCallState
-     * @param call_id int, call ID
+     * Send current account state
+     * @param state
      */
-    void accountState(const int &state);
+    void accountState(const int state);
 
     /**
-     * Gets a status code by the Phone::callbackCallState
-     * @param call_id int, call ID
-     * @param code int, status code
+     * Send call state
+     * @param call_id
+     * @param code status code
+     * @param last_status last status code
      */
-    void callState(const int &call_id, const int &code, const int &last_status);
+    void callState(const int call_id, const int code, const int last_status);
 
     /**
-     * function should handle an incoming call
-     * @param number QString, Phonenumber or name from incoming call
+     * Notify about an incoming call
+     * @param call
      */
     void incomingCall(const Call &call);
 
     /**
-     * Ask Js for the url to the print page
-     * @return QUrl the url to the print page
+     * Request the url of a page to print
+     * @return The url of the webpage that should be printed
      */
     QUrl getPrintPage();
 
 public slots:
-
     /**
-     * allows to register an individual callback-handler
-     * @param class_name QString, the name of the handler to register
+     * Register an individual callback-handler by name
+     * @param class_name The name of the handler to register
      */
     int registerJsCallbackHandler(const QString &class_name);
 
     /**
-     * get the account status
-     * @return bool true if account is just registered
+     * Get the account status
+     * @return true, if account is registred
      */
     bool checkAccountStatus();
 
     /**
-     * get information about account
-     * @return QVariantList object with information
+     * Get account information
+     * @return Object with information about the registred account
      */
     QVariantMap getAccountInformation();
 
     /**
-     * register client to server
-     * @param host QString, address of server
-     * @param user_name QString, login name
-     * @param password QString, password to login
-     * @return bool on success true
+     * Register client on a given host
+     * @param host Address of server
+     * @param user_name Login name
+     * @param password Login password
+     * @return true, if successful
      */
     bool registerToServer(QString host, QString user_name, QString password);
 
     /**
-     * unregister client from server
+     * Unregister client from server
      */
     void unregisterFromServer();
 
     /**
-     * starts a call
-     * @param number QString, Phonenumber or name to call
-     * @return The ID of the call
+     * Starts an outgoing call
+     * @param number Phone number or name to call
+     * @return ID of the new call
      */
     int makeCall(const QString &number);
 
     /**
-     * accept the call with given id
-     * @param call_id int, id of the call to accept
+     * Accept the call with given id
+     * @param call_id ID of the call to accept
      */
-    void callAccept(const int &call_id);
+    void callAccept(const int call_id);
 
     /**
-     * finish call with given id
-     * @param call_id int, id of the call to end
+     * Finish call with given id
+     * @param call_id ID of the call to end
      */
-    void hangup(const int &call_id);
+    void hangup(const int call_id);
 
     /**
-     * finish all running calls
+     * Finish all running calls
      */
     void hangupAll();
 
     /**
      * Set the LogLevel
      */
-    void setLogLevel(const unsigned &log_level);
+    void setLogLevel(const unsigned int log_level);
 
     /**
-     * get stored data to specific call
-     * @param call_id int, the id of the call
-     * @return QString the data
+     * Get stored custom user data to specific call
+     * @param call_id ID of the call
+     * @return custom user data as a string
      */
-    QString getCallUserData(const int &call_id);
+    QString getCallUserData(const int call_id);
 
     /**
-     * store data to a call
-     * @param call_id int, the if of the call
-     * @param data QString, the data to store
+     * Store custom user data to a call
+     * @param call_id ID of the call
+     * @param data Customer user data as a string
      */
-    void setCallUserData(const int &call_id, QString data);
+    void setCallUserData(const int call_id, QString data);
 
     /**
-     * get a list of all open calls
+     * Get a list of error logs
+     * @return List of error log data
      */
     QVariantList getErrorLogData();
 
     /**
-     * delete error-log file
+     * Delete error log file
      */
     void deleteErrorLogFile();
 
     /**
-     * adds a call to a conference
-     *
-     * @param src_id int, id of call to add to conference
-     * @param dst_id int, id of conference
-     * @return bool true on success
+     * Adds a call to a conference
+     * @param src_id ID of call to add to conference
+     * @param dst_id ID of conference
+     * @return true, if successful
      */
-    bool addToConference(const int &src_id, const int &dst_id);
+    bool addToConference(const int src_id, const int dst_id);
 
     /**
-     * remove a call from a conference
-     *
-     * @param src_id int, id of call to remove from conference
-     * @param dst_id int, id of conference
-     * @return bool true on success
+     * Remove a call from a conference
+     * @param src_id ID of call to remove from conference
+     * @param dst_id ID of conference
+     * @return true, if successful
      */
-    bool removeFromConference(const int &src_id, const int &dst_id);
+    bool removeFromConference(const int src_id, const int dst_id);
 
     /**
      * Redirect an active call to a new destination
-     * @param call_id int, id of the call to be redirected
-     * @param dst_url QString, the Number or address of the new destination
-     * @return int the success-code
+     * @param call_id ID of the call to be redirected
+     * @param dst_url Number or address of the new destination
+     * @return success code
      */
-    int redirectCall(const int &call_id, const QString dst_url);
+    int redirectCall(const int call_id, const QString dst_url);
 
     /**
-     * Get all active calls
-     * @return QVariant
+     * Get list of all active calls
+     * @return List of active calls
      */
     QVariantList getActiveCallList();
 
     /**
      * Switch sound on/off
-     * @param mute bool, true if call should be muted
+     * @param mute true, if sound of call should be muted
+     * @param call_id ID of call, or -1
      */
-    void muteSound(const bool &mute, const int &call_id = -1);
+    void muteSound(const bool mute, const int call_id = -1);
 
     /**
      * Switch microphone on/off
-     * @param mute bool, true if call should be muted
+     * @param mute true, if microphone of call should be muted
+     * @param call_id ID of call, or -1
      */
-    void muteMicrophone(const bool &mute, const int &call_id = -1);
+    void muteMicrophone(const bool mute, const int call_id = -1);
 
     /**
      * Get information about signal levels
-     * @return QVariantMap, current signal level for sound and microphone
+     * @return Map with sound and micro signal levels
      */
     QVariantMap getSignalInformation();
 
     /**
-     * get data of an option
-     * @param name QString, the name of the option
-     * @return QString the option data
+     * Get data of an option
+     * @param name The name of the option
+     * @return The option data
      */
     QVariant getOption(const QString &name);
 
     /**
-     * set new data to an option
-     * @param name QString, the name of the option
-     * @param option QString, the new data of the option
+     * Set new data of an option
+     * @param name The name of the option
+     * @param option The new data of the option
      */
     void setOption(const QString &name, const QVariant &option);
 
     /**
-     * tell qt to print a page given by url
-     * @param url_str QString the url of the page to print
+     * Tell Qt to print a page given by url
+     * @param url_str The url of the page to print
      */
     void printPage(const QString &url_str);
 
     /**
      * Get log message from js and send it to the log_handler
-     * @param QVariantMap log, the log-object
+     * @param log The log object
      */
     bool sendLogMessage(QVariantMap log);
 
     /**
      * Slot to catch sended signals
-     * @params call_id int, id of incoming call
-     * @params call_url QString, number of incoming call
+     * @params call_id ID of incoming call
+     * @params call_url Number of incoming call
      */
     void incomingCallSlot(const Call &call);
 
     /**
-     * Should print errors, warning and debug messages
-     * @param info LogInfo, log information and message
+     * Prints errors, warning and debug messages
+     * @param info Log information and message
      */
     void logMessageSlot(const LogInfo &info);
 
     /**
      * Sound level has changed
-     * @param int level new sound level
+     * @param level New sound level
      */
     void soundLevelSlot(int level);
 
     /**
      * Microphone level has changed
-     * @param int level new microphone level
+     * @param level New microphone level
      */
     void microphoneLevelSlot(int level);
 
+    /**
+     * Get a list of log files
+     * @return List of filenames
+     */
     QStringList getLogFileList();
+
+    /**
+     * Get the content of a log file
+     * @param file_name File name of log file
+     * @return Log file content
+     */
     QString getLogFileContent(const QString &file_name);
+    
+    /**
+     * Delete a log file
+     * @param file_name File name of log file that should be deleted
+     */
     void deleteLogFile(const QString &file_name);
+
+private:
+    Phone &phone_;
+    PrintHandler *print_handler_;
+    QWebView *web_view_;
+    QString js_class_handler_;
+
+    /**
+     * This method handles the communication with javascript in the
+     * internal browser.
+     * @param func The name of the function to be called
+     * @return The return value of the executed function
+     */
+    QVariant callJavascriptFunc(const QString &func);
 };
 
-#endif // JAVASCRIPT_HANDLER_H
+#endif // JAVASCRIPTHANDLER_INCLUDE_H

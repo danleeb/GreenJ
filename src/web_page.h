@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,28 +9,26 @@
 **
 ****************************************************************************/
 
-#ifndef WEB_PAGE_H
-#define WEB_PAGE_H
+#ifndef WEBPAGE_INCLUDE_H
+#define WEBPAGE_INCLUDE_H
 
 #include <QWebPage>
 #include <QWebHistory>
 #include <QString>
 #include <QUrl>
 
-#include "log_info.h"
-#include "log_handler.h"
 
 /**
- * This class gives webkit a simple name.
- * It is needed because some web-pages like google-maps could have problems
- * with not available touchscreen
+ * Overloads Qts WebPage class to manipulate user agent etc.
  */
 class WebPage : public QWebPage
 {
     /**
      * Set a default user-agent to the browser
      * This is necessary to prevent being identified as smartphone by js-libs
-     * @param url QUrl, currently unused
+     * (e.g. Google Maps)
+     * @param url Currently unused
+     * @return User agent string
      */
     // virtual QString userAgentForUrl(const QUrl &url) const 
     // {
@@ -40,8 +38,8 @@ class WebPage : public QWebPage
 
     /**
      * Prevent history-back function being executed
-     * @param action webaction, the action of browser
-     * @param checked bool
+     * @param action The browser action
+     * @param checked
      */
     // virtual void triggerAction(WebAction action, bool checked = false)
     // {
@@ -52,4 +50,4 @@ class WebPage : public QWebPage
     // }
 };
 
-#endif // WEB_PAGE_H
+#endif // WEBPAGE_INCLUDE_H

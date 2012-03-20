@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,26 +9,22 @@
 **
 ****************************************************************************/
 
-#include "gui.h"
-
 #include <QApplication>
 #include <QWebFrame>
 #include <QWebInspector>
-
 #include "config_file_handler.h"
-
 #include "gui_window_handler.h"
-
 #include "log_info.h"
 #include "log_handler.h"
 #include "sip_phone.h"
-
 #include "web_page.h"
+#include "gui.h"
 
-//----------------------------------------------------------------------
-Gui::Gui(QWidget *parent, Qt::WFlags flags)
-    : QMainWindow(parent, flags), phone_(new SipPhone), js_handler_(phone_),
-      print_handler_(*this, js_handler_)
+
+//-----------------------------------------------------------------------------
+Gui::Gui(QWidget *parent, Qt::WFlags flags) : 
+    QMainWindow(parent, flags), phone_(new SipPhone), js_handler_(phone_),
+    print_handler_(*this, js_handler_)
 {
     qRegisterMetaType<LogInfo>("LogInfo");
     ui_.setupUi(this);
@@ -43,40 +39,37 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags)
             this,
             SLOT(alertIncomingCall(const QString&)));
 
-    //Set Window appearence
+    // Set Window appearence
     GuiWindowHandler window_handler(*this);
     window_handler.loadFromConfig();
 
-    //Setting up phone
+    // Setting up phone
     phone_.init(&js_handler_);
 
     WebPage *page = new WebPage();
-
     ui_.webview->setPage(page);
+
     js_handler_.init(ui_.webview, &print_handler_);
 
 #ifndef DEBUG
     // deactivate right click context menu
     ui_.webview->setContextMenuPolicy(Qt::NoContextMenu);
 #else
-    //Enable webkit Debugger
+    // Enable webkit Debugger
     ui_.webview->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled,true);
 #endif
 
-    //Phone-book
     //ui_.webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     connect(ui_.webview->page()->mainFrame(), 
             SIGNAL(javaScriptWindowObjectCleared()), 
             this, 
             SLOT(slotCreateJSWinObject()));
-
     
     connect(ui_.webview, 
             SIGNAL(linkClicked(const QUrl&)), 
             this,
             SLOT(linkClicked(const QUrl&)));
 
-    //WebView
     ConfigFileHandler &config = ConfigFileHandler::getInstance();
 
     connect(&config,
@@ -84,30 +77,32 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags)
             this,
             SLOT(updateWebPage()));
 
-    const QUrl &server_url = config.getServerUrl();
-    if (!server_url.isEmpty())
-    {
+    const QUrl &server_url = config.getWebpageUrl();
+    if (!server_url.isEmpty()) {
         ui_.webview->setUrl(server_url);
     }
 
-    createActions();
-    createTrayIcon();
-    tray_icon_->show();
-    tray_icon_->setIcon(QIcon(":images/icon.xpm"));
+    createSystemTray();
 
-    // shortcuts
+    // Shortcuts
     toggle_fullscreen_ = new QShortcut(Qt::Key_F11, this, SLOT(toggleFullScreen()));
     print_ = new QShortcut(Qt::CTRL + Qt::Key_P, this, SLOT(printKeyPressed()));
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 Gui::~Gui()
 {
     phone_.unregister();
 
-    //Set Window appearence
+    // Save window appearence
     GuiWindowHandler window_handler(*this);
     window_handler.saveToConfig();
+}
+
+//-----------------------------------------------------------------------------
+Ui::MainWindow &Gui::getWindow()
+{
+    return ui_;
 }
 
 void Gui::linkClicked(const QUrl &url)
@@ -115,8 +110,8 @@ void Gui::linkClicked(const QUrl &url)
     ui_.webview->load(url);
 }
 
-//----------------------------------------------------------------------
-void Gui::createActions()
+//-----------------------------------------------------------------------------
+void Gui::createSystemTray()
 {
     minimize_action_ = new QAction(tr("Mi&nimize"), this);
     connect(minimize_action_, SIGNAL(triggered()), this, SLOT(hide()));
@@ -132,11 +127,7 @@ void Gui::createActions()
 
     quit_action_ = new QAction(tr("&Quit"), this);
     connect(quit_action_, SIGNAL(triggered()), qApp, SLOT(quit()));
-}
 
-//----------------------------------------------------------------------
-void Gui::createTrayIcon()
-{
     tray_icon_menu_ = new QMenu(this);
     tray_icon_menu_->addAction(minimize_action_);
     tray_icon_menu_->addAction(maximize_action_);
@@ -147,52 +138,50 @@ void Gui::createTrayIcon()
 
     tray_icon_ = new QSystemTrayIcon(this);
     tray_icon_->setContextMenu(tray_icon_menu_);
+    tray_icon_->setIcon(QIcon(":images/icon.xpm"));
+    tray_icon_->show();
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void Gui::toggleFullScreen()
 {
     bool is_fullscreen = windowState() & Qt::WindowFullScreen;
-    if (is_fullscreen)
-    {
+    if (is_fullscreen) {
         showNormal();
         setWindowState((Qt::WindowState)current_state_);
-    }
-    else
-    {
+    } else {
         current_state_ = windowState();
         showFullScreen();
     }
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void Gui::printKeyPressed()
 {
     print_handler_.printKeyPressed();
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void Gui::slotCreateJSWinObject()
 {
-    ui_.webview->page()->mainFrame()->
-        addToJavaScriptWindowObject("qt_handler", &js_handler_);
+    ui_.webview->page()->mainFrame()
+        ->addToJavaScriptWindowObject("qt_handler", &js_handler_);
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void Gui::alertIncomingCall(const QString &url)
 {
     QApplication::alert(this);
-    if (!QApplication::focusWidget())
+    if (!QApplication::focusWidget()) {
         tray_icon_->showMessage("Anruf", url+" versucht Sie zu kontaktieren");
+    }
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void Gui::updateWebPage()
 {
-    const QUrl &server_url = ConfigFileHandler::getInstance().getServerUrl();
-    if (!server_url.isEmpty())
-    {
+    const QUrl &server_url = ConfigFileHandler::getInstance().getWebpageUrl();
+    if (!server_url.isEmpty()) {
         ui_.webview->setUrl(server_url);
     }
-
 }

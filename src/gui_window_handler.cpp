@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Lorem Ipsum Mediengesellschaft m.b.H.
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
 **
 ** GNU General Public License
 ** This file may be used under the terms of the GNU General Public License
@@ -9,108 +9,73 @@
 **
 ****************************************************************************/
 
-#include "gui_window_handler.h"
-#include "gui.h"
-#include "config_file_handler.h"
 #include <QString>
+#include "config_file_handler.h"
+#include "gui.h"
+#include "gui_window_handler.h"
 
-//----------------------------------------------------------------------
-GuiWindowHandler::GuiWindowHandler(Gui &gui) :
-    the_gui_(gui)
+
+//-----------------------------------------------------------------------------
+GuiWindowHandler::GuiWindowHandler(Gui &gui) : gui_(gui)
 {
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+GuiWindowHandler::~GuiWindowHandler()
+{
+}
+
+//-----------------------------------------------------------------------------
 void GuiWindowHandler::loadFromConfig()
 {
-    QString str;
+    ConfigFileHandler &config = ConfigFileHandler::getInstance();
 
-    //Window Title
-    str = ConfigFileHandler::getInstance().getAppName();
-    the_gui_.setWindowTitle(str);
+    gui_.setWindowTitle(config.getAppName());
 
-    //Window position & size
-    int x = ConfigFileHandler::getInstance().getAppPosX();
-    int y = ConfigFileHandler::getInstance().getAppPosY();
-    int w = ConfigFileHandler::getInstance().getAppSizeX();
-    int h = ConfigFileHandler::getInstance().getAppSizeY();
-    the_gui_.setGeometry(x,y,w,h);
+    int w = config.getWindowSizeX();
+    int h = config.getWindowSizeY();
+    gui_.setGeometry(config.getWindowPosX(), config.getWindowPosY(), w, h);
 
-    int state = ConfigFileHandler::getInstance().getAppState();
-    the_gui_.setWindowState((Qt::WindowState)state);
+    gui_.setWindowState((Qt::WindowState)config.getWindowState());
 
-    //Window restrictions
-    bool is_minizeable, is_maximizeable, is_resizeable, is_fullscreen;
-    is_minizeable = ConfigFileHandler::getInstance().getAppIsMinimizeable();
-    is_maximizeable = ConfigFileHandler::getInstance().getAppIsMaximizeable();
-    is_resizeable = ConfigFileHandler::getInstance().getAppIsResizeable();
-    is_fullscreen = ConfigFileHandler::getInstance().getAppIsFullscreen();
-
-    //Resizeable
-    if (is_resizeable == false)
-        the_gui_.setFixedSize(w,h);
-
-    //Maximizeable
-    if (is_maximizeable == false)
-    {
-        Qt::WindowFlags wflags = the_gui_.windowFlags() & ~Qt::WindowMaximizeButtonHint;
-        the_gui_.setWindowFlags(wflags);
+    if (!config.getWindowIsResizable()) {
+        gui_.setFixedSize(w, h);
     }
 
-    //Minimizeable
-    if (is_minizeable == false)
-    {
-        Qt::WindowFlags wflags = the_gui_.windowFlags() & ~Qt::WindowMinimizeButtonHint;
-        the_gui_.setWindowFlags(wflags);
+    Qt::WindowFlags wflags = gui_.windowFlags();
+    if (!config.getWindowIsMaximizable()) {
+        wflags &= ~Qt::WindowMaximizeButtonHint;
     }
+    if (!config.getWindowIsMinimizable()) {
+        wflags &= ~Qt::WindowMinimizeButtonHint;
+    }
+    gui_.setWindowFlags(wflags);
 
-    //Fullscreen
-    if (is_fullscreen)
-    {
-        the_gui_.showFullScreen();
+    if (config.getWindowIsFullscreen()) {
+        gui_.showFullScreen();
     }
 }
 
-//----------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 void GuiWindowHandler::saveToConfig()
 {
-    bool is_fullscreen = the_gui_.windowState() & Qt::WindowFullScreen;
-    if (!is_fullscreen)
-    {
-        int x = the_gui_.x();
-        int y = the_gui_.y();
+    ConfigFileHandler &config = ConfigFileHandler::getInstance();
 
-        if (x<0)
-            x=0;
-        if (y<20)
-            y=20;
+    bool is_fullscreen = gui_.windowState() & Qt::WindowFullScreen;
+    if (!is_fullscreen) {
+        int x = gui_.x();
+        int y = gui_.y();
 
-        ConfigFileHandler::getInstance().setAppPosX(x);
-        ConfigFileHandler::getInstance().setAppPosY(y);
-        ConfigFileHandler::getInstance().setAppSizeX(the_gui_.width());
-        ConfigFileHandler::getInstance().setAppSizeY(the_gui_.height());
-        ConfigFileHandler::getInstance().setAppState((int)the_gui_.windowState());
+        config.setWindowPosX(x < 0  ? 0  : x);
+        config.setWindowPosY(y < 20 ? 20 : y);
+        config.setWindowSizeX(gui_.width());
+        config.setWindowSizeY(gui_.height());
+        config.setWindowState((int)gui_.windowState());
     }
 
-    //Resizeable
-    bool is_resizeable =true;
-    if (the_gui_.minimumWidth() == the_gui_.maximumWidth())
-        is_resizeable = false;
-    ConfigFileHandler::getInstance().setAppIsResizeable(is_resizeable);
+    config.setWindowIsResizable(gui_.minimumWidth() == gui_.maximumWidth());
 
-    //Maximizeable
-    Qt::WindowFlags wflags = the_gui_.windowFlags();
-    bool is_maximizeable= wflags.testFlag(Qt::WindowMaximizeButtonHint);
-    ConfigFileHandler::getInstance().setAppIsMaximizeable(is_maximizeable);
-
-    //Minimizeable
-    bool is_minimizeable= wflags.testFlag(Qt::WindowMinimizeButtonHint);
-    ConfigFileHandler::getInstance().setAppIsMinimizeable(is_minimizeable);
-
-}
-
-
-//----------------------------------------------------------------------
-GuiWindowHandler::~GuiWindowHandler(void)
-{
+    Qt::WindowFlags wflags = gui_.windowFlags();
+    config.setWindowIsMaximizable(wflags.testFlag(Qt::WindowMaximizeButtonHint));
+    config.setWindowIsMinimizable(wflags.testFlag(Qt::WindowMinimizeButtonHint));
 }
