@@ -9,8 +9,6 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QTextDocument>
 #include <QFile>
 #include <QDataStream>
 #include "call.h"
@@ -20,7 +18,6 @@
 #include "javascript_handler.h"
 #include "account.h"
 #include "phone.h"
-
 
 //-----------------------------------------------------------------------------
 Phone::Phone(PhoneApi *api) : phone_api_(api)
@@ -49,11 +46,11 @@ Phone::~Phone(void)
     file.open(QIODevice::WriteOnly | QIODevice::Append);
     QDataStream out(&file);
     for (int i = 0; i < call_list_.size(); i++) {
-        Call *temp = call_list_[i];
-        if (temp->isActive()) {
-            out << *temp;
+        Call *call = call_list_[i];
+        if (call->isActive()) {
+            out << *call;
         }
-        delete temp;
+        delete call;
     }
     call_list_.clear();
     delete phone_api_;

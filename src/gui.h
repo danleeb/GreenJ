@@ -18,13 +18,10 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QShortcut>
-
-
 #include "ui_gui.h"
 #include "phone.h"
 #include "javascript_handler.h"
 #include "print_handler.h"
-
 
 /**
  * This class represents the main window of the application.

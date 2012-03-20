@@ -14,7 +14,6 @@
 
 class Gui;
 
-
 /**
  * Manages the position, size and restriction of the window-appearence
  * Those values get saved in the config file at shutdown and are loaded back on restart

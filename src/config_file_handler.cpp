@@ -9,11 +9,9 @@
 **
 ****************************************************************************/
 
-#include <QMessageBox>
 #include <QDir>
 #include "log_info.h"
 #include "config_file_handler.h"
-
 
 //-----------------------------------------------------------------------------
 ConfigFileHandler::ConfigFileHandler() :

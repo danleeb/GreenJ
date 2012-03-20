@@ -11,7 +11,6 @@
 
 #include <QWebFrame>
 #include <QString>
-#include <QTextDocument>
 #include "call.h"
 #include "phone.h"
 #include "print_handler.h"
@@ -20,7 +19,6 @@
 #include "account.h"
 #include "config_file_handler.h"
 #include "javascript_handler.h"
-
 
 //-----------------------------------------------------------------------------
 JavascriptHandler::JavascriptHandler(Phone &phone) :
@@ -265,13 +263,13 @@ QVariantList JavascriptHandler::getActiveCallList()
 //-----------------------------------------------------------------------------
 void JavascriptHandler::muteSound(const bool mute, const int call_id)
 {
-  phone_.muteSound(mute, call_id);
+    phone_.muteSound(mute, call_id);
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::muteMicrophone(const bool mute, const int call_id)
 {
-  phone_.muteMicrophone(mute, call_id);
+    phone_.muteMicrophone(mute, call_id);
 }
 
 //-----------------------------------------------------------------------------

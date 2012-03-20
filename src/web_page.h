@@ -17,7 +17,6 @@
 #include <QString>
 #include <QUrl>
 
-
 /**
  * Overloads Qts WebPage class to manipulate user agent etc.
  */

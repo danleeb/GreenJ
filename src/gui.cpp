@@ -20,26 +20,25 @@
 #include "web_page.h"
 #include "gui.h"
 
-
 //-----------------------------------------------------------------------------
 Gui::Gui(QWidget *parent, Qt::WFlags flags) : 
-    QMainWindow(parent, flags), phone_(new SipPhone), js_handler_(phone_),
+    QMainWindow(parent, flags), 
+    phone_(new SipPhone), 
+    js_handler_(phone_),
     print_handler_(*this, js_handler_)
 {
     qRegisterMetaType<LogInfo>("LogInfo");
     ui_.setupUi(this);
+    
+    ConfigFileHandler &config = ConfigFileHandler::getInstance();
 
-    connect(&LogHandler::getInstance(),
-            SIGNAL(signalLogMessage(const LogInfo&)),
-            &js_handler_,
-            SLOT(logMessageSlot(const LogInfo&)));
+    connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
+            &js_handler_,               SLOT(logMessageSlot(const LogInfo&)));
 
-    connect(&phone_,
-            SIGNAL(signalIncomingCall(const QString&)),
-            this,
-            SLOT(alertIncomingCall(const QString&)));
+    connect(&phone_,                    SIGNAL(signalIncomingCall(const QString&)),
+            this,                       SLOT(alertIncomingCall(const QString&)));
 
-    // Set Window appearence
+    // Set window appearence
     GuiWindowHandler window_handler(*this);
     window_handler.loadFromConfig();
 
@@ -60,22 +59,14 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
 #endif
 
     //ui_.webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    connect(ui_.webview->page()->mainFrame(), 
-            SIGNAL(javaScriptWindowObjectCleared()), 
-            this, 
-            SLOT(slotCreateJSWinObject()));
+    connect(ui_.webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), 
+            this,                             SLOT(slotCreateJSWinObject()));
     
-    connect(ui_.webview, 
-            SIGNAL(linkClicked(const QUrl&)), 
-            this,
-            SLOT(linkClicked(const QUrl&)));
+    connect(ui_.webview, SIGNAL(linkClicked(const QUrl&)), 
+            this,        SLOT(linkClicked(const QUrl&)));
 
-    ConfigFileHandler &config = ConfigFileHandler::getInstance();
-
-    connect(&config,
-            SIGNAL(signalWebPageChanged()),
-            this,
-            SLOT(updateWebPage()));
+    connect(&config, SIGNAL(signalWebPageChanged()),
+            this,    SLOT(updateWebPage()));
 
     const QUrl &server_url = config.getWebpageUrl();
     if (!server_url.isEmpty()) {

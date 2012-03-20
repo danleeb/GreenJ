@@ -17,9 +17,7 @@
 #include <QVariantMap>
 #include <QDataStream>
 
-
 class PhoneApi;
-
 
 /**
  * This class handles a specific call.

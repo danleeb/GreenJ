@@ -16,12 +16,10 @@
 #include <QVector>
 #include <QVariantMap>
 
-
 class PhoneApi;
 class Account;
 class Call;
 class JavascriptHandler;
-
 
 /**
  * Base phone class

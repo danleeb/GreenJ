@@ -9,13 +9,11 @@
 **
 ****************************************************************************/
 
-#include <QStringList>
 #include "phone_api.h"
 #include "sound.h"
 #include "log_info.h"
 #include "log_handler.h"
 #include "call.h"
-
 
 const int Call::TYPE_UNKNOWN    = -1;
 const int Call::TYPE_INCOMING   = 0x00;
@@ -26,7 +24,6 @@ const int Call::STATUS_RINGING  = 0x00;
 const int Call::STATUS_ACCEPTED = 0x01;
 const int Call::STATUS_CLOSED   = 0x02;
 const int Call::STATUS_ERROR    = 0x03;
-
 
 //-----------------------------------------------------------------------------
 Call::Call(PhoneApi *phone_api, const int type, const int status) :

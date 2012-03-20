@@ -9,13 +9,7 @@
 **
 ****************************************************************************/
 
-#include <QtGui/QApplication>
-#include <QDir>
-#include <QFile>
-#include <QMessageBox>
-#include <QTextStream>
 #include "account.h"
-
 
 //-----------------------------------------------------------------------------
 Account::Account() : user_name_(""), password_(""), host_("")

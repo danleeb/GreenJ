@@ -11,7 +11,6 @@
 
 #include "log_info.h"
 
-
 const unsigned LogInfo::STATUS_DEBUG       = 0x00;
 const unsigned LogInfo::STATUS_MESSAGE     = 0x01;
 const unsigned LogInfo::STATUS_WARNING     = 0x02;
@@ -20,7 +19,6 @@ const unsigned LogInfo::STATUS_FATAL_ERROR = 0x04;
 
 const QString LogInfo::STATUS_STRING[] = { "DEBUG", "MESSAGE", "WARNING",
                                            "ERROR", "FATALERROR" };
-
 
 //-----------------------------------------------------------------------------
 LogInfo::LogInfo(const unsigned status, const QString &domain, 

@@ -16,11 +16,9 @@
 #include <QString>
 #include <QVariantMap>
 
-
 class LogInfo;
 class Account;
 class Call;
-
 
 /**
  * Abstract class for phone implementations.

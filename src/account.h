@@ -13,8 +13,6 @@
 #define ACCOUNT_INCLUDE_H
 
 #include <QString>
-#include <QXmlStreamReader>
-
 
 /**
  * This class stores account data used for logging into the server.

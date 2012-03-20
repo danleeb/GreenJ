@@ -15,15 +15,14 @@
 #include <QObject>
 #include <QString>
 #include <QVariant>
-#include <QWebView>
 #include <QUrl>
-
+#include <QWebView>
 
 class Phone;
 class PrintHandler;
 class LogInfo;
 class Call;
-
+class QWebView;
 
 /**
  * This class is the bridge between Qt and website-javascript

@@ -15,10 +15,9 @@
 #include "javascript_handler.h"
 #include "print_handler.h"
 
-
 //-----------------------------------------------------------------------------
-PrintHandler::PrintHandler(Gui &gui, JavascriptHandler &js_handler)
-    : gui_(gui), js_handler_(js_handler)
+PrintHandler::PrintHandler(Gui &gui, JavascriptHandler &js_handler) : 
+    gui_(gui), js_handler_(js_handler)
 {
     connect(&print_page_, SIGNAL(loadFinished(bool)), 
             this,         SLOT(showPrintPreview()));

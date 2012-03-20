@@ -13,7 +13,6 @@
 #include "config_file_handler.h"
 #include "sound.h"
 
-
 //-----------------------------------------------------------------------------
 Sound::Sound() : ring_(0), dial_(0)
 {

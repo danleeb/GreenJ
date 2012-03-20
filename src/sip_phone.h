@@ -16,10 +16,8 @@
 #include <QVector>
 #include "phone_api.h"
 
-
 class Gui;
 class Phone;
-
 
 /**
  * This class is an implementation of PhoneApi for sip-Protocol

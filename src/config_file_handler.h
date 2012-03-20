@@ -13,11 +13,9 @@
 #define CONFIGFILEHANDLER_INCLUDE_H
 
 #include <QObject>
-#include <QList>
 #include <QString>
 #include <QUrl>
 #include <QSettings>
-
 
 /**
  * Singleton that handles the settings file.

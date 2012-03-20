@@ -11,16 +11,12 @@
 
 #include <QtGui/QApplication>
 #include "gui.h"
-#include "config_file_handler.h"
-
 
 //-----------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":images/icon.xpm"));
-
-    ConfigFileHandler &instance = ConfigFileHandler::getInstance();
 
     Gui w;
     w.show();

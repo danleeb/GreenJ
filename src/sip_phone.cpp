@@ -9,19 +9,15 @@
 **
 ****************************************************************************/
 
-#include "sip_phone.h"
-
-#include <QApplication>
 #include <QTextDocument>
-
-#include "phone.h"
-#include "gui.h"
-#include "call.h"
 #include "log_info.h"
 #include "log_handler.h"
-#include "account.h"
 #include "config_file_handler.h"
 #include "sound.h"
+#include "account.h"
+#include "call.h"
+#include "phone.h"
+#include "sip_phone.h"
 
 SipPhone *SipPhone::self_;
 
@@ -32,11 +28,17 @@ SipPhone::SipPhone()
 }
 
 //-----------------------------------------------------------------------------
+SipPhone::~SipPhone()
+{
+    pjsua_destroy();
+}
+
+//-----------------------------------------------------------------------------
 void SipPhone::init()
 {
     pj_status_t status;
 
-    // Create pjsua first!
+    // Create pjsua first
     status = pjsua_create();
 
     if (status != PJ_SUCCESS) {
@@ -254,7 +256,6 @@ void SipPhone::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
     self_->signalIncomingCall(call);
 }
 
-
 //-----------------------------------------------------------------------------
 void SipPhone::callStateCb(pjsua_call_id call_id, pjsip_event *e)
 {
@@ -274,7 +275,9 @@ void SipPhone::callStateCb(pjsua_call_id call_id, pjsip_event *e)
         self_->hangUp(call_id);
     }
 
-    LogInfo info(LogInfo::STATUS_DEBUG, "pjsip", 0, "Call-state from call "+QString::number(call_id)+" changed to "+QString::number(ci.state));
+    LogInfo info(LogInfo::STATUS_DEBUG, "pjsip", 0, "Call-state from call " 
+                                        + QString::number(call_id) + " changed to " 
+                                        + QString::number(ci.state));
     self_->signalLogData(info);
 
     self_->signalCallState(call_id, ci.state, ci.last_status);
@@ -547,10 +550,4 @@ void SipPhone::unregister()
         hangUpAll();
         pjsua_acc_del(acc_id_);
     }
-}
-
-//-----------------------------------------------------------------------------
-SipPhone::~SipPhone(void)
-{
-    pjsua_destroy();
 }

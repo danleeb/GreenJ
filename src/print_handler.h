@@ -16,10 +16,8 @@
 #include <QWebView>
 #include <QUrl>
 
-
 class Gui;
 class JavascriptHandler;
-
 
 /**
  * This class handles a print action.

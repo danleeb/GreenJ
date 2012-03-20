@@ -14,7 +14,6 @@
 #include "gui.h"
 #include "gui_window_handler.h"
 
-
 //-----------------------------------------------------------------------------
 GuiWindowHandler::GuiWindowHandler(Gui &gui) : gui_(gui)
 {

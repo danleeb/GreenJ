@@ -18,9 +18,7 @@
 #include <QReadWriteLock>
 #include <QStringList>
 
-
 class LogInfo;
-
 
 /**
  * Singleton that handles the logging. 

@@ -15,7 +15,6 @@
 #include <QObject>
 #include <QSound>
 
-
 /**
  * Singleton that handles sounds
  */
@@ -69,4 +68,5 @@ private:
     Sound(const Sound &original);
     ~Sound(void);
 };
+
 #endif // SOUND_INCLUDE_H

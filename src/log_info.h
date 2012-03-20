@@ -16,7 +16,6 @@
 #include <QDateTime>
 #include <QString>
 
-
 /**
  * This class stores log information (status, message, time, etc)
  */
