@@ -10,13 +10,13 @@
 ****************************************************************************/
 
 #include <QFile>
-#include "config_file_handler.h"
+#include "config.h"
 #include "sound.h"
 
 //-----------------------------------------------------------------------------
 Sound::Sound() : ring_(0), dial_(0)
 {
-    ConfigFileHandler &config = ConfigFileHandler::getInstance();
+    Config &config = Config::getInstance();
 
     if (QFile::exists(config.getRingSoundFilename())) {
         ring_ = new QSound(config.getRingSoundFilename());

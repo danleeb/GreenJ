@@ -174,15 +174,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\config_file_handler.cpp"
+				RelativePath="..\src\config.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\src\gui.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\gui_window_handler.cpp"
 				>
 			</File>
 			<File
@@ -232,17 +228,17 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\config_file_handler.h"
+				RelativePath="..\src\config.h"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						Description="Performing Custom Build Step"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -250,10 +246,10 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						Description="Performing Custom Build Step"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 			</File>
@@ -282,10 +278,6 @@
 						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\gui_window_handler.h"
-				>
 			</File>
 			<File
 				RelativePath="..\src\javascript_handler.h"
@@ -534,18 +526,6 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_config_file_handler.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
 					RelativePath="..\src\GeneratedFiles\Release\moc_gui.cpp"
 					>
 					<FileConfiguration
@@ -647,18 +627,6 @@
 				Filter="cpp;moc"
 				SourceControlFiles="false"
 				>
-				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_config_file_handler.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
 				<File
 					RelativePath="..\src\GeneratedFiles\Debug\moc_gui.cpp"
 					>

@@ -12,8 +12,7 @@
 #include <QApplication>
 #include <QWebFrame>
 #include <QWebInspector>
-#include "config_file_handler.h"
-#include "gui_window_handler.h"
+#include "config.h"
 #include "log_info.h"
 #include "log_handler.h"
 #include "sip_phone.h"
@@ -30,17 +29,13 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
     qRegisterMetaType<LogInfo>("LogInfo");
     ui_.setupUi(this);
     
-    ConfigFileHandler &config = ConfigFileHandler::getInstance();
+    Config &config = Config::getInstance();
 
     connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
             &js_handler_,               SLOT(logMessageSlot(const LogInfo&)));
 
     connect(&phone_,                    SIGNAL(signalIncomingCall(const QString&)),
             this,                       SLOT(alertIncomingCall(const QString&)));
-
-    // Set window appearence
-    GuiWindowHandler window_handler(*this);
-    window_handler.loadFromConfig();
 
     // Setting up phone
     phone_.init(&js_handler_);
@@ -65,8 +60,8 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
     connect(ui_.webview, SIGNAL(linkClicked(const QUrl&)), 
             this,        SLOT(linkClicked(const QUrl&)));
 
-    connect(&config, SIGNAL(signalWebPageChanged()),
-            this,    SLOT(updateWebPage()));
+    connect(&js_handler_, SIGNAL(signalWebPageChanged()),
+            this,         SLOT(updateWebPage()));
 
     const QUrl &server_url = config.getWebpageUrl();
     if (!server_url.isEmpty()) {
@@ -75,19 +70,21 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
 
     createSystemTray();
 
+    readSettings();
+
     // Shortcuts
     toggle_fullscreen_ = new QShortcut(Qt::Key_F11, this, SLOT(toggleFullScreen()));
     print_ = new QShortcut(Qt::CTRL + Qt::Key_P, this, SLOT(printKeyPressed()));
 }
 
 //-----------------------------------------------------------------------------
-Gui::~Gui()
+void Gui::closeEvent(QCloseEvent *event)
 {
     phone_.unregister();
 
-    // Save window appearence
-    GuiWindowHandler window_handler(*this);
-    window_handler.saveToConfig();
+    writeSettings();
+
+    event->accept();
 }
 
 //-----------------------------------------------------------------------------
@@ -134,19 +131,6 @@ void Gui::createSystemTray()
 }
 
 //-----------------------------------------------------------------------------
-void Gui::toggleFullScreen()
-{
-    bool is_fullscreen = windowState() & Qt::WindowFullScreen;
-    if (is_fullscreen) {
-        showNormal();
-        setWindowState((Qt::WindowState)current_state_);
-    } else {
-        current_state_ = windowState();
-        showFullScreen();
-    }
-}
-
-//-----------------------------------------------------------------------------
 void Gui::printKeyPressed()
 {
     print_handler_.printKeyPressed();
@@ -171,8 +155,48 @@ void Gui::alertIncomingCall(const QString &url)
 //-----------------------------------------------------------------------------
 void Gui::updateWebPage()
 {
-    const QUrl &server_url = ConfigFileHandler::getInstance().getWebpageUrl();
+    const QUrl &server_url = Config::getInstance().getWebpageUrl();
     if (!server_url.isEmpty()) {
         ui_.webview->setUrl(server_url);
     }
+}
+
+//-----------------------------------------------------------------------------
+void Gui::toggleFullScreen()
+{
+    if (isFullScreen()) {
+        showNormal();
+    } else {
+        showFullScreen();
+    }
+}
+
+//-----------------------------------------------------------------------------
+void Gui::readSettings()
+{
+    Config &config = Config::getInstance();
+    QSettings settings(config.getAppDeveloper(), config.getAppName());
+
+    settings.beginGroup("GuiMainWindow");
+    resize(settings.value("size", QSize(800, 600)).toSize());
+    move(settings.value("pos", QPoint(100, 50)).toPoint());
+    setWindowState((Qt::WindowStates)settings.value("state", QVariant(Qt::WindowMaximized)).toInt());
+    settings.endGroup();
+
+    setWindowTitle(config.getAppName());
+}
+
+//-----------------------------------------------------------------------------
+void Gui::writeSettings()
+{
+    Config &config = Config::getInstance();
+    QSettings settings(config.getAppDeveloper(), config.getAppName());
+    
+    settings.beginGroup("GuiMainWindow");
+    if (!isFullScreen()) {
+        settings.setValue("size", size());
+        settings.setValue("pos", pos());
+    }
+    settings.setValue("state", QVariant(windowState()));
+    settings.endGroup();
 }

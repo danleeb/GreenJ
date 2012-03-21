@@ -12,7 +12,7 @@
 #include <QTextDocument>
 #include "log_info.h"
 #include "log_handler.h"
-#include "config_file_handler.h"
+#include "config.h"
 #include "sound.h"
 #include "account.h"
 #include "call.h"
@@ -51,7 +51,7 @@ void SipPhone::init()
     {
         pjsua_config cfg;
         pjsua_logging_config log_cfg;
-        ConfigFileHandler &config = ConfigFileHandler::getInstance();
+        Config &config = Config::getInstance();
         QString stun = config.getStunServer();
         pjsua_config_default(&cfg);
 

@@ -12,7 +12,7 @@
 #ifndef GUI_INCLUDE_H
 #define GUI_INCLUDE_H
 
-#include <QtGui/QMainWindow>
+#include <QtGui>
 #include <QString>
 #include <QAction>
 #include <QSystemTrayIcon>
@@ -39,7 +39,6 @@ public:
      * @param flags Flags for creating the window, default 0
      */
     Gui(QWidget *parent = 0, Qt::WFlags flags = 0);
-    virtual ~Gui();
 
     Ui::MainWindow &getWindow();
 
@@ -65,6 +64,9 @@ private slots:
      */
     void updateWebPage();
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
     Ui::MainWindow ui_;
 
@@ -85,9 +87,10 @@ private:
     QShortcut *toggle_fullscreen_;
     QShortcut *print_;
 
-    int current_state_;
-
     void createSystemTray();
+
+    void readSettings();
+    void writeSettings();
 };
 
 #endif // GUI_INCLUDE_H

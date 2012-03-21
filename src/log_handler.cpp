@@ -13,7 +13,7 @@
 #include <QTextStream>
 #include <QDir>
 #include "log_info.h"
-#include "config_file_handler.h"
+#include "config.h"
 #include "log_handler.h"
 
 //-----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ LogHandler &LogHandler::getInstance()
 //-----------------------------------------------------------------------------
 void LogHandler::logData(const LogInfo &info)
 {
-    if (info.status_ >= ConfigFileHandler::getInstance().getLogLevel()) {
+    if (info.status_ >= Config::getInstance().getLogLevel()) {
         writeFile(createString(info));
         signalLogMessage(info);
     }
@@ -90,7 +90,7 @@ void LogHandler::logDataSlot(const LogInfo &info)
 //-----------------------------------------------------------------------------
 void LogHandler::logFromJs(const LogInfo &info)
 {
-    if (info.status_ >= ConfigFileHandler::getInstance().getLogLevel()) {
+    if (info.status_ >= Config::getInstance().getLogLevel()) {
         writeFile(createString(info));
     }
 }
@@ -98,7 +98,7 @@ void LogHandler::logFromJs(const LogInfo &info)
 //-----------------------------------------------------------------------------
 void LogHandler::setLogLevel(const unsigned int log_level)
 {
-    ConfigFileHandler::getInstance().setLogLevel(log_level);
+    Config::getInstance().setLogLevel(log_level);
 }
 
 //-----------------------------------------------------------------------------

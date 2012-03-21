@@ -17,7 +17,7 @@
 #include "log_info.h"
 #include "log_handler.h"
 #include "account.h"
-#include "config_file_handler.h"
+#include "config.h"
 #include "javascript_handler.h"
 
 //-----------------------------------------------------------------------------
@@ -283,13 +283,16 @@ QVariantMap JavascriptHandler::getSignalInformation()
 //-----------------------------------------------------------------------------
 QVariant JavascriptHandler::getOption(const QString &name)
 {
-    return ConfigFileHandler::getInstance().getOption(name);
+    return Config::getInstance().getOption(name);
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::setOption(const QString &name, const QVariant &option)
 {
-    ConfigFileHandler::getInstance().setOption(name, option);
+    Config::getInstance().setOption(name, option);
+    if (name == "url") {
+        signalWebPageChanged();
+    }
 }
 
 //-----------------------------------------------------------------------------

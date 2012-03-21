@@ -71,6 +71,12 @@ public:
      */
     QUrl getPrintPage();
 
+signals:
+    /**
+     * Signal when weppage-url changed
+     */
+    void signalWebPageChanged();
+
 public slots:
     /**
      * Register an individual callback-handler by name
