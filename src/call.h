@@ -28,6 +28,28 @@ class Call
 {
 public:
     /**
+     * Call Type
+     * Defines where the call is from
+     */
+    enum Type {
+        TYPE_UNKNOWN = -1,
+        TYPE_INCOMING,
+        TYPE_OUTGOING
+    };
+
+    /**
+     * Call Status
+     * Defines the life cycle of the call
+     */
+    enum Status {
+        STATUS_UNKNOWN = -1,
+        STATUS_RINGING,
+        STATUS_ACCEPTED,
+        STATUS_CLOSED,
+        STATUS_ERROR
+    };
+
+    /**
      * Empty constructor only needed for error-logging
      */
     Call() {}
@@ -38,58 +60,8 @@ public:
      * @param type Which type the call is (where it is created)
      * @param status Call status
      */
-    Call(PhoneApi *phone_api, const int type = Call::TYPE_UNKNOWN,
-         const int status = Call::STATUS_UNKNOWN);
-
-    /**
-     * \name Call Type
-     * TYPE defines where call is from
-     * \{
-     */
-    /**
-     * TYPE is unknown
-     */
-    static const int TYPE_UNKNOWN;
-    /**
-     * TYPE is incoming
-     */
-    static const int TYPE_INCOMING;
-    /**
-     * TYPE is outgoing
-     */
-    static const int TYPE_OUTGOING;
-    /**
-     * \}
-     */
-
-    /**
-     * \name Call Status
-     * STATUS defines the life cycle of the call
-     * \{
-     */
-    /**
-     * STATUS is unknown
-     */
-    static const int STATUS_UNKNOWN;
-    /**
-     * STATUS is ringing
-     */
-    static const int STATUS_RINGING;
-    /**
-     * STATUS is accepted
-     */
-    static const int STATUS_ACCEPTED;
-    /**
-     * STATUS is closed
-     */
-    static const int STATUS_CLOSED;
-    /**
-     * STATUS is error
-     */
-    static const int STATUS_ERROR;
-    /**
-     * \}
-     */
+    Call(PhoneApi *phone_api, const Type type = TYPE_UNKNOWN,
+         const Status status = STATUS_UNKNOWN);
 
     /**
      * Starts a SIP call to the stored address

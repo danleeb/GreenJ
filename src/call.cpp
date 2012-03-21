@@ -15,18 +15,8 @@
 #include "log_handler.h"
 #include "call.h"
 
-const int Call::TYPE_UNKNOWN    = -1;
-const int Call::TYPE_INCOMING   = 0x00;
-const int Call::TYPE_OUTGOING   = 0x01;
-
-const int Call::STATUS_UNKNOWN  = -1;
-const int Call::STATUS_RINGING  = 0x00;
-const int Call::STATUS_ACCEPTED = 0x01;
-const int Call::STATUS_CLOSED   = 0x02;
-const int Call::STATUS_ERROR    = 0x03;
-
 //-----------------------------------------------------------------------------
-Call::Call(PhoneApi *phone_api, const int type, const int status) :
+Call::Call(PhoneApi *phone_api, const Type type, const Status status) :
     phone_api_(phone_api), 
     type_(type), status_(status), active_(false), 
     call_id_(-1), call_state_(0), media_state_(0), 
@@ -328,7 +318,7 @@ QDataStream &operator>>(QDataStream &in, Call &call)
     QString user_data;
     in >> type >> call_id >> call_url >> status >> start_time >> accept_time
        >> close_time >> duration >> user_data;
-    call = Call(0, type,status);
+    call = Call(0, (Call::Type)type, (Call::Status)status);
     call.setCallId(call_id);
     call.setUrl(call_url);
     call.setUserData(user_data);
