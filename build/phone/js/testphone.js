@@ -1,7 +1,7 @@
 var settings = {
-    host:   '',
-    name:   '',
-    secret: ''
+    host:   'localhost',
+    name:   'user',
+    secret: 'pw'
 };
 
 jQuery(document).ready(function () {
@@ -15,7 +15,7 @@ jQuery(document).ready(function () {
             opacity: 0.5,
             color: '#fff'
         },
-        message: '<h1><img style="vertical-align:middle;" src="images/ajax-loader.gif" /> Verbindung zum Server wird hergestellt ...</h1>'
+        message: '<h1><img style="vertical-align:middle;" src="images/ajax-loader.gif" /> Connecting to server...</h1>'
     });
     var current_call = null;
     var flip = jQuery("#quickflip-wrapper").quickFlip();
@@ -126,7 +126,7 @@ jQuery(document).ready(function () {
         var incoming_id = jQuery('input[name=test]:checked').val();
         var c = null;
         if (current_call) {
-            jQuery('<div title="Fehler">Anruf läuft gerade</div>')
+            jQuery('<div title="Error">Active call</div>')
                 .dialog({dialogClass: 'ui-state-error'});
             return;
         }
@@ -142,7 +142,7 @@ jQuery(document).ready(function () {
         } else {
             number = jQuery("#numstring").val();
             if (!number) {
-                jQuery('<div title="Fehler">Keine Nummer gewählt</div>')
+                jQuery('<div title="Error">No phone number</div>')
                     .dialog({dialogClass: 'ui-state-error'});
                 return false;
             }
@@ -251,7 +251,7 @@ jQuery(document).ready(function () {
         c.addListener('onClose', function () {
             jQuery('#incoming').append('<br />[' + c.id + '] closed');
             jQuery('#list-element-' + c.id).remove();
-            accept_button.button("option", "label", "Anrufen");
+            accept_button.button("option", "label", "Call");
             if (c === current_call) {
                 jQuery('.deactivateable').button('enable');
                 current_call = null;
@@ -324,7 +324,7 @@ jQuery(document).ready(function () {
      */
     window.phone.addListener("onAccountState", function (data) {
         if (data.state >= li.Phone.SIP_SC_BAD_REQUEST) {
-            jQuery('<div title="Fehler">Registrierung fehlgeschlagen</div>').dialog({dialogClass: 'ui-state-error'});
+            jQuery('<div title="Error">Registration error</div>').dialog({dialogClass: 'ui-state-error'});
         } else if (data.state === li.Phone.SIP_SC_OK) {
             jQuery("#container").show();
             jQuery.unblockUI();
@@ -332,7 +332,7 @@ jQuery(document).ready(function () {
     });
 
     jQuery(".button-list").live('click', function () {
-        accept_button.button("option", "label", "Annehmen");
+        accept_button.button("option", "label", "Accept");
     });
 
 
