@@ -12,15 +12,13 @@
 #include <QPrinter>
 #include <QPrintPreviewDialog>
 #include "gui.h"
-#include "javascript_handler.h"
 #include "print_handler.h"
 
 //-----------------------------------------------------------------------------
-PrintHandler::PrintHandler(Gui &gui, JavascriptHandler &js_handler) : 
-    gui_(gui), js_handler_(js_handler)
+PrintHandler::PrintHandler(Gui &gui) : gui_(gui)
 {
     connect(&print_page_, SIGNAL(loadFinished(bool)), 
-            this,         SLOT(showPrintPreview()));
+            this,         SLOT(slotShowPrintPreview()));
 }
 
 //-----------------------------------------------------------------------------
@@ -33,7 +31,7 @@ void PrintHandler::loadPrintPage(const QUrl &url)
 }
 
 //-----------------------------------------------------------------------------
-void PrintHandler::showPrintPreview()
+void PrintHandler::slotShowPrintPreview()
 {
     QPrinter printer;
     QPrintPreviewDialog *preview = new QPrintPreviewDialog(&printer, &gui_);
@@ -42,13 +40,4 @@ void PrintHandler::showPrintPreview()
     connect(preview,      SIGNAL(paintRequested(QPrinter*)), 
             &print_page_, SLOT(print(QPrinter*)));
     preview->exec();
-}
-
-//-----------------------------------------------------------------------------
-void PrintHandler::printKeyPressed()
-{
-    QUrl url = js_handler_.getPrintPage();
-    if (url != QUrl("about:blank")) {
-        loadPrintPage(url);
-    }
 }

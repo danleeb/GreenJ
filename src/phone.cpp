@@ -27,20 +27,20 @@ Phone::Phone(PhoneApi *api) : phone_api_(api)
     connect(phone_api_, SIGNAL(signalAccountRegState(const int)),
             this,       SLOT(accountRegState(const int)));
     connect(phone_api_, SIGNAL(signalIncomingCall(Call*)),
-            this,       SLOT(incomingCallSlot(Call*)));
+            this,       SLOT(slotIncomingCall(Call*)));
     connect(phone_api_, SIGNAL(signalCallState(int,int,int)),
-            this,       SLOT(callStateSlot(int,int,int)));
+            this,       SLOT(slotCallState(int,int,int)));
     connect(phone_api_, SIGNAL(signalSoundLevel(int)),
-            this,       SLOT(soundLevelSlot(int)));
+            this,       SLOT(slotSoundLevel(int)));
 
     connect(phone_api_, SIGNAL(signalMicrophoneLevel(int)),
-            this,       SLOT(microphoneLevelSlot(int)));
+            this,       SLOT(slotMicrophoneLevel(int)));
     connect(phone_api_,                 SIGNAL(signalLogData(const LogInfo&)),
-            &LogHandler::getInstance(), SLOT(logDataSlot(const LogInfo&)));
+            &LogHandler::getInstance(), SLOT(slotLogData(const LogInfo&)));
 }
 
 //-----------------------------------------------------------------------------
-Phone::~Phone(void)
+Phone::~Phone()
 {
     QFile file("error.log");
     file.open(QIODevice::WriteOnly | QIODevice::Append);
@@ -57,7 +57,7 @@ Phone::~Phone(void)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::init(JavascriptHandler *js_handler)
+void Phone::setJsHandler(JavascriptHandler *js_handler)
 {
     js_handler_ = js_handler;
 }
@@ -136,8 +136,7 @@ void Phone::answerCall(const int call_id)
     if (call) {
         call->answerCall();
     } else {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Call to answer doesn't exist!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Call to answer doesn't exist!"));
     }
 }
 
@@ -195,23 +194,19 @@ bool Phone::addCallToConference(const int call_src, const int call_dest)
     Call *call = getCallFromList(call_src);
     Call *dest_call = getCallFromList(call_dest);
     if (!call || !dest_call) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
         return false;
     }
     if (!call->isActive() || !dest_call->isActive()) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
         return false;
     }
     if (!call->addCallToConference(*dest_call)) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to source!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to source!"));
         return false;
     }
     if (!dest_call->addCallToConference(*call)) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to destination!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to destination!"));
         return false;
     }
     return true;
@@ -223,23 +218,19 @@ bool Phone::removeCallFromConference(const int call_src, const int call_dest)
     Call *call = getCallFromList(call_src);
     Call *dest_call = getCallFromList(call_dest);
     if (!call || !dest_call) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
         return false;
     }
-    if (!call->isActive() || !dest_call->isActive()) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!");
-        LogHandler::getInstance().logDataSlot(info);
+    if (!call->isActive() || !dest_call->isActive()) {;
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
         return false;
     }
     if (call->removeCallFromConference(*dest_call)) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from source!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from source!"));
         return false;
     }
     if(dest_call->removeCallFromConference(*call)) {
-        LogInfo info(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from destination!");
-        LogHandler::getInstance().logDataSlot(info);
+        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from destination!"));
         return false;
     }
     return true;
@@ -327,19 +318,19 @@ void Phone::unregister()
 }
 
 //-----------------------------------------------------------------------------
-void Phone::incomingCallSlot(Call *call)
+void Phone::slotIncomingCall(Call *call)
 {
     if (!addToCallList(call)) {
         delete call;
         return;
     }
-    js_handler_->incomingCallSlot(*call);
+    js_handler_->incomingCall(*call);
 
     signalIncomingCall(call->getCallUrl());
 }
 
 //-----------------------------------------------------------------------------
-void Phone::callStateSlot(int call_id, int call_state, int last_status)
+void Phone::slotCallState(int call_id, int call_state, int last_status)
 {
     Call *call = getCallFromList(call_id);
     if (call) {
@@ -350,15 +341,15 @@ void Phone::callStateSlot(int call_id, int call_state, int last_status)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::soundLevelSlot(int level)
+void Phone::slotSoundLevel(int level)
 {
-    js_handler_->soundLevelSlot(level);
+    js_handler_->soundLevel(level);
 }
 
 //-----------------------------------------------------------------------------
-void Phone::microphoneLevelSlot(int level)
+void Phone::slotMicrophoneLevel(int level)
 {
-    js_handler_->microphoneLevelSlot(level);
+    js_handler_->microphoneLevel(level);
 }
 
 //-----------------------------------------------------------------------------

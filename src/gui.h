@@ -40,54 +40,57 @@ public:
      */
     Gui(QWidget *parent = 0, Qt::WFlags flags = 0);
 
+    /**
+     * Destructor
+     */
+    virtual ~Gui();
+
     Ui::MainWindow &getWindow();
 
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private slots:
-    void linkClicked(const QUrl &url);
-    void toggleFullScreen();
-    void printKeyPressed();
+    void slotLinkClicked(const QUrl &url);
+    void slotToggleFullScreen();
+    void slotPrintKeyPressed();
+    void slotPrintPage(const QUrl &url);
 
     /**
      * Register js_handler to Webkit. Allows Javascript to access qt-gui
      */
-    void slotCreateJSWinObject();
+    void slotCreateJavascriptWindowObject();
 
     /**
      * If window has no focus, the user will be notified when an incoming 
      * call has been detected. (blinking short message in system tray)
      * @param url Number or url of caller
      */
-    void alertIncomingCall(const QString &url);
+    void slotAlertIncomingCall(const QString &url);
 
     /**
      * Load webpage in internal browser
      */
-    void updateWebPage();
-
-protected:
-    void closeEvent(QCloseEvent *event);
+    void slotUpdateWebPage();
+    
+    /**
+     * Prints errors, warning and debug messages
+     * @param info Log information and message
+     */
+    void slotLogMessage(const LogInfo &info);
 
 private:
     Ui::MainWindow ui_;
 
     Phone phone_;
 
-    JavascriptHandler js_handler_;
+    JavascriptHandler *js_handler_;
     PrintHandler print_handler_;
 
-    QAction *minimize_action_;
-    QAction *maximize_action_;
-    QAction *restore_action_;
-    QAction *fullscreen_action_;
-    QAction *quit_action_;
-
-    QSystemTrayIcon *tray_icon_;
-    QMenu *tray_icon_menu_;
-
-    QShortcut *toggle_fullscreen_;
-    QShortcut *print_;
+    QSystemTrayIcon *system_tray_icon_;
 
     void createSystemTray();
+    void createShortcuts();
 
     void readSettings();
     void writeSettings();

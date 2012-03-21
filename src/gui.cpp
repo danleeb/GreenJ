@@ -20,48 +20,45 @@
 #include "gui.h"
 
 //-----------------------------------------------------------------------------
-Gui::Gui(QWidget *parent, Qt::WFlags flags) : 
-    QMainWindow(parent, flags), 
-    phone_(new SipPhone), 
-    js_handler_(phone_),
-    print_handler_(*this, js_handler_)
+Gui::Gui(QWidget *parent, Qt::WFlags flags) :
+    QMainWindow(parent, flags),
+    phone_(new SipPhone),
+    print_handler_(*this)
 {
     qRegisterMetaType<LogInfo>("LogInfo");
     ui_.setupUi(this);
     
     Config &config = Config::getInstance();
 
-    connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
-            &js_handler_,               SLOT(logMessageSlot(const LogInfo&)));
+    js_handler_ = new JavascriptHandler(phone_, ui_.webview);
 
-    connect(&phone_,                    SIGNAL(signalIncomingCall(const QString&)),
-            this,                       SLOT(alertIncomingCall(const QString&)));
+    phone_.setJsHandler(js_handler_);
 
-    // Setting up phone
-    phone_.init(&js_handler_);
-
-    WebPage *page = new WebPage();
-    ui_.webview->setPage(page);
-
-    js_handler_.init(ui_.webview, &print_handler_);
-
-#ifndef DEBUG
-    // deactivate right click context menu
-    ui_.webview->setContextMenuPolicy(Qt::NoContextMenu);
-#else
+    ui_.webview->setPage(new WebPage());
+    //ui_.webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+#ifdef DEBUG
     // Enable webkit Debugger
-    ui_.webview->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled,true);
+    ui_.webview->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
+#else
+    // Deactivate right-click context menu
+    ui_.webview->setContextMenuPolicy(Qt::NoContextMenu);
 #endif
 
-    //ui_.webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    connect(ui_.webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), 
-            this,                             SLOT(slotCreateJSWinObject()));
-    
-    connect(ui_.webview, SIGNAL(linkClicked(const QUrl&)), 
-            this,        SLOT(linkClicked(const QUrl&)));
+    connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
+            js_handler_,                SLOT(slotLogMessage(const LogInfo&)));
 
-    connect(&js_handler_, SIGNAL(signalWebPageChanged()),
-            this,         SLOT(updateWebPage()));
+    connect(ui_.webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), 
+            this,                             SLOT(slotCreateJavascriptWindowObject()));
+    connect(ui_.webview,                      SIGNAL(linkClicked(const QUrl&)), 
+            this,                             SLOT(slotLinkClicked(const QUrl&)));
+
+    connect(js_handler_, SIGNAL(signalWebPageChanged()),
+            this,        SLOT(slotUpdateWebPage()));
+    connect(js_handler_, SIGNAL(signalPrintPage(const QUrl&)),
+            this,        SLOT(slotPrintPage(const QUrl &url)));
+
+    connect(&phone_, SIGNAL(signalIncomingCall(const QString&)),
+            this,    SLOT(slotAlertIncomingCall(const QString&)));
 
     const QUrl &server_url = config.getWebpageUrl();
     if (!server_url.isEmpty()) {
@@ -69,12 +66,15 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
     }
 
     createSystemTray();
+    createShortcuts();
 
     readSettings();
+}
 
-    // Shortcuts
-    toggle_fullscreen_ = new QShortcut(Qt::Key_F11, this, SLOT(toggleFullScreen()));
-    print_ = new QShortcut(Qt::CTRL + Qt::Key_P, this, SLOT(printKeyPressed()));
+//-----------------------------------------------------------------------------
+Gui::~Gui()
+{
+    delete js_handler_;
 }
 
 //-----------------------------------------------------------------------------
@@ -93,67 +93,55 @@ Ui::MainWindow &Gui::getWindow()
     return ui_;
 }
 
-void Gui::linkClicked(const QUrl &url)
+//-----------------------------------------------------------------------------
+void Gui::slotLinkClicked(const QUrl &url)
 {
     ui_.webview->load(url);
 }
 
 //-----------------------------------------------------------------------------
-void Gui::createSystemTray()
+void Gui::slotToggleFullScreen()
 {
-    minimize_action_ = new QAction(tr("Mi&nimize"), this);
-    connect(minimize_action_, SIGNAL(triggered()), this, SLOT(hide()));
-  
-    maximize_action_ = new QAction(tr("Ma&ximize"), this);
-    connect(maximize_action_, SIGNAL(triggered()), this, SLOT(showMaximized()));
-  
-    restore_action_ = new QAction(tr("&Restore"), this);
-    connect(restore_action_, SIGNAL(triggered()), this, SLOT(showNormal()));
-  
-    fullscreen_action_ = new QAction(tr("&FullScreen"), this);
-    connect(fullscreen_action_, SIGNAL(triggered()), this, SLOT(toggleFullScreen()));
-
-    quit_action_ = new QAction(tr("&Quit"), this);
-    connect(quit_action_, SIGNAL(triggered()), qApp, SLOT(quit()));
-
-    tray_icon_menu_ = new QMenu(this);
-    tray_icon_menu_->addAction(minimize_action_);
-    tray_icon_menu_->addAction(maximize_action_);
-    tray_icon_menu_->addAction(restore_action_);
-    tray_icon_menu_->addAction(fullscreen_action_);
-    tray_icon_menu_->addSeparator();
-    tray_icon_menu_->addAction(quit_action_);
-
-    tray_icon_ = new QSystemTrayIcon(this);
-    tray_icon_->setContextMenu(tray_icon_menu_);
-    tray_icon_->setIcon(QIcon(":images/icon.xpm"));
-    tray_icon_->show();
-}
-
-//-----------------------------------------------------------------------------
-void Gui::printKeyPressed()
-{
-    print_handler_.printKeyPressed();
-}
-
-//-----------------------------------------------------------------------------
-void Gui::slotCreateJSWinObject()
-{
-    ui_.webview->page()->mainFrame()
-        ->addToJavaScriptWindowObject("qt_handler", &js_handler_);
-}
-
-//-----------------------------------------------------------------------------
-void Gui::alertIncomingCall(const QString &url)
-{
-    QApplication::alert(this);
-    if (!QApplication::focusWidget()) {
-        tray_icon_->showMessage("Anruf", url+" versucht Sie zu kontaktieren");
+    if (isFullScreen()) {
+        showNormal();
+    } else {
+        showFullScreen();
     }
 }
 
 //-----------------------------------------------------------------------------
-void Gui::updateWebPage()
+void Gui::slotPrintKeyPressed()
+{
+    QUrl url = js_handler_->getPrintPage();
+    if (url != QUrl("about:blank")) {
+        print_handler_.loadPrintPage(url);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void Gui::slotPrintPage(const QUrl &url)
+{
+    print_handler_.loadPrintPage(url);
+}
+
+//-----------------------------------------------------------------------------
+void Gui::slotCreateJavascriptWindowObject()
+{
+    ui_.webview->page()->mainFrame()
+        ->addToJavaScriptWindowObject("qt_handler", js_handler_);
+}
+
+//-----------------------------------------------------------------------------
+void Gui::slotAlertIncomingCall(const QString &url)
+{
+    QApplication::alert(this);
+    if (!QApplication::focusWidget()) {
+        system_tray_icon_->showMessage("Anruf", url+" versucht Sie zu kontaktieren");
+    }
+}
+
+//-----------------------------------------------------------------------------
+void Gui::slotUpdateWebPage()
 {
     const QUrl &server_url = Config::getInstance().getWebpageUrl();
     if (!server_url.isEmpty()) {
@@ -162,13 +150,45 @@ void Gui::updateWebPage()
 }
 
 //-----------------------------------------------------------------------------
-void Gui::toggleFullScreen()
+void Gui::slotLogMessage(const LogInfo &info)
 {
-    if (isFullScreen()) {
-        showNormal();
-    } else {
-        showFullScreen();
-    }
+    js_handler_->logMessage(info);
+}
+
+//-----------------------------------------------------------------------------
+void Gui::createSystemTray()
+{
+    QAction *minimize_action =   new QAction(tr("Mi&nimize"), this);
+    QAction *maximize_action =   new QAction(tr("Ma&ximize"), this);
+    QAction *restore_action =    new QAction(tr("&Restore"), this);
+    QAction *fullscreen_action = new QAction(tr("&FullScreen"), this);
+    QAction *quit_action =       new QAction(tr("&Quit"), this);
+
+    connect(minimize_action,   SIGNAL(triggered()), this, SLOT(hide()));
+    connect(maximize_action,   SIGNAL(triggered()), this, SLOT(showMaximized()));
+    connect(restore_action,    SIGNAL(triggered()), this, SLOT(showNormal()));
+    connect(fullscreen_action, SIGNAL(triggered()), this, SLOT(slotToggleFullScreen()));
+    connect(quit_action,       SIGNAL(triggered()), qApp, SLOT(quit()));
+
+    QMenu *tray_menu = new QMenu(this);
+    tray_menu->addAction(minimize_action);
+    tray_menu->addAction(maximize_action);
+    tray_menu->addAction(restore_action);
+    tray_menu->addAction(fullscreen_action);
+    tray_menu->addSeparator();
+    tray_menu->addAction(quit_action);
+
+    system_tray_icon_ = new QSystemTrayIcon(this);
+    system_tray_icon_->setContextMenu(tray_menu);
+    system_tray_icon_->setIcon(QIcon(":images/icon.xpm"));
+    system_tray_icon_->show();
+}
+
+//-----------------------------------------------------------------------------
+void Gui::createShortcuts()
+{
+    new QShortcut(Qt::Key_F11,          this, SLOT(slotToggleFullScreen()));
+    new QShortcut(Qt::CTRL + Qt::Key_P, this, SLOT(slotPrintKeyPressed()));
 }
 
 //-----------------------------------------------------------------------------

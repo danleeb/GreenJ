@@ -13,7 +13,6 @@
 #include <QString>
 #include "call.h"
 #include "phone.h"
-#include "print_handler.h"
 #include "log_info.h"
 #include "log_handler.h"
 #include "account.h"
@@ -21,68 +20,42 @@
 #include "javascript_handler.h"
 
 //-----------------------------------------------------------------------------
-JavascriptHandler::JavascriptHandler(Phone &phone) :
-    phone_(phone), web_view_(0), js_class_handler_("")
+JavascriptHandler::JavascriptHandler(Phone &phone, QWebView *web_view) :
+    phone_(phone), web_view_(web_view), js_callback_handler_("")
 {
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::init(QWebView *web_view, PrintHandler *print_handler)
-{
-    web_view_ = web_view;
-    print_handler_ = print_handler;
-}
-
-//-----------------------------------------------------------------------------
-QVariant JavascriptHandler::callJavascriptFunc(const QString &func)
-{
-    QVariant ret;
-    if (js_class_handler_.isEmpty()) {
-        ret = web_view_->page()->mainFrame()->evaluateJavaScript(func);
-    } else {
-        ret = web_view_->page()->mainFrame()->evaluateJavaScript(js_class_handler_ + "." + func);
-    }
-
-    return ret;
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::accountState(const int state)
 {
-    QString state_str(QString::number(state));
-
-    callJavascriptFunc("accountStateChanged("+state_str+")");
+    evaluateJavaScript("accountStateChanged(" + QString::number(state) + ")");
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::callState(const int call_id, const int code, 
                                   const int last_status)
 {
-    QString call_str(QString::number(call_id));
-    QString code_str(QString::number(code));
-    QString status_str(QString::number(last_status));
-    callJavascriptFunc("callStateChanged(" + call_str + "," + code_str + "," + status_str + ")");
+    evaluateJavaScript("callStateChanged(" + QString::number(call_id) + "," 
+                                           + QString::number(code) + "," 
+                                           + QString::number(last_status) + ")");
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::incomingCall(const Call &call)
 {
-    QString call_str = QString::number(call.getCallId());
-    QString sip_url = call.getCallUrl();
-    QString name = call.getCallName();
-
-    callJavascriptFunc("incomingCall(" + call_str + ",'" + sip_url + "','" + name + "')");
+    evaluateJavaScript("incomingCall(" + QString::number(call.getCallId()) + ",'" 
+                                       + call.getCallUrl() + "','" 
+                                       + call.getCallName() + "')");
 }
 
 //-----------------------------------------------------------------------------
 QUrl JavascriptHandler::getPrintPage()
 {
-    QVariant url = callJavascriptFunc("getPrintUrl();");
+    QVariant url = evaluateJavaScript("getPrintUrl();");
 
     if (!url.convert(QVariant::Url)) {
         if (!url.isNull()) {
-            LogInfo info(LogInfo::STATUS_ERROR, "print", 0, "Print Page: Wrong Url Format!");
-            LogHandler::getInstance().logData(info);
+            LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "print", 0, "Print Page: Wrong Url Format!"));
         }
         return QUrl("about:blank");
     }
@@ -91,13 +64,46 @@ QUrl JavascriptHandler::getPrintPage()
 }
 
 //-----------------------------------------------------------------------------
-// Public slots
-// These functions could be called by webkit-js
+void JavascriptHandler::soundLevel(int level)
+{
+    evaluateJavaScript("soundLevel(" + QString::number(level) + ")");
+}
 
 //-----------------------------------------------------------------------------
-int JavascriptHandler::registerJsCallbackHandler(const QString &class_name)
+void JavascriptHandler::microphoneLevel(int level)
 {
-    js_class_handler_ = class_name;
+    evaluateJavaScript("microphoneLevel(" + QString::number(level) + ")");
+}
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::logMessage(const LogInfo &info)
+{
+    QString json = "{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
+                 + "','status':" + QString::number(info.status_) 
+                 + ",'domain':'" + info.domain_
+                 + "','code':" + QString::number(info.code_) 
+                 + ",'message':'" + info.msg_ + "'}";
+
+    evaluateJavaScript("logMessage(" + json + ")");
+}
+
+//-----------------------------------------------------------------------------
+QVariant JavascriptHandler::evaluateJavaScript(const QString &code)
+{
+    if (js_callback_handler_.isEmpty()) {
+        return web_view_->page()->mainFrame()->evaluateJavaScript(code);
+    }
+    return web_view_->page()->mainFrame()->evaluateJavaScript(js_callback_handler_ + "." + code);
+}
+
+//-----------------------------------------------------------------------------
+// Public slots
+// These methods will be exposed as JavaScript methods.
+
+//-----------------------------------------------------------------------------
+int JavascriptHandler::registerJsCallbackHandler(const QString &handler_name)
+{
+    js_callback_handler_ = handler_name;
     return 0;
 }
 
@@ -119,8 +125,7 @@ QVariantMap JavascriptHandler::getAccountInformation()
 bool JavascriptHandler::registerToServer(QString host, QString user_name,
                                          QString password)
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "registerToServer");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "registerToServer"));
 
     Account acc;
     acc.setUserName(user_name);
@@ -133,8 +138,7 @@ bool JavascriptHandler::registerToServer(QString host, QString user_name,
 //-----------------------------------------------------------------------------
 void JavascriptHandler::unregisterFromServer()
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "unregisterFromServer");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "unregisterFromServer"));
 
     phone_.unregister();
 }
@@ -142,8 +146,7 @@ void JavascriptHandler::unregisterFromServer()
 //-----------------------------------------------------------------------------
 int JavascriptHandler::makeCall(const QString &number)
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "call "+number);
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "call "+number));
 
     return phone_.makeCall(number);
 }
@@ -151,8 +154,7 @@ int JavascriptHandler::makeCall(const QString &number)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::callAccept(const int call_id)
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "accept call "+QString::number(call_id));
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "accept call "+QString::number(call_id)));
 
     phone_.answerCall(call_id);
 }
@@ -160,20 +162,17 @@ void JavascriptHandler::callAccept(const int call_id)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::hangup(const int call_id)
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup call "+QString::number(call_id));
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup call "+QString::number(call_id)));
 
     phone_.hangUp(call_id);
 
-    LogInfo info2(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup finished");
-    LogHandler::getInstance().logData(info2);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup finished"));
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::hangupAll()
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup all ");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup all "));
 
     phone_.hangUpAll();
 }
@@ -187,8 +186,7 @@ void JavascriptHandler::setLogLevel(const unsigned int log_level)
 //-----------------------------------------------------------------------------
 QString JavascriptHandler::getCallUserData(const int call_id)
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get user data "+QString::number(call_id));
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get user data "+QString::number(call_id)));
 
     return phone_.getCallUserData(call_id);
 }
@@ -196,9 +194,7 @@ QString JavascriptHandler::getCallUserData(const int call_id)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::setCallUserData(const int call_id, QString data)
 {
-
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "Set user data "+QString::number(call_id));
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Set user data "+QString::number(call_id)));
 
     phone_.setCallUserData(call_id, data);
 }
@@ -206,8 +202,7 @@ void JavascriptHandler::setCallUserData(const int call_id, QString data)
 //-----------------------------------------------------------------------------
 QVariantList JavascriptHandler::getErrorLogData()
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get error log data");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get error log data"));
 
     QVariantList log_data;
     QFile file("error.log");
@@ -227,8 +222,7 @@ QVariantList JavascriptHandler::getErrorLogData()
 //-----------------------------------------------------------------------------
 void JavascriptHandler::deleteErrorLogFile()
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "js_handler", 0, "Delete error log file");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Delete error log file"));
 
     QFile::remove("error.log");
 }
@@ -299,7 +293,7 @@ void JavascriptHandler::setOption(const QString &name, const QVariant &option)
 void JavascriptHandler::printPage(const QString &url_str)
 {
     QUrl url(url_str);
-    print_handler_->loadPrintPage(url);
+    signalPrintPage(url);
 }
 
 //-----------------------------------------------------------------------------
@@ -320,42 +314,11 @@ bool JavascriptHandler::sendLogMessage(QVariantMap log)
         return false;
     }
 
-    LogInfo info(status.toUInt(), domain.toString(), code.toInt(), msg.toString());
+    LogInfo info((LogInfo::Status)status.toUInt(), domain.toString(), code.toInt(), msg.toString());
     info.time_.fromString(time.toString(), "dd.MM.yyyy hh:mm:ss");
 
     LogHandler::getInstance().logFromJs(info);
     return true;
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::incomingCallSlot(const Call &call)
-{
-    incomingCall(call);
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::logMessageSlot(const LogInfo &info)
-{
-    QString json;
-    json.append("{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
-                + "','status':" + QString::number(info.status_) 
-                + ",'domain':'" + info.domain_
-                + "','code':" + QString::number(info.code_) 
-                + ",'message':'" + info.msg_ + "'}");
-
-    callJavascriptFunc("logMessage(" + json + ")");
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::soundLevelSlot(int level)
-{
-    callJavascriptFunc("soundLevel(" + QString::number(level) + ")");
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::microphoneLevelSlot(int level)
-{
-    callJavascriptFunc("microphoneLevel(" + QString::number(level) + ")");
 }
 
 //-----------------------------------------------------------------------------

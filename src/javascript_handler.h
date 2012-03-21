@@ -19,10 +19,8 @@
 #include <QWebView>
 
 class Phone;
-class PrintHandler;
 class LogInfo;
 class Call;
-class QWebView;
 
 /**
  * This class is the bridge between Qt and website-javascript
@@ -35,15 +33,10 @@ public:
     /**
      * Constructor
      * @param phone To access the phone methods
-     */
-    JavascriptHandler(Phone &phone);
-
-    /**
-     * Init method, because web_view can't be set in constructor
      * @param web_view WebView needed to call the JS functions
      * @param print_handler
      */
-    void init(QWebView *web_view, PrintHandler *print_handler);
+    JavascriptHandler(Phone &phone, QWebView *web_view);
 
     /**
      * Send current account state
@@ -71,18 +64,44 @@ public:
      */
     QUrl getPrintPage();
 
+    /**
+     * Sound level has changed
+     * @param level New sound level
+     */
+    void soundLevel(int level);
+
+    /**
+     * Microphone level has changed
+     * @param level New microphone level
+     */
+    void microphoneLevel(int level);
+
+    /**
+     * Prints errors, warning and debug messages
+     * @param info Log information and message
+     */
+    void logMessage(const LogInfo &info);
+
 signals:
     /**
      * Signal when weppage-url changed
      */
     void signalWebPageChanged();
 
+    /**
+     * Signal that a page should be printed
+     * @param url Page url
+     */
+    void signalPrintPage(const QUrl &url);
+
 public slots:
     /**
-     * Register an individual callback-handler by name
-     * @param class_name The name of the handler to register
+     * Register an individual callback-handler by name.
+     * This handler is a JavaScript object and must implement
+     * all necessary callback methods.
+     * @param handler_name The name of the handler to register
      */
-    int registerJsCallbackHandler(const QString &class_name);
+    int registerJsCallbackHandler(const QString &handler_name);
 
     /**
      * Get the account status
@@ -241,31 +260,6 @@ public slots:
     bool sendLogMessage(QVariantMap log);
 
     /**
-     * Slot to catch sended signals
-     * @params call_id ID of incoming call
-     * @params call_url Number of incoming call
-     */
-    void incomingCallSlot(const Call &call);
-
-    /**
-     * Prints errors, warning and debug messages
-     * @param info Log information and message
-     */
-    void logMessageSlot(const LogInfo &info);
-
-    /**
-     * Sound level has changed
-     * @param level New sound level
-     */
-    void soundLevelSlot(int level);
-
-    /**
-     * Microphone level has changed
-     * @param level New microphone level
-     */
-    void microphoneLevelSlot(int level);
-
-    /**
      * Get a list of log files
      * @return List of filenames
      */
@@ -286,17 +280,17 @@ public slots:
 
 private:
     Phone &phone_;
-    PrintHandler *print_handler_;
     QWebView *web_view_;
-    QString js_class_handler_;
+
+    QString js_callback_handler_;
 
     /**
-     * This method handles the communication with javascript in the
-     * internal browser.
-     * @param func The name of the function to be called
-     * @return The return value of the executed function
+     * This method handles the communication with javascript by
+     * evaluating code in the internal browser.
+     * @param code JavaScript code
+     * @return The return value from JavaScript
      */
-    QVariant callJavascriptFunc(const QString &func);
+    QVariant evaluateJavaScript(const QString &code);
 };
 
 #endif // JAVASCRIPTHANDLER_INCLUDE_H

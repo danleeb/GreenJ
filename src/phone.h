@@ -30,16 +30,19 @@ class Phone : public QObject
 
 public:
     /**
-     * Constuctor
+     * Constructor
      * @param api Pointer to the phone API
      */
     Phone(PhoneApi *api);
+    /**
+     * Destructor
+     */
     virtual ~Phone();
 
     /**
-     * Initializing the phone
+     * Set the JavaScript handler object
      */
-    void init(JavascriptHandler *js_handler);
+    void setJsHandler(JavascriptHandler *js_handler);
 
     /**
      * Checks if account is valid
@@ -179,7 +182,7 @@ public slots:
      * This slot gets called on incoming calls
      * @param call Call*, the call handler class
      */
-    void incomingCallSlot(Call *call);
+    void slotIncomingCall(Call *call);
 
     /**
      * This slot gets called when the state of a call has changed
@@ -187,19 +190,19 @@ public slots:
      * @param call_state The new state
      * @param last_status The old state
      */
-    void callStateSlot(int call_id, int call_state, int last_status);
+    void slotCallState(int call_id, int call_state, int last_status);
 
     /**
      * This slot gets called when the sound level has changed
      * @param level The new sound level
      */
-    void soundLevelSlot(int level);
+    void slotSoundLevel(int level);
 
     /**
      * This slot gets called when the microphone level has changed
      * @param level The new micro level
      */
-    void microphoneLevelSlot(int level);
+    void slotMicrophoneLevel(int level);
 
     /**
      * This slot gets called when the account registration state has changed

@@ -17,7 +17,6 @@
 #include <QUrl>
 
 class Gui;
-class JavascriptHandler;
 
 /**
  * This class handles a print action.
@@ -32,7 +31,7 @@ public:
      * @param gui Reference to the main gui
      * @param js_handler Reference to the Javascript handler
      */
-    PrintHandler(Gui &gui, JavascriptHandler &js_handler);
+    PrintHandler(Gui &gui);
 
     /**
      * Load a page to print
@@ -40,19 +39,14 @@ public:
      */
     void loadPrintPage(const QUrl &url);
 
-public slots:
-    /**
-     * This slot requests an url to the printable webpage and then starts 
-     * the print routine.
-     */
-    void printKeyPressed();
-
 private slots:
-    void showPrintPreview();
+    /**
+     * Displays print preview window
+     */
+    void slotShowPrintPreview();
 
 private:
     Gui &gui_;
-    JavascriptHandler &js_handler_;
     QWebView print_page_;
 };
 
