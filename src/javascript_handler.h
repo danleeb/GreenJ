@@ -122,7 +122,8 @@ public slots:
      * @param password Login password
      * @return true, if successful
      */
-    bool registerToServer(QString host, QString user_name, QString password);
+    bool registerToServer(const QString &host, const QString &user_name,
+                          const QString &password);
 
     /**
      * Unregister client from server
@@ -170,7 +171,7 @@ public slots:
      * @param call_id ID of the call
      * @param data Customer user data as a string
      */
-    void setCallUserData(const int call_id, QString data);
+    void setCallUserData(const int call_id, const QString &data);
 
     /**
      * Get a list of error logs

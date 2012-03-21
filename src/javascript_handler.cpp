@@ -122,8 +122,8 @@ QVariantMap JavascriptHandler::getAccountInformation()
 }
 
 //-----------------------------------------------------------------------------
-bool JavascriptHandler::registerToServer(QString host, QString user_name,
-                                         QString password)
+bool JavascriptHandler::registerToServer(const QString &host, const QString &user_name,
+                                         const QString &password)
 {
     LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "registerToServer"));
 
@@ -154,7 +154,7 @@ int JavascriptHandler::makeCall(const QString &number)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::callAccept(const int call_id)
 {
-    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "accept call "+QString::number(call_id)));
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "accept call " + QString::number(call_id)));
 
     phone_.answerCall(call_id);
 }
@@ -162,7 +162,7 @@ void JavascriptHandler::callAccept(const int call_id)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::hangup(const int call_id)
 {
-    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup call "+QString::number(call_id)));
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup call " + QString::number(call_id)));
 
     phone_.hangUp(call_id);
 
@@ -186,15 +186,15 @@ void JavascriptHandler::setLogLevel(const unsigned int log_level)
 //-----------------------------------------------------------------------------
 QString JavascriptHandler::getCallUserData(const int call_id)
 {
-    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get user data "+QString::number(call_id)));
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get user data " + QString::number(call_id)));
 
     return phone_.getCallUserData(call_id);
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::setCallUserData(const int call_id, QString data)
+void JavascriptHandler::setCallUserData(const int call_id, const QString &data)
 {
-    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Set user data "+QString::number(call_id)));
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Set user data " + QString::number(call_id)));
 
     phone_.setCallUserData(call_id, data);
 }
