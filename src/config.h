@@ -93,7 +93,7 @@ public:
      * @param name The name of the option that should be returned
      * @return Option data
      */
-    QVariant getOption(const QString &name);
+    QVariant getOption(const QString &name) const;
 
     /**
      * Set new data for an option

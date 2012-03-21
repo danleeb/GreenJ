@@ -12,7 +12,7 @@
 #include "log_info.h"
 
 const QString LogInfo::STATUS_[] = { "DEBUG", "MESSAGE", "WARNING",
-                                           "ERROR", "FATALERROR" };
+                                     "ERROR", "FATALERROR" };
 
 //-----------------------------------------------------------------------------
 LogInfo::LogInfo(const Status status, const QString &domain, 
@@ -23,7 +23,7 @@ LogInfo::LogInfo(const Status status, const QString &domain,
 }
 
 //-----------------------------------------------------------------------------
-QString LogInfo::getStatusString() const
+const QString &LogInfo::getStatusString() const
 {
     return STATUS_[status_];
 }

@@ -34,7 +34,6 @@ public:
      * Constructor
      * @param phone To access the phone methods
      * @param web_view WebView needed to call the JS functions
-     * @param print_handler
      */
     JavascriptHandler(Phone &phone, QWebView *web_view);
 
@@ -42,7 +41,7 @@ public:
      * Send current account state
      * @param state
      */
-    void accountState(const int state);
+    void accountState(const int state) const;
 
     /**
      * Send call state
@@ -50,37 +49,37 @@ public:
      * @param code status code
      * @param last_status last status code
      */
-    void callState(const int call_id, const int code, const int last_status);
+    void callState(const int call_id, const int code, const int last_status) const;
 
     /**
      * Notify about an incoming call
      * @param call
      */
-    void incomingCall(const Call &call);
+    void incomingCall(const Call &call) const;
 
     /**
      * Request the url of a page to print
      * @return The url of the webpage that should be printed
      */
-    QUrl getPrintPage();
+    QUrl getPrintPage() const;
 
     /**
      * Sound level has changed
      * @param level New sound level
      */
-    void soundLevel(int level);
+    void soundLevel(int level) const;
 
     /**
      * Microphone level has changed
      * @param level New microphone level
      */
-    void microphoneLevel(int level);
+    void microphoneLevel(int level) const;
 
     /**
      * Prints errors, warning and debug messages
      * @param info Log information and message
      */
-    void logMessage(const LogInfo &info);
+    void logMessage(const LogInfo &info) const;
 
 signals:
     /**
@@ -107,13 +106,13 @@ public slots:
      * Get the account status
      * @return true, if account is registred
      */
-    bool checkAccountStatus();
+    bool checkAccountStatus() const;
 
     /**
      * Get account information
      * @return Object with information about the registred account
      */
-    QVariantMap getAccountInformation();
+    QVariantMap getAccountInformation() const;
 
     /**
      * Register client on a given host
@@ -123,66 +122,66 @@ public slots:
      * @return true, if successful
      */
     bool registerToServer(const QString &host, const QString &user_name,
-                          const QString &password);
+                          const QString &password) const;
 
     /**
      * Unregister client from server
      */
-    void unregisterFromServer();
+    void unregisterFromServer() const;
 
     /**
      * Starts an outgoing call
      * @param number Phone number or name to call
      * @return ID of the new call
      */
-    int makeCall(const QString &number);
+    int makeCall(const QString &number) const;
 
     /**
      * Accept the call with given id
      * @param call_id ID of the call to accept
      */
-    void callAccept(const int call_id);
+    void callAccept(const int call_id) const;
 
     /**
      * Finish call with given id
      * @param call_id ID of the call to end
      */
-    void hangup(const int call_id);
+    void hangup(const int call_id) const;
 
     /**
      * Finish all running calls
      */
-    void hangupAll();
+    void hangupAll() const;
 
     /**
      * Set the LogLevel
      */
-    void setLogLevel(const unsigned int log_level);
+    void setLogLevel(const unsigned int log_level) const;
 
     /**
      * Get stored custom user data to specific call
      * @param call_id ID of the call
      * @return custom user data as a string
      */
-    QString getCallUserData(const int call_id);
+    QString getCallUserData(const int call_id) const;
 
     /**
      * Store custom user data to a call
      * @param call_id ID of the call
      * @param data Customer user data as a string
      */
-    void setCallUserData(const int call_id, const QString &data);
+    void setCallUserData(const int call_id, const QString &data) const;
 
     /**
      * Get a list of error logs
      * @return List of error log data
      */
-    QVariantList getErrorLogData();
+    QVariantList getErrorLogData() const;
 
     /**
      * Delete error log file
      */
-    void deleteErrorLogFile();
+    void deleteErrorLogFile() const;
 
     /**
      * Adds a call to a conference
@@ -190,7 +189,7 @@ public slots:
      * @param dst_id ID of conference
      * @return true, if successful
      */
-    bool addToConference(const int src_id, const int dst_id);
+    bool addToConference(const int src_id, const int dst_id) const;
 
     /**
      * Remove a call from a conference
@@ -198,48 +197,48 @@ public slots:
      * @param dst_id ID of conference
      * @return true, if successful
      */
-    bool removeFromConference(const int src_id, const int dst_id);
+    bool removeFromConference(const int src_id, const int dst_id) const;
 
     /**
      * Redirect an active call to a new destination
      * @param call_id ID of the call to be redirected
-     * @param dst_url Number or address of the new destination
+     * @param dst_uri Number or address of the new destination
      * @return success code
      */
-    int redirectCall(const int call_id, const QString dst_url);
+    int redirectCall(const int call_id, const QString &dst_uri) const;
 
     /**
      * Get list of all active calls
      * @return List of active calls
      */
-    QVariantList getActiveCallList();
+    QVariantList getActiveCallList() const;
 
     /**
      * Switch sound on/off
      * @param mute true, if sound of call should be muted
      * @param call_id ID of call, or -1
      */
-    void muteSound(const bool mute, const int call_id = -1);
+    void muteSound(const bool mute, const int call_id = -1) const;
 
     /**
      * Switch microphone on/off
      * @param mute true, if microphone of call should be muted
      * @param call_id ID of call, or -1
      */
-    void muteMicrophone(const bool mute, const int call_id = -1);
+    void muteMicrophone(const bool mute, const int call_id = -1) const;
 
     /**
      * Get information about signal levels
      * @return Map with sound and micro signal levels
      */
-    QVariantMap getSignalInformation();
+    QVariantMap getSignalInformation() const;
 
     /**
      * Get data of an option
      * @param name The name of the option
      * @return The option data
      */
-    QVariant getOption(const QString &name);
+    QVariant getOption(const QString &name) const;
 
     /**
      * Set new data of an option
@@ -258,26 +257,26 @@ public slots:
      * Get log message from js and send it to the log_handler
      * @param log The log object
      */
-    bool sendLogMessage(QVariantMap log);
+    bool sendLogMessage(const QVariantMap &log) const;
 
     /**
      * Get a list of log files
      * @return List of filenames
      */
-    QStringList getLogFileList();
+    QStringList getLogFileList() const;
 
     /**
      * Get the content of a log file
      * @param file_name File name of log file
      * @return Log file content
      */
-    QString getLogFileContent(const QString &file_name);
+    QString getLogFileContent(const QString &file_name) const;
     
     /**
      * Delete a log file
      * @param file_name File name of log file that should be deleted
      */
-    void deleteLogFile(const QString &file_name);
+    void deleteLogFile(const QString &file_name) const;
 
 private:
     Phone &phone_;
@@ -291,7 +290,7 @@ private:
      * @param code JavaScript code
      * @return The return value from JavaScript
      */
-    QVariant evaluateJavaScript(const QString &code);
+    QVariant evaluateJavaScript(const QString &code) const;
 };
 
 #endif // JAVASCRIPTHANDLER_INCLUDE_H

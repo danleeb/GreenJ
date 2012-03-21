@@ -93,7 +93,7 @@ private:
     void createShortcuts();
 
     void readSettings();
-    void writeSettings();
+    void writeSettings() const;
 };
 
 #endif // GUI_INCLUDE_H

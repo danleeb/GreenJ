@@ -207,7 +207,7 @@ void Gui::readSettings()
 }
 
 //-----------------------------------------------------------------------------
-void Gui::writeSettings()
+void Gui::writeSettings() const
 {
     Config &config = Config::getInstance();
     QSettings settings(config.getAppDeveloper(), config.getAppName());

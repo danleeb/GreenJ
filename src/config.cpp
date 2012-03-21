@@ -142,7 +142,7 @@ void Config::setLogLevel(const unsigned val)
 }
 
 //-----------------------------------------------------------------------------
-QVariant Config::getOption(const QString &name)
+QVariant Config::getOption(const QString &name) const
 {
     QVariant result(0);
 

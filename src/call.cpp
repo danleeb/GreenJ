@@ -30,19 +30,19 @@ int Call::makeCall()
 {
     Sound::getInstance().startDial();
 
-    int call_id = phone_api_->makeCall(url_);
+    int id = phone_api_->makeCall(url_);
     active_ = true;
 
-    if (call_id < 0) {
+    if (id < 0) {
         Sound::getInstance().stop();
     }
-    call_id_ = call_id;
+    call_id_ = id;
  
     return call_id_;
 }
 
 //-----------------------------------------------------------------------------
-void Call::answerCall()
+void Call::answerCall() const
 {
     if (call_id_ != -1) {
         phone_api_->answerCall(call_id_);
@@ -59,19 +59,19 @@ void Call::hangUp()
 }
 
 //-----------------------------------------------------------------------------
-bool Call::addCallToConference(const Call &call_dest)
+bool Call::addCallToConference(const Call &call_dest) const
 {
     return phone_api_->addCallToConference(call_id_, call_dest.getCallId());
 }
 
 //-----------------------------------------------------------------------------
-bool Call::removeCallFromConference(const Call &call_dest)
+bool Call::removeCallFromConference(const Call &call_dest) const
 {
     return phone_api_->removeCallFromConference(call_id_, call_dest.getCallId());
 }
 
 //-----------------------------------------------------------------------------
-int Call::redirectCall(const QString &dest_uri)
+int Call::redirectCall(const QString &dest_uri) const
 {
     return phone_api_->redirectCall(call_id_, dest_uri);
 }
@@ -95,7 +95,7 @@ const int Call::getCallId() const
 }
 
 //-----------------------------------------------------------------------------
-void Call::getCallInfo(QVariantMap &call_info)
+void Call::getCallInfo(QVariantMap &call_info) const
 {
     if (phone_api_) {
         phone_api_->getCallInfo(call_id_, call_info);
@@ -173,7 +173,7 @@ void Call::setDuration(const int duration)
 }
 
 //-----------------------------------------------------------------------------
-QString Call::getUserData() const
+const QString &Call::getUserData() const
 {
     return user_data_;
 }
@@ -287,7 +287,7 @@ void Call::muteMicrophone(const bool mute)
 }
 
 //-----------------------------------------------------------------------------
-void Call::getSignalInformation(QVariantMap &signal_info)
+void Call::getSignalInformation(QVariantMap &signal_info) const
 {
     signal_info.insert("sound", speaker_level_);
     signal_info.insert("micro", mic_level_);

@@ -72,7 +72,7 @@ public:
     /**
      * Answers the call
      */
-    void answerCall();
+    void answerCall() const;
 
     /**
      * Hanging up the call
@@ -84,21 +84,21 @@ public:
      * @param call_dest CallID of the other callee.
      * @return true if successful
      */
-    bool addCallToConference(const Call &call_dest);
+    bool addCallToConference(const Call &call_dest) const;
 
     /**
      * Remove the callee from the conference.
      * @param call_dest CallID of the other callee.
      * @return true if successful
      */
-    bool removeCallFromConference(const Call &call_dest);
+    bool removeCallFromConference(const Call &call_dest) const;
 
     /**
      * Redirecting an active call to a new destination.
      * @param dest_uri SIP address of the new destination
      * @return success-code
      */
-    int redirectCall(const QString &dest_uri);
+    int redirectCall(const QString &dest_uri) const;
 
     /**
      * Get the SIP address
@@ -122,7 +122,7 @@ public:
      * Get information about call like SIP address, state, etc
      * @param call_info Object to store call information
      */
-    void getCallInfo(QVariantMap &call_info);
+    void getCallInfo(QVariantMap &call_info) const;
 
     /**
      * Get call status
@@ -188,7 +188,7 @@ public:
      * Get custom user data
      * @return user data as a string
      */
-    QString getUserData() const;
+    const QString &getUserData() const;
 
     /**
      * Save custom user data
@@ -263,7 +263,7 @@ public:
      * Get information about signal levels of sound and microphone
      * @param signal_info Map to store current sound and micro signal levels
      */
-    void getSignalInformation(QVariantMap &signal_info);
+    void getSignalInformation(QVariantMap &signal_info) const;
 
 private:
     QDateTime start_time_;

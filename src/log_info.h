@@ -64,7 +64,7 @@ public:
      * Convert the status code into a string
      * @return The text of current status_
      */
-    QString getStatusString() const;
+    const QString &getStatusString() const;
     
     /**
      * Return a formatted string for this log info entry
