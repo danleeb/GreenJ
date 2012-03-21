@@ -240,8 +240,7 @@ void Call::setActive()
 //-----------------------------------------------------------------------------
 void Call::setInactive()
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive"));
 
     active_ = false;
     close_time_ = QDateTime::currentDateTime();

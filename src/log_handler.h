@@ -42,19 +42,6 @@ public:
     void logFromJs(const LogInfo &info);
 
     /**
-     * Get log information to write it into a file and try to send it to webkit
-     * @param info The log information data
-     */
-    void logData(const LogInfo &info);
-
-public slots:
-    /**
-     * Get log information to write it into a file and try to send it to webkit
-     * @param info The log information data
-     */
-    void logDataSlot(const LogInfo &info);
-
-    /**
      * Set the LogLevel
      */
     void setLogLevel(const unsigned int log_level);
@@ -78,6 +65,13 @@ public slots:
      */
     void deleteLogFile(const QString &file_name);
 
+public slots:
+    /**
+     * Get log information to write it into a file and try to send it to webkit
+     * @param info The log information data
+     */
+    void slotLogData(const LogInfo &info);
+
 signals:
     /**
      * Signal to send message to webkit
@@ -94,7 +88,6 @@ private:
     LogHandler(const LogHandler&);
     virtual ~LogHandler();
 
-    QString createString(const LogInfo &info);
     void writeFile(const QString &msg);
 };
 

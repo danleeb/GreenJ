@@ -29,13 +29,6 @@ public:
     static Config &getInstance();
 
     /**
-     * Read the settings file.
-     * If settings file doesn't exist it creates one and fills it with 
-     * default data
-     */
-    void init();
-
-    /**
      * Get url of the webpage 
      * @return webpage url
      */
@@ -120,6 +113,11 @@ private:
 
     QSettings settings_;
 
+    /**
+     * Read the settings file.
+     * If settings file doesn't exist it creates one and fills it with 
+     * default data
+     */
     Config();
     Config(const Config&);
     virtual ~Config();

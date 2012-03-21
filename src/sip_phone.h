@@ -28,7 +28,7 @@ class SipPhone : public PhoneApi
 
 public:
     SipPhone();
-    ~SipPhone(void);
+    ~SipPhone();
 
     virtual void init();
 
@@ -84,24 +84,30 @@ private:
     void finishIncoming();
 
     /**
-     * PJSIP-Callback
+     * PJSIP callback for incoming calls
+     * @param acc_id The id of the account receiving the incoming call
+     * @param call_id The id of the new incoming call
+     * @param rdata Incoming message buffer
      */
     static void incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
                                pjsip_rx_data *rdata);
 
     /**
-     * PJSIP-Callback
+     * PJSIP callback for call state changes
+     * @param call_id The id of the call which changed
+     * @param e PJSIP event
      */
     static void callStateCb(pjsua_call_id call_id, pjsip_event *e);
 
     /**
-     * PJSIP-Callback
+     * PJSIP callback for media state changes
+     * @param call_id The id of the call which changed
      */
     static void callMediaStateCb(pjsua_call_id call_id);
 
     /**
-     * PJSIP-Callback, called when reg_state changes
-     * @param acc pjsua_acc_id, the id of account which changes
+     * PJSIP callback for reg_state changes
+     * @param acc The id of the account which changed
      */
     static void regStateCb(pjsua_acc_id acc);
 };

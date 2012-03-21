@@ -41,31 +41,6 @@ LogHandler::~LogHandler()
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::writeFile(const QString &msg)
-{
-    lock_.lockForWrite();
-    if (!file_.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
-        return;
-    }
-
-    QTextStream out(&file_);
-    out << msg;
-
-    file_.close();
-    lock_.unlock();
-}
-
-//-----------------------------------------------------------------------------
-QString LogHandler::createString(const LogInfo &info)
-{
-    QString msg;
-    msg.append(info.time_.toString("hh:mm:ss") + " ");
-    msg.append("[" + info.getStatusString() + "] " + info.domain_ +
-               ": [" + QString::number(info.code_) + "] " + info.msg_ + "\n");
-    return msg;
-}
-
-//-----------------------------------------------------------------------------
 LogHandler &LogHandler::getInstance()
 {
     static LogHandler instance;
@@ -73,25 +48,10 @@ LogHandler &LogHandler::getInstance()
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::logData(const LogInfo &info)
-{
-    if (info.status_ >= Config::getInstance().getLogLevel()) {
-        writeFile(createString(info));
-        signalLogMessage(info);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void LogHandler::logDataSlot(const LogInfo &info)
-{
-    logData(info);
-}
-
-//-----------------------------------------------------------------------------
 void LogHandler::logFromJs(const LogInfo &info)
 {
     if (info.status_ >= Config::getInstance().getLogLevel()) {
-        writeFile(createString(info));
+        writeFile(info.toString());
     }
 }
 
@@ -119,8 +79,9 @@ QString LogHandler::getLogFileContent(const QString &file_name) const
         QString result;
         while (!in.atEnd()) {
             QString line = in.readLine();
-            result.append(line+"\n");
+            result.append(line + "\n");
         }
+        log_file.close();
         return result;
     }
     return "";
@@ -129,9 +90,33 @@ QString LogHandler::getLogFileContent(const QString &file_name) const
 //-----------------------------------------------------------------------------
 void LogHandler::deleteLogFile(const QString &file_name)
 {
-    int idx = log_list_.indexOf(file_name);
-    if (idx != -1) {
-        log_list_.removeAt(idx);
+    int index = log_list_.indexOf(file_name);
+    if (index != -1) {
+        log_list_.removeAt(index);
         QFile::remove(file_name);
     }
+}
+
+//-----------------------------------------------------------------------------
+void LogHandler::slotLogData(const LogInfo &info)
+{
+    if (info.status_ >= Config::getInstance().getLogLevel()) {
+        writeFile(info.toString());
+        signalLogMessage(info);
+    }
+}
+
+//-----------------------------------------------------------------------------
+void LogHandler::writeFile(const QString &msg)
+{
+    lock_.lockForWrite();
+
+    if (file_.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file_);
+        out << msg;
+
+        file_.close();
+    }
+
+    lock_.unlock();
 }

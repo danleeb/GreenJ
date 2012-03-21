@@ -23,60 +23,26 @@ class LogInfo
 {
 public:
     /**
-     * \name Log Status Codes
+     * Log status codes
      * Status codes are priorities of writing log messages.
      */
-    //@{
-    /**
-     * STATUS code for debug
-     */
-    static const unsigned STATUS_DEBUG;
-    /**
-     * STATUS code for message
-     */
-    static const unsigned STATUS_MESSAGE;
-    /**
-     * STATUS code for warning
-     */
-    static const unsigned STATUS_WARNING;
-    /**
-     * STATUS code for error
-     */
-    static const unsigned STATUS_ERROR;
-    /**
-     * STATUS code for fatal_error
-     */
-    static const unsigned STATUS_FATAL_ERROR;
-    //@}
+    enum Status {
+        STATUS_DEBUG = 0,
+        STATUS_MESSAGE,
+        STATUS_WARNING,
+        STATUS_ERROR,
+        STATUS_FATAL_ERROR
+    };
 
     /**
      * Translations of status codes
      */
-    static const QString STATUS_STRING[];
+    static const QString STATUS_[];
 
-    /**
-     * Status code
-     */
-    unsigned status_;
-
-    /**
-     * The domain of the log message
-     */
+    Status status_;
     QString domain_;
-
-    /**
-     * Log message code
-     */
     int code_;
-
-    /**
-     * Log message
-     */
     QString msg_;
-
-    /**
-     * Log time
-     */
     QDateTime time_;
 
     /**
@@ -91,7 +57,7 @@ public:
      * @param code Some log messages use an error code
      * @param msg Log message text
      */
-    LogInfo(const unsigned int status, const QString &domain, const int code,
+    LogInfo(const Status status, const QString &domain, const int code,
             const QString &msg);
 
     /**
@@ -99,6 +65,12 @@ public:
      * @return The text of current status_
      */
     QString getStatusString() const;
+    
+    /**
+     * Return a formatted string for this log info entry
+     * @return Log message string
+     */
+    QString toString() const;
 };
 
 Q_DECLARE_METATYPE(LogInfo)

@@ -64,9 +64,9 @@ private:
     QSound *ring_;
     QSound *dial_;
 
-    Sound(void);
+    Sound();
     Sound(const Sound &original);
-    ~Sound(void);
+    ~Sound();
 };
 
 #endif // SOUND_INCLUDE_H

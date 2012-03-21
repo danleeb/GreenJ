@@ -11,17 +11,11 @@
 
 #include "log_info.h"
 
-const unsigned LogInfo::STATUS_DEBUG       = 0x00;
-const unsigned LogInfo::STATUS_MESSAGE     = 0x01;
-const unsigned LogInfo::STATUS_WARNING     = 0x02;
-const unsigned LogInfo::STATUS_ERROR       = 0x03;
-const unsigned LogInfo::STATUS_FATAL_ERROR = 0x04;
-
-const QString LogInfo::STATUS_STRING[] = { "DEBUG", "MESSAGE", "WARNING",
+const QString LogInfo::STATUS_[] = { "DEBUG", "MESSAGE", "WARNING",
                                            "ERROR", "FATALERROR" };
 
 //-----------------------------------------------------------------------------
-LogInfo::LogInfo(const unsigned status, const QString &domain, 
+LogInfo::LogInfo(const Status status, const QString &domain, 
                  const int code, const QString &msg) : 
     status_(status), domain_(domain), code_(code), msg_(msg), 
     time_(QDateTime::currentDateTime())
@@ -31,5 +25,15 @@ LogInfo::LogInfo(const unsigned status, const QString &domain,
 //-----------------------------------------------------------------------------
 QString LogInfo::getStatusString() const
 {
-    return STATUS_STRING[status_];
+    return STATUS_[status_];
+}
+
+//-----------------------------------------------------------------------------
+QString LogInfo::toString() const
+{
+    return time_.toString("hh:mm:ss") + " [" 
+         + getStatusString() + "] " 
+         + domain_ + ": [" 
+         + QString::number(code_) + "] " 
+         + msg_ + "\n";
 }

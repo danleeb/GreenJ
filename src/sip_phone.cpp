@@ -42,8 +42,7 @@ void SipPhone::init()
     status = pjsua_create();
 
     if (status != PJ_SUCCESS) {
-        LogInfo info(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error in pjsua_create()");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error in pjsua_create()"));
         return;
     }
 
@@ -58,8 +57,7 @@ void SipPhone::init()
         if (stun.size()) {
             char ch_stun[100];
             if (stun.size() > 99) {
-                LogInfo info(LogInfo::STATUS_ERROR, "pjsip", 0, "Error init pjsip, stun-server too long");
-                signalLogData(info);
+                signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error init pjsip, stun-server too long"));
                 return;
             }
 
@@ -80,8 +78,7 @@ void SipPhone::init()
         status = pjsua_init(&cfg, &log_cfg, NULL);
         printf("init successful\n");
         if (status != PJ_SUCCESS) {
-            LogInfo info(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error in pjsua_init()");
-            signalLogData(info);
+            signalLogData(LogInfo(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error in pjsua_init()"));
             return;
         }
     }
@@ -99,8 +96,7 @@ void SipPhone::init()
         status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, &transport_id);
 
         if (status != PJ_SUCCESS) {
-            LogInfo info(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error creating transport");
-            signalLogData(info);
+            signalLogData(LogInfo(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error creating transport"));
             return;
         }
 
@@ -124,8 +120,7 @@ void SipPhone::init()
     status = pjsua_start();
 
     if (status != PJ_SUCCESS) {
-        LogInfo info(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error starting PJSUA");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_FATAL_ERROR, "pjsip", status, "Error starting PJSUA"));
         return;
     }
 
@@ -148,8 +143,7 @@ int SipPhone::registerUser(const Account &acc)
     QString password = acc.getPassword();
     QString domain = acc.getHost();
     if (pjsua_acc_is_valid(acc_id_)) {
-        LogInfo info(LogInfo::STATUS_WARNING, "pjsip", 0, "Account already exists");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_WARNING, "pjsip", 0, "Account already exists"));
         return -1;
     }
 
@@ -176,8 +170,7 @@ int SipPhone::registerUser(const Account &acc)
         user.size() > 99 ||
         password.size() > 99)
     {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", 0, "Error adding account, data too long");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error adding account, data too long"));
         return -1;
     }
 
@@ -204,13 +197,11 @@ int SipPhone::registerUser(const Account &acc)
     pj_status_t status = pjsua_acc_add(&cfg, PJ_TRUE, &acc_id_);
 
     if (status != PJ_SUCCESS) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", status, "Error adding account");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error adding account"));
         return -1;
     }
-    LogInfo info(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Registered user with account-id "
-                 + QString::number(acc_id_));
-    signalLogData(info);
+    signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, 
+                          "Registered user with account-id " + QString::number(acc_id_)));
 
     return acc_id_;
 }
@@ -219,8 +210,7 @@ int SipPhone::registerUser(const Account &acc)
 void SipPhone::getAccountInfo(QVariantMap &account_info)
 {
     if (!pjsua_acc_is_valid(acc_id_)) {
-        LogInfo info(LogInfo::STATUS_WARNING, "pjsip", 0, "There is no active account");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_WARNING, "pjsip", 0, "There is no active account"));
         return;
     }
     pjsua_acc_info ai;
@@ -250,8 +240,7 @@ void SipPhone::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
     call->setCallId(call_id);
     call->setUrl(ci.remote_contact.ptr);
     call->setName(ci.remote_info.ptr);
-    LogInfo info(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Incoming Call");
-    self_->signalLogData(info);
+    self_->signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Incoming Call"));
 
     self_->signalIncomingCall(call);
 }
@@ -275,10 +264,10 @@ void SipPhone::callStateCb(pjsua_call_id call_id, pjsip_event *e)
         self_->hangUp(call_id);
     }
 
-    LogInfo info(LogInfo::STATUS_DEBUG, "pjsip", 0, "Call-state from call " 
-                                        + QString::number(call_id) + " changed to " 
-                                        + QString::number(ci.state));
-    self_->signalLogData(info);
+    self_->signalLogData(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, 
+                                 "Call-state from call " 
+                                 + QString::number(call_id) + " changed to " 
+                                 + QString::number(ci.state)));
 
     self_->signalCallState(call_id, ci.state, ci.last_status);
 }
@@ -294,8 +283,7 @@ void SipPhone::callMediaStateCb(pjsua_call_id call_id)
         pjsua_conf_connect(ci.conf_slot, 0);
         pjsua_conf_connect(0, ci.conf_slot);
     }
-    LogInfo info(LogInfo::STATUS_DEBUG, "pjsip", 0, "Call-media-state changed to "+QString::number(ci.state));
-    self_->signalLogData(info);
+    self_->signalLogData(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, "Call-media-state changed to "+QString::number(ci.state)));
 }
 
 //-----------------------------------------------------------------------------
@@ -309,11 +297,9 @@ void SipPhone::regStateCb(pjsua_acc_id acc)
     QString msg("\t");
     msg.append(acc_info.status_text.ptr);
     if (acc_info.status < 300) {
-        LogInfo info(LogInfo::STATUS_MESSAGE, "account", acc_info.status, msg);
-        self_->signalLogData(info);
+        self_->signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "account", acc_info.status, msg));
     } else {
-        LogInfo info(LogInfo::STATUS_ERROR, "account", acc_info.status, msg);
-        self_->signalLogData(info);
+        self_->signalLogData(LogInfo(LogInfo::STATUS_ERROR, "account", acc_info.status, msg));
     }
     self_->signalAccountRegState(acc_info.status);
 }
@@ -322,8 +308,7 @@ void SipPhone::regStateCb(pjsua_acc_id acc)
 int SipPhone::makeCall(const QString &url)
 {
     if (url.size() > 149) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", 0, "Error making call, phoneurl too long");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error making call, phoneurl too long"));
         return -1;
     }
 
@@ -335,14 +320,12 @@ int SipPhone::makeCall(const QString &url)
     pj_str_t uri = pj_str(ch_url);
     pjsua_call_id call_id;
 
-    LogInfo info(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Make call");
-    signalLogData(info);
+    signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Make call"));
 
     pj_status_t status = pjsua_call_make_call(acc_id_, &uri, 0, NULL, NULL, &call_id);
 
     if (status != PJ_SUCCESS) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", status, "Error making call");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error making call"));
         return -1;
     }
     return (int)call_id;
@@ -356,11 +339,9 @@ void SipPhone::answerCall(int call_id)
 
     if (call_info.state == PJSIP_INV_STATE_INCOMING) {
         pjsua_call_answer((pjsua_call_id)call_id, 200, NULL, NULL);
-        LogInfo info(LogInfo::STATUS_DEBUG, "pjsip", call_info.state, "Call answered");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", call_info.state, "Call answered"));
     } else {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", call_info.state, "Call not incoming");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", call_info.state, "Call not incoming"));
     }
     finishIncoming();
 }
@@ -368,8 +349,7 @@ void SipPhone::answerCall(int call_id)
 //-----------------------------------------------------------------------------
 void SipPhone::hangUp(const int call_id)
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "psjip", 0, "hangup");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "psjip", 0, "hangup"));
 
     pjsua_call_info ci;
     pjsua_call_get_info(call_id,&ci);
@@ -389,12 +369,10 @@ void SipPhone::hangUpAll()
 //-----------------------------------------------------------------------------
 void SipPhone::finishIncoming()
 {
-    LogInfo info(LogInfo::STATUS_DEBUG, "psjip", 0, "stop the sound");
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "psjip", 0, "stop the sound"));
 
     Sound::getInstance().stop();
 }
-
 
 //-----------------------------------------------------------------------------
 bool SipPhone::addCallToConference(const int call_src, const int call_dest)
@@ -403,8 +381,7 @@ bool SipPhone::addCallToConference(const int call_src, const int call_dest)
     int dest = call_dest;
 
     if (src == -1 || dest == -1) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", 0, "Error: one of the selected calls does NOT exist!");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error: one of the selected calls does NOT exist!"));
         return false;
     }
 
@@ -415,8 +392,7 @@ bool SipPhone::addCallToConference(const int call_src, const int call_dest)
 
     pj_status_t status =  pjsua_conf_connect(src_ci.conf_slot,dest_ci.conf_slot);
     if (status != PJ_SUCCESS) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", status, "Error connecting conference!");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error connecting conference!"));
         return false;
     }
 
@@ -430,8 +406,7 @@ bool SipPhone::removeCallFromConference(const int call_src, const int call_dest)
     int dest = call_dest;
 
     if (src == -1 || dest == -1) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", 0, "Error: one of the selected calls does NOT exist!");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error: one of the selected calls does NOT exist!"));
         return false;
     }
 
@@ -442,8 +417,7 @@ bool SipPhone::removeCallFromConference(const int call_src, const int call_dest)
 
     pj_status_t status =  pjsua_conf_disconnect(src_ci.conf_slot,dest_ci.conf_slot);
     if (status != PJ_SUCCESS) {
-        LogInfo info(LogInfo::STATUS_ERROR, "pjsip", status, "Error connecting conference (1/2)!");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error connecting conference (1/2)!"));
         return false;
     }
     return true;
@@ -486,12 +460,10 @@ void SipPhone::muteSound(const bool mute)
 {
     float level = 0.f;
     if (mute) {
-        LogInfo info(LogInfo::STATUS_MESSAGE, "phone", 0, "muteSound: true");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "phone", 0, "muteSound: true"));
         level = 0.f;
     } else {
-        LogInfo info(LogInfo::STATUS_MESSAGE, "phone", 0, "muteSound: false");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "phone", 0, "muteSound: false"));
         level = 1.f;
     }
     speaker_level_ = level;
@@ -513,12 +485,10 @@ void SipPhone::muteMicrophone(const bool mute)
 {
     float level = 0.f;
     if (mute) {
-        LogInfo info(LogInfo::STATUS_MESSAGE, "phone", 0, "muteMicrophone: true");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "phone", 0, "muteMicrophone: true"));
         level = 0.f;
     } else {
-        LogInfo info(LogInfo::STATUS_MESSAGE, "phone", 0, "muteMicrophone: false");
-        signalLogData(info);
+        signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "phone", 0, "muteMicrophone: false"));
         level = 1.f;
     }
     mic_level_ = level;
@@ -544,8 +514,7 @@ void SipPhone::getSignalInformation(QVariantMap &signal_info)
 //-----------------------------------------------------------------------------
 void SipPhone::unregister()
 {
-    LogInfo info(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Unregister account");
-    signalLogData(info);
+    signalLogData(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Unregister account"));
     if (pjsua_acc_is_valid(acc_id_)) {
         hangUpAll();
         pjsua_acc_del(acc_id_);
