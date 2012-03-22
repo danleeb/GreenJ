@@ -45,7 +45,7 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
 #endif
 
     connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
-            js_handler_,                SLOT(slotLogMessage(const LogInfo&)));
+            this,                       SLOT(slotLogMessage(const LogInfo&)));
 
     connect(ui_.webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), 
             this,                             SLOT(slotCreateJavascriptWindowObject()));
@@ -55,13 +55,23 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags) :
     connect(js_handler_, SIGNAL(signalWebPageChanged()),
             this,        SLOT(slotUpdateWebPage()));
     connect(js_handler_, SIGNAL(signalPrintPage(const QUrl&)),
-            this,        SLOT(slotPrintPage(const QUrl &url)));
+            this,        SLOT(slotPrintPage(const QUrl&)));
 
     connect(&phone_, SIGNAL(signalIncomingCall(const QString&)),
             this,    SLOT(slotAlertIncomingCall(const QString&)));
 
-    const QUrl &server_url = config.getWebpageUrl();
-    if (!server_url.isEmpty()) {
+    QUrl server_url = config.getWebpageUrl();
+    if (server_url.isRelative()) {
+        QFileInfo fileinfo = QFileInfo(server_url.toString());
+        if (fileinfo.exists()) {
+            if (fileinfo.isRelative()) {
+                server_url = QUrl::fromLocalFile(fileinfo.absoluteFilePath());
+            } else {
+                server_url = QUrl::fromLocalFile(fileinfo.fileName());
+            }
+        }
+    }
+    if (!server_url.isEmpty() && server_url.isValid()) {
         ui_.webview->setUrl(server_url);
     }
 
