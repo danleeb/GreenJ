@@ -23,97 +23,96 @@ namespace phone
 Call::Call(Phone *phone, const Type type, const Status status) :
     phone_(phone), 
     type_(type), status_(status), active_(false), 
-    call_id_(-1), call_state_(0), media_state_(0), 
+    id_(-1), call_state_(0), media_state_(0), 
     speaker_level_(1.f), mic_level_(1.f), 
     start_time_(QDateTime::currentDateTime())
 {
 }
 
 //-----------------------------------------------------------------------------
-int Call::makeCall()
+int Call::makeCall(const QString &url)
 {
-    Sound::getInstance().startDial();
-
-    int id = phone_->getApi()->makeCall(url_);
+    url_ = url;
+    id_ = phone_->getApi()->makeCall(url_);
     active_ = true;
 
-    if (id < 0) {
-        Sound::getInstance().stop();
+    if (id_ >= 0) {
+        Sound::getInstance().startDial();
     }
-    call_id_ = id;
- 
-    return call_id_;
+    return id_;
 }
 
 //-----------------------------------------------------------------------------
 void Call::answerCall() const
 {
-    if (call_id_ != -1) {
-        phone_->getApi()->answerCall(call_id_);
+    if (id_ != -1) {
+        phone_->getApi()->answerCall(id_);
     }
 }
 
 //-----------------------------------------------------------------------------
 void Call::hangUp()
 {
-    if (call_id_ != -1) {
-        phone_->getApi()->hangUp(call_id_);
+    if (id_ != -1) {
+        phone_->getApi()->hangUp(id_);
     }
     setInactive();
 }
 
 //-----------------------------------------------------------------------------
-bool Call::addCallToConference(const Call &call_dest) const
+bool Call::addToConference(const Call &call_dest) const
 {
-    return phone_->getApi()->addCallToConference(call_id_, call_dest.getCallId());
+    return phone_->getApi()->addCallToConference(id_, call_dest.getId());
 }
 
 //-----------------------------------------------------------------------------
-bool Call::removeCallFromConference(const Call &call_dest) const
+bool Call::removeFromConference(const Call &call_dest) const
 {
-    return phone_->getApi()->removeCallFromConference(call_id_, call_dest.getCallId());
+    return phone_->getApi()->removeCallFromConference(id_, call_dest.getId());
 }
 
 //-----------------------------------------------------------------------------
-int Call::redirectCall(const QString &dest_uri) const
+int Call::redirect(const QString &dest_uri) const
 {
-    return phone_->getApi()->redirectCall(call_id_, dest_uri);
+    return phone_->getApi()->redirectCall(id_, dest_uri);
 }
 
 //-----------------------------------------------------------------------------
-const QString &Call::getCallUrl() const
+const QString &Call::getUrl() const
 {
     return url_;
 }
 
 //-----------------------------------------------------------------------------
-const QString &Call::getCallName() const
+const QString &Call::getName() const
 {
     return name_;
 }
 
 //-----------------------------------------------------------------------------
-const int Call::getCallId() const
+const int Call::getId() const
 {
-    return call_id_;
+    return id_;
 }
 
 //-----------------------------------------------------------------------------
-void Call::getCallInfo(QVariantMap &call_info) const
+QVariantMap Call::getInfo() const
 {
+    QVariantMap info;
     if (phone_) {
-        phone_->getApi()->getCallInfo(call_id_, call_info);
+        phone_->getApi()->getCallInfo(id_, info);
     } else {
-        call_info.insert("number", url_);
-        call_info.insert("duration", duration_);
+        info.insert("number", url_);
+        info.insert("duration", duration_);
     }
-    call_info.insert("name", name_);
-    call_info.insert("type", (int)type_);
-    call_info.insert("status", (int)status_);
-    call_info.insert("callTime", start_time_.toMSecsSinceEpoch());
-    call_info.insert("acceptTime", accept_time_.toMSecsSinceEpoch());
-    call_info.insert("closeTime", close_time_.toMSecsSinceEpoch());
-    call_info.insert("userData", user_data_);
+    info.insert("name", name_);
+    info.insert("type", (int)type_);
+    info.insert("status", (int)status_);
+    info.insert("callTime", start_time_.toMSecsSinceEpoch());
+    info.insert("acceptTime", accept_time_.toMSecsSinceEpoch());
+    info.insert("closeTime", close_time_.toMSecsSinceEpoch());
+    info.insert("userData", user_data_);
+    return info;
 }
 
 //-----------------------------------------------------------------------------
@@ -189,12 +188,6 @@ void Call::setUserData(const QString &data)
 }
 
 //-----------------------------------------------------------------------------
-void Call::clearUserData()
-{
-    user_data_ = "";
-}
-
-//-----------------------------------------------------------------------------
 bool Call::isActive() const
 {
     return active_;
@@ -219,9 +212,9 @@ void Call::setName(const QString &name)
 }
 
 //-----------------------------------------------------------------------------
-void Call::setCallId(const int call_id)
+void Call::setId(const int call_id)
 {
-    call_id_ = call_id;
+    id_ = call_id;
 }
 
 //-----------------------------------------------------------------------------
@@ -272,14 +265,14 @@ void Call::setMediaState(const int state)
 void Call::muteSound(const bool mute)
 {
     speaker_level_ = mute ? 0.f : 1.f;
-    phone_->getApi()->muteSound(call_id_, speaker_level_);
+    phone_->getApi()->muteSound(id_, speaker_level_);
 }
 
 //-----------------------------------------------------------------------------
 void Call::muteMicrophone(const bool mute)
 {
     mic_level_ = mute ? 0.f : 1.f;
-    phone_->getApi()->muteMicrophone(call_id_, mic_level_);
+    phone_->getApi()->muteMicrophone(id_, mic_level_);
 }
 
 //-----------------------------------------------------------------------------
@@ -296,7 +289,7 @@ void Call::getSignalInformation(QVariantMap &signal_info) const
 //-----------------------------------------------------------------------------
 QDataStream &operator<<(QDataStream &out, const phone::Call &call)
 {
-    out << call.getType() << call.getCallId() << call.getCallUrl()
+    out << call.getType() << call.getId() << call.getUrl()
         << call.getStatus() << call.getStartTime() << call.getAcceptTime()
         << call.getCloseTime() << call.getDuration() << call.getUserData();
     return out;
@@ -317,7 +310,7 @@ QDataStream &operator>>(QDataStream &in, phone::Call &call)
     in >> type >> call_id >> call_url >> status >> start_time >> accept_time
        >> close_time >> duration >> user_data;
     call = phone::Call(0, (phone::Call::Type)type, (phone::Call::Status)status);
-    call.setCallId(call_id);
+    call.setId(call_id);
     call.setUrl(call_url);
     call.setUserData(user_data);
     call.setStartTime(start_time);

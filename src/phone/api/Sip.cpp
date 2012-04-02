@@ -34,82 +34,25 @@ Sip::~Sip()
 }
 
 //-----------------------------------------------------------------------------
-bool Sip::init(const QString &stun)
+bool Sip::init(unsigned int port, const QString &stun)
 {
-    pj_status_t status;
-
     // Create pjsua first
-    status = pjsua_create();
+    pj_status_t status = pjsua_create();
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "Creating pjsua application failed"));
         return false;
     }
 
     // Init pjsua
-    {
-        pjsua_config cfg;
-        pjsua_logging_config log_cfg;
-        pjsua_config_default(&cfg);
-
-        if (stun.size()) {
-            if (stun.size() > 99) {
-                signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Couldn't initialize pjsip: Stun server string too long"));
-                return false;
-            }
-
-            char ch_stun[100];
-            strcpy(ch_stun, stun.toLocal8Bit().data());
-            ch_stun[stun.size()] = 0;
-
-            cfg.stun_srv[cfg.stun_srv_cnt++] = pj_str(ch_stun);
-        }
-        cfg.enable_unsolicited_mwi = PJ_FALSE;
-        cfg.cb.on_incoming_call = &incomingCallCb;
-        cfg.cb.on_call_state = &callStateCb;
-        cfg.cb.on_call_media_state = &callMediaStateCb;
-        cfg.cb.on_reg_state = &regStateCb;
-
-        pjsua_logging_config_default(&log_cfg);
-        log_cfg.console_level = 4;
-
-        status = pjsua_init(&cfg, &log_cfg, NULL);
-        if (status != PJ_SUCCESS) {
-            signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "pjsua initialization failed"));
-            return false;
-        }
+    if (!_initPjsua(stun)) {
+        return false;
     }
 
     // Add UDP transport
-    {
-        pjsua_transport_config cfg;
-        pjsua_acc_id aid;
-        pjsua_transport_id transport_id = -1;
-        pjsua_transport_config tcp_cfg;
-
-        pjsua_transport_config_default(&cfg);
-        cfg.port = 5060;
-
-        status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, &transport_id);
-        if (status != PJ_SUCCESS) {
-            signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "Creating UDP transport failed"));
-            return false;
-        }
-
-        // Add local account
-        pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-        pjsua_acc_set_online_status(aid, PJ_TRUE);
-
-        if (cfg.port == 0) {
-            pjsua_transport_info ti;
-            pj_sockaddr_in *a;
-
-            pjsua_transport_get_info(transport_id, &ti);
-            a = (pj_sockaddr_in*)&ti.local_addr;
-
-            tcp_cfg.port = pj_ntohs(a->sin_port);
-        }
+    if (!_addTransport(PJSIP_TRANSPORT_UDP, port)) {
+        return false;
     }
-
+    
     // Initialization is done, now start pjsua
     status = pjsua_start();
     if (status != PJ_SUCCESS) {
@@ -126,9 +69,76 @@ bool Sip::init(const QString &stun)
 }
 
 //-----------------------------------------------------------------------------
-bool Sip::checkAccountStatus()
+bool Sip::_initPjsua(const QString &stun)
 {
-    return pjsua_acc_is_valid(account_id_);
+    pjsua_config cfg;
+    pjsua_logging_config log_cfg;
+    pjsua_config_default(&cfg);
+
+    // TODO: additional configurations
+    // * max_calls
+    // * nameserver_count, nameserver (instead of default pj_gethostbyname)
+    // * outbound_proxy_cnt, outbound_proxy
+
+    if (stun.size()) {
+        if (stun.size() > 99) {
+            signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Couldn't initialize pjsip: Stun server string too long"));
+            return false;
+        }
+        char ch_stun[100];
+        strcpy(ch_stun, stun.toLocal8Bit().data());
+        cfg.stun_srv[cfg.stun_srv_cnt++] = pj_str(ch_stun);
+    }
+    cfg.enable_unsolicited_mwi = PJ_FALSE;
+    cfg.cb.on_incoming_call = &incomingCallCb;
+    cfg.cb.on_call_state = &callStateCb;
+    cfg.cb.on_call_media_state = &callMediaStateCb;
+    cfg.cb.on_reg_state = &registerStateCb;
+
+    pjsua_logging_config_default(&log_cfg);
+    log_cfg.console_level = 4;
+
+    pj_status_t status = pjsua_init(&cfg, &log_cfg, NULL);
+    if (status != PJ_SUCCESS) {
+        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "pjsua initialization failed"));
+        return false;
+    }
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
+{
+    pjsua_transport_config cfg;
+    pjsua_acc_id aid;
+    pjsua_transport_id transport_id = -1;
+    pjsua_transport_config tcp_cfg;
+
+    pjsua_transport_config_default(&cfg);
+    cfg.port = port;
+
+    // TODO: tls settings
+
+    pj_status_t status = pjsua_transport_create(type, &cfg, &transport_id);
+    if (status != PJ_SUCCESS) {
+        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "Transport creation failed"));
+        return false;
+    }
+
+    // Add local account
+    pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
+    pjsua_acc_set_online_status(aid, PJ_TRUE);
+
+    if (cfg.port == 0) {
+        pjsua_transport_info ti;
+        pj_sockaddr_in *a;
+
+        pjsua_transport_get_info(transport_id, &ti);
+        a = (pj_sockaddr_in*)&ti.local_addr;
+
+        tcp_cfg.port = pj_ntohs(a->sin_port);
+    }
+    return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -140,34 +150,37 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
     }
 
     QString id = "sip:" + user + "@" + domain;
-    QString reg_uri = "sip:" + domain;
+    QString uri = "sip:" + domain;
 
     if (id.size() > 149
-        || reg_uri.size() > 99
+        || uri.size() > 99
         || user.size() > 99
-        || password.size() > 99)
+        || password.size() > 99
+        || domain.size() > 99)
     {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error adding account: Invalid data"));
         return -1;
     }
 
-    char cid[150], creg_uri[100], cuser[100], cpassword[100];
+    char cid[150], curi[100], cuser[100], cpassword[100], cdomain[100];
     strcpy(cid, id.toLocal8Bit().constData());
-    strcpy(creg_uri, reg_uri.toLocal8Bit().constData());
+    strcpy(curi, uri.toLocal8Bit().constData());
     strcpy(cuser, user.toLocal8Bit().constData());
     strcpy(cpassword, password.toLocal8Bit().constData());
+    strcpy(cdomain, domain.toLocal8Bit().constData());
 
     // Register to SIP server by creating SIP account.
     pjsua_acc_config cfg;
     pjsua_acc_config_default(&cfg);
 
     cfg.id = pj_str(cid);
-    cfg.reg_uri = pj_str(creg_uri);
+    cfg.reg_uri = pj_str(curi);
     cfg.cred_count = 1;
-    cfg.cred_info[0].realm = pj_str((char*)"*");
-    cfg.cred_info[0].scheme = pj_str((char*)"digest");
+    //cfg.cred_info[0].realm = pj_str((char*)"*");
+    cfg.cred_info[0].realm = pj_str(cdomain);
+    cfg.cred_info[0].scheme = pj_str("digest");
     cfg.cred_info[0].username = pj_str(cuser);
-    cfg.cred_info[0].data_type = 0;
+    cfg.cred_info[0].data_type = PJSIP_CRED_DATA_PLAIN_PASSWD;
     cfg.cred_info[0].data = pj_str(cpassword);
 
     pj_status_t status = pjsua_acc_add(&cfg, PJ_TRUE, &account_id_);
@@ -179,6 +192,22 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
                       "Registered user with account-id " + QString::number(account_id_)));
 
     return account_id_;
+}
+
+//-----------------------------------------------------------------------------
+bool Sip::checkAccountStatus()
+{
+    return pjsua_acc_is_valid(account_id_);
+}
+
+//-----------------------------------------------------------------------------
+void Sip::unregister()
+{
+    if (pjsua_acc_is_valid(account_id_)) {
+        hangUpAll();
+        pjsua_acc_del(account_id_);
+        signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Account unregistered"));
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +227,7 @@ void Sip::getAccountInfo(QVariantMap &account_info)
 
 //-----------------------------------------------------------------------------
 void Sip::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
-                              pjsip_rx_data *rdata)
+                         pjsip_rx_data *rdata)
 {
     pjsua_call_info ci;
 
@@ -210,8 +239,8 @@ void Sip::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
     if (pjsua_call_get_count() <= 1) {
         self_->signalRingSound();
     }
-
-    self_->signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Incoming call"));
+    self_->signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Incoming call from " +
+                             QString(ci.remote_contact.ptr)));
 
     self_->signalIncomingCall(call_id, QString(ci.remote_contact.ptr), QString(ci.remote_info.ptr));
 }
@@ -230,7 +259,6 @@ void Sip::callStateCb(pjsua_call_id call_id, pjsip_event *e)
     {
         self_->signalStopSound();
     }
-
     if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
         self_->hangUp(call_id);
     }
@@ -248,6 +276,7 @@ void Sip::callMediaStateCb(pjsua_call_id call_id)
     pjsua_call_info ci;
 
     pjsua_call_get_info(call_id, &ci);
+    
     if (ci.media_status == PJSUA_CALL_MEDIA_ACTIVE) {
         // When media is active, connect call to sound device
         pjsua_conf_connect(ci.conf_slot, 0);
@@ -259,7 +288,7 @@ void Sip::callMediaStateCb(pjsua_call_id call_id)
 }
 
 //-----------------------------------------------------------------------------
-void Sip::regStateCb(pjsua_acc_id acc_id)
+void Sip::registerStateCb(pjsua_acc_id acc_id)
 {
     PJ_UNUSED_ARG(acc_id);
     pjsua_acc_info acc_info;
@@ -302,15 +331,15 @@ int Sip::makeCall(const QString &url)
 //-----------------------------------------------------------------------------
 void Sip::answerCall(int call_id)
 {
-    pjsua_call_info call_info;
-    pjsua_call_get_info(call_id, &call_info);
+    pjsua_call_info ci;
+    pjsua_call_get_info(call_id, &ci);
 
-    if (call_info.state == PJSIP_INV_STATE_INCOMING) {
+    if (ci.state == PJSIP_INV_STATE_INCOMING) {
         pjsua_call_answer((pjsua_call_id)call_id, 200, NULL, NULL);
-        signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", call_info.state, 
+        signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", ci.state, 
                           "Call " + QString::number(call_id) + " answered"));
     } else {
-        signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", call_info.state, 
+        signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", ci.state, 
                           "Call " + QString::number(call_id) + " is not an incoming call"));
     }
 
@@ -351,7 +380,7 @@ bool Sip::addCallToConference(const int call_src, const int call_dest)
     pjsua_call_get_info(call_src, &src_ci);
     pjsua_call_get_info(call_dest, &dest_ci);
 
-    pj_status_t status =  pjsua_conf_connect(src_ci.conf_slot,dest_ci.conf_slot);
+    pj_status_t status =  pjsua_conf_connect(src_ci.conf_slot, dest_ci.conf_slot);
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error connecting conference"));
         return false;
@@ -453,16 +482,6 @@ void Sip::getSignalInformation(QVariantMap &signal_info)
 {
     signal_info.insert("sound", speaker_level_);
     signal_info.insert("micro", mic_level_);
-}
-
-//-----------------------------------------------------------------------------
-void Sip::unregister()
-{
-    if (pjsua_acc_is_valid(account_id_)) {
-        hangUpAll();
-        pjsua_acc_del(account_id_);
-        signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Account unregistered"));
-    }
 }
 
 }} // phone::api::

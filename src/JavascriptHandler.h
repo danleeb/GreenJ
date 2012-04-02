@@ -135,7 +135,7 @@ public slots:
     /**
      * Starts an outgoing call
      * @param number Phone number or name to call
-     * @return ID of the new call
+     * @return ID of the new call (-1 if unsuccessful)
      */
     int makeCall(const QString &number) const;
 

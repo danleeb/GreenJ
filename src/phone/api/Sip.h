@@ -32,10 +32,11 @@ public:
     Sip();
     ~Sip();
 
-    virtual bool init(const QString &stun);
+    virtual bool init(unsigned int port, const QString &stun);
 
-    virtual bool checkAccountStatus();
     virtual int registerUser(const QString &user, const QString &password, const QString &domain);
+    virtual bool checkAccountStatus();
+    virtual void unregister();
     virtual void getAccountInfo(QVariantMap &account_info);
 
     virtual int makeCall(const QString &url);
@@ -55,8 +56,6 @@ public:
     virtual void muteMicrophone(const bool mute);
     virtual void muteMicrophone(const int call_id, const float mute);
     virtual void getSignalInformation(QVariantMap &signal_info);
-
-    virtual void unregister();
     
     /**
      * Get the sip-address of a given call
@@ -80,10 +79,18 @@ private:
     pjsua_acc_id account_id_;
 
     /**
-     * Stop ringing
-     * Setting the incoming_call_info_
+     * Initialize pjsua
+     * @return true, if successful
      */
-    void finishIncoming();
+    bool _initPjsua(const QString &stun);
+
+    /**
+     * Add UDP transport
+     * @param type Transport type
+     * @param port
+     * @return true, if successful
+     */
+    bool _addTransport(pjsip_transport_type_e type, unsigned int port);
 
     /**
      * PJSIP callback for incoming calls
@@ -111,7 +118,7 @@ private:
      * PJSIP callback for reg_state changes
      * @param acc The id of the account which changed
      */
-    static void regStateCb(pjsua_acc_id acc);
+    static void registerStateCb(pjsua_acc_id acc);
 };
 
 }} // phone::api::

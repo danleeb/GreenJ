@@ -68,9 +68,10 @@ public:
 
     /**
      * Starts a SIP call to the stored address
+     * @param url Destination address for the outgoing call
      * @return CallId of the new call
      */
-    int makeCall();
+    int makeCall(const QString &url);
 
     /**
      * Answers the call
@@ -87,45 +88,45 @@ public:
      * @param call_dest CallID of the other callee.
      * @return true if successful
      */
-    bool addCallToConference(const Call &call_dest) const;
+    bool addToConference(const Call &call_dest) const;
 
     /**
      * Remove the callee from the conference.
      * @param call_dest CallID of the other callee.
      * @return true if successful
      */
-    bool removeCallFromConference(const Call &call_dest) const;
+    bool removeFromConference(const Call &call_dest) const;
 
     /**
      * Redirecting an active call to a new destination.
      * @param dest_uri SIP address of the new destination
      * @return success-code
      */
-    int redirectCall(const QString &dest_uri) const;
+    int redirect(const QString &dest_uri) const;
 
     /**
      * Get the SIP address
      * @return SIP address
      */
-    const QString &getCallUrl() const;
+    const QString &getUrl() const;
 
     /**
      * Get the caller name or number
      * @return the name
      */
-    const QString &getCallName() const;
+    const QString &getName() const;
 
     /**
-     * Get the CallID
-     * @return CallID
+     * Get the call ID
+     * @return Call ID
      */
-    const int getCallId() const;
+    const int getId() const;
 
     /**
      * Get information about call like SIP address, state, etc
-     * @param call_info Object to store call information
+     * @return Call information
      */
-    void getCallInfo(QVariantMap &call_info) const;
+    QVariantMap getInfo() const;
 
     /**
      * Get call status
@@ -200,11 +201,6 @@ public:
     void setUserData(const QString &data);
 
     /**
-     * Delete custom user data
-     */
-    void clearUserData();
-
-    /**
      * Checks if call is active
      * @return true, if call is currently active
      */
@@ -223,10 +219,10 @@ public:
     void setName(const QString &name);
 
     /**
-     * Set CallID
+     * Set call ID
      * @param call_id
      */
-    void setCallId(const int call_id);
+    void setId(const int call_id);
 
     /**
      * Set call as active
@@ -279,7 +275,7 @@ private:
     int type_;
     int status_;
     bool active_;
-    int call_id_;
+    int id_;
     int call_state_;
     int media_state_;
     float speaker_level_;

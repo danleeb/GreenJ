@@ -84,28 +84,16 @@ public:
 
     /**
      * Get information about the account
-     * @param account_info Map to store account information
+     * @return Map with account information
      */
-    void getAccountInfo(QVariantMap &account_info);
+    QVariantMap getAccountInfo();
 
     /**
      * Starting a call to the given address
      * @param url Destination address (e.g. "SIP:user@domain")
-     * @return The ID of the new call
+     * @return New Call object or NULL if unsuccessful
      */
-    int makeCall(const QString &url);
-
-    /**
-     * Answering an incoming call
-     * @param call_id ID of the incoming call
-     */
-    void answerCall(const int call_id = -1);
-
-    /**
-     * Hanging up a specific call
-     * @param call_id int, The callID to hang up.
-     */
-    void hangUp(const int call_id);
+    Call *makeCall(const QString &url);
 
     /**
      * Hanging up incoming and all active calls
@@ -113,68 +101,17 @@ public:
     void hangUpAll();
 
     /**
-     * Get custom user data by call id
-     * @param call_id ID of the call
-     * @return Stored user data as a string
+     * Return call object via id
+     * @param call_id Call ID
+     * @return Call object
      */
-    QString getCallUserData(const int call_id);
-
-    /**
-     * Set customer user data for call by call id
-     * @param call_id ID of the call
-     * @param Data that should be stored
-     */
-    void setCallUserData(const int call_id, const QString &data);
-
-    /**
-     * Deletes the custom user data of the call
-     * @param call_id ID of the call
-     */
-    void clearCallUserData(const int call_id);
-
-    /**
-     * Connecting the callee of one specific call with another.
-     * @param call_src CallID of the first callee.
-     * @param call_dest CallID of the second callee.
-     * @return true, if successful
-     */
-    bool addCallToConference(const int call_src, const int call_dest);
-
-    /**
-     * Remove one call from the conference
-     * @param call_src CallID of the first callee.
-     * @param call_dest CallID of the second callee.
-     * @return true, if successful
-     */
-    bool removeCallFromConference(const int call_src, const int call_dest);
-
-    /**
-     * Redirecting an active call to a new destination.
-     * @param call_id CallID of the call to be redirected.
-     * @param dest_uri Address of the new destination
-     * @return success code
-     */
-    int redirectCall(const int call_id, const QString &dest_uri);
-
-    /**
-     * Get the address of a given call
-     * @param call_id ID of the call
-     * @return address
-     */
-    QString getCallUrl(const int call_id);
-
-    /**
-     * Get information about a call
-     * @param call_id ID of the call
-     * @param call_info Map, to store information in
-     */
-    void getCallInfo(const int call_id, QVariantMap &call_info);
+    Call *getCall(const int call_id);
 
     /**
      * Get list of active calls
-     * @param call_list List to store active calls in
+     * @return List of active calls
      */
-    void getActiveCallList(QVariantList &call_list);
+    QVariantList getActiveCallList() const;
 
     /**
      * Switch sound on/off
@@ -192,9 +129,9 @@ public:
 
     /**
      * Get information about signal levels of sound and microphone
-     * @param signal_info Map to save sound and micro signal levels in
+     * @param Map with sound and micro signal levels
      */
-    void getSignalInformation(QVariantMap &signal_info);
+    QVariantMap getSignalInformation() const;
 
     /**
      * Hangs up all active calls, unregisters the account
@@ -263,7 +200,6 @@ private:
     QString error_msg_;
 
     bool addToCallList(Call *call);
-    Call *getCallFromList(const int call_id);
 };
 
 } // phone::

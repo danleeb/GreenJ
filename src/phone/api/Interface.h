@@ -31,12 +31,24 @@ class Interface : public QObject
     Q_OBJECT
 
 public:
-    virtual ~Interface() {}
+    /**
+     * Destructor
+     */
+    virtual ~Interface() {};
 
     /**
      * Initializing the phone
      */
-    virtual bool init(const QString &stun) = 0;
+    virtual bool init(unsigned int port, const QString &stun) = 0;
+
+    /**
+     * Registers the account
+     * @param user
+     * @param password
+     * @param domain
+     * @return Account id or -1 if unsuccessful
+     */
+    virtual int registerUser(const QString &user, const QString &password, const QString &domain) = 0;
 
     /**
      * Checks if account is valid
@@ -45,11 +57,10 @@ public:
     virtual bool checkAccountStatus() = 0;
 
     /**
-     * Registers the account
-     * @param acc Account
-     * @return true, if registration was successful
+     * Hangs up all active calls, unregisters the account
+     * and shuts down the phone
      */
-    virtual int registerUser(const QString &user, const QString &password, const QString &domain) = 0;
+    virtual void unregister() = 0;
 
     /**
      * Get information about the account
@@ -143,12 +154,6 @@ public:
      * @param signal_info Map to save sound and micro signal levels in
      */
     virtual void getSignalInformation(QVariantMap &signal_info) = 0;
-
-    /**
-     * Hangs up all active calls, unregisters the account
-     * and shuts down the phone
-     */
-    virtual void unregister() = 0;
 
 signals:
     /**

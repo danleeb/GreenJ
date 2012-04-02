@@ -67,7 +67,7 @@ Phone::~Phone()
 bool Phone::init()
 {
     Config &config = Config::getInstance();
-    return api_->init(config.getStunServer());
+    return api_->init(5060, config.getStunServer());
 }
 
 //-----------------------------------------------------------------------------
@@ -104,19 +104,21 @@ bool Phone::registerUser(const Account &acc)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::getAccountInfo(QVariantMap &account_info)
+QVariantMap Phone::getAccountInfo()
 {
-    api_->getAccountInfo(account_info);
+    QVariantMap info;
+    api_->getAccountInfo(info);
+    return info;
 }
 
 //-----------------------------------------------------------------------------
 bool Phone::addToCallList(Call *call)
 {
-    for (int i=0; i < call_list_.size(); i++) {
+    for (int i = 0; i < call_list_.size(); i++) {
         if (call_list_[i] == call) {
             return true;
         }
-        if (call_list_[i]->getCallId() == call->getCallId()) {
+        if (call_list_[i]->getId() == call->getId()) {
             return false;
         }
     }
@@ -126,182 +128,51 @@ bool Phone::addToCallList(Call *call)
 }
 
 //-----------------------------------------------------------------------------
-Call *Phone::getCallFromList(const int call_id)
-{
-    for (int i=0; i< call_list_.size(); i++) {
-        if (call_list_[i]->getCallId() == call_id) {
-            return call_list_[i];
-        }
-    }
-    return 0;
-}
-
-//-----------------------------------------------------------------------------
-int Phone::makeCall(const QString &url)
+Call *Phone::makeCall(const QString &url)
 {
     Call *call = new Call(this, Call::TYPE_OUTGOING);
-
-    call->setUrl(url);
-
-    int call_id = call->makeCall();
-    if (call_id != -1) {
-        if (!addToCallList(call)) {
-            delete call;
-        }
-    } else {
+    if (call->makeCall(url) < 0 || !addToCallList(call)) {
         delete call;
+        return NULL;
     }
-    return call_id;
-}
-
-//-----------------------------------------------------------------------------
-void Phone::answerCall(const int call_id)
-{
-    Call *call = getCallFromList(call_id);
-
-    if (call) {
-        call->answerCall();
-    } else {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Call to answer doesn't exist!"));
-    }
-}
-
-//-----------------------------------------------------------------------------
-void Phone::hangUp(const int call_id)
-{
-    Call *call = getCallFromList(call_id);
-
-    if (call) {
-        call->hangUp();
-    }
+    return call;
 }
 
 //-----------------------------------------------------------------------------
 void Phone::hangUpAll()
 {
     api_->hangUpAll();
-    for (int i=0; i < call_list_.size(); i++) {
+    for (int i = 0; i < call_list_.size(); i++) {
         call_list_[i]->setInactive();
     }
 }
 
 //-----------------------------------------------------------------------------
-QString Phone::getCallUserData(const int call_id)
+Call *Phone::getCall(const int call_id)
 {
-    Call *call = getCallFromList(call_id);
-    if (call) {
-        return call->getUserData();
-    }
-    return "";
-}
-
-//-----------------------------------------------------------------------------
-void Phone::setCallUserData(const int call_id, const QString &data)
-{
-    Call *call = getCallFromList(call_id);
-    if (call) {
-        call->setUserData(data);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void Phone::clearCallUserData(const int call_id)
-{
-    Call *call = getCallFromList(call_id);
-    if (call) {
-        call->clearUserData();
-    }
-}
-
-//-----------------------------------------------------------------------------
-bool Phone::addCallToConference(const int call_src, const int call_dest)
-{
-    Call *call = getCallFromList(call_src);
-    Call *dest_call = getCallFromList(call_dest);
-    if (!call || !dest_call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
-        return false;
-    }
-    if (!call->isActive() || !dest_call->isActive()) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
-        return false;
-    }
-    if (!call->addCallToConference(*dest_call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to source!"));
-        return false;
-    }
-    if (!dest_call->addCallToConference(*call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to destination!"));
-        return false;
-    }
-    return true;
-}
-
-//-----------------------------------------------------------------------------
-bool Phone::removeCallFromConference(const int call_src, const int call_dest)
-{
-    Call *call = getCallFromList(call_src);
-    Call *dest_call = getCallFromList(call_dest);
-    if (!call || !dest_call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
-        return false;
-    }
-    if (!call->isActive() || !dest_call->isActive()) {;
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
-        return false;
-    }
-    if (call->removeCallFromConference(*dest_call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from source!"));
-        return false;
-    }
-    if(dest_call->removeCallFromConference(*call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from destination!"));
-        return false;
-    }
-    return true;
-}
-
-//-----------------------------------------------------------------------------
-int Phone::redirectCall(const int call_id, const QString &dest_uri)
-{
-    Call *call = getCallFromList(call_id);
-    if (call) {
-        return call->redirectCall(dest_uri);
-    }
-    return -1;
-}
-
-//-----------------------------------------------------------------------------
-QString Phone::getCallUrl(const int call_id)
-{
-    Call *call = getCallFromList(call_id);
-    if (call) {
-        return call->getCallUrl();
-    }
-    return "";
-}
-
-//-----------------------------------------------------------------------------
-void Phone::getCallInfo(const int call_id, QVariantMap &call_info)
-{
-    Call *call = getCallFromList(call_id);
-    if (call) {
-        call->getCallInfo(call_info);
-    }
-}
-
-//-----------------------------------------------------------------------------
-void Phone::getActiveCallList(QVariantList &call_list)
-{
-    for (int i=0; i < call_list_.size(); ++i) {
-        int id = call_list_[i]->getCallId();
-        if (call_list_[i]->isActive()) {
-            QVariantMap current;
-            current.insert("id",id);
-            getCallInfo(id, current);
-            call_list << current;
+    for (int i = 0; i < call_list_.size(); i++) {
+        if (call_list_[i]->getId() == call_id) {
+            return call_list_[i];
         }
     }
+    return NULL;
+}
+
+//-----------------------------------------------------------------------------
+QVariantList Phone::getActiveCallList() const
+{
+    QVariantList list;
+    for (int i = 0; i < call_list_.size(); ++i) {
+        Call *call = call_list_[i];
+        int id = call->getId();
+        if (call->isActive()) {
+            QVariantMap current;
+            current.insert("id", id);
+            current = call->getInfo();
+            list << current;
+        }
+    }
+    return list;
 }
 
 //-----------------------------------------------------------------------------
@@ -310,7 +181,7 @@ void Phone::muteSound(const bool mute, const int call_id)
     if (call_id == -1) {
         api_->muteSound(mute);
     } else {
-        Call *call = getCallFromList(call_id);
+        Call *call = getCall(call_id);
         if (call) {
             call->muteSound(mute);
         }
@@ -323,7 +194,7 @@ void Phone::muteMicrophone(const bool mute, const int call_id)
     if (call_id == -1) {
         api_->muteMicrophone(mute);
     } else {
-        Call *call = getCallFromList(call_id);
+        Call *call = getCall(call_id);
         if (call) {
             call->muteMicrophone(mute);
         }
@@ -331,9 +202,11 @@ void Phone::muteMicrophone(const bool mute, const int call_id)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::getSignalInformation(QVariantMap &signal_info)
+QVariantMap Phone::getSignalInformation() const
 {
-    api_->getSignalInformation(signal_info);
+    QVariantMap info;
+    api_->getSignalInformation(info);
+    return info;
 }
 
 //-----------------------------------------------------------------------------
@@ -346,7 +219,7 @@ void Phone::unregister()
 void Phone::slotIncomingCall(int call_id, const QString &url, const QString &name)
 {
     Call *call = new Call(this, Call::TYPE_INCOMING);
-    call->setCallId(call_id);
+    call->setId(call_id);
     call->setUrl(url);
     call->setName(name);
 
@@ -356,13 +229,13 @@ void Phone::slotIncomingCall(int call_id, const QString &url, const QString &nam
     }
     js_handler_->incomingCall(*call);
 
-    signalIncomingCall(call->getCallUrl());
+    signalIncomingCall(call->getUrl());
 }
 
 //-----------------------------------------------------------------------------
 void Phone::slotCallState(int call_id, int call_state, int last_status)
 {
-    Call *call = getCallFromList(call_id);
+    Call *call = getCall(call_id);
     if (call) {
         call->setState(call_state);
     }
