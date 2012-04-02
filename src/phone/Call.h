@@ -17,7 +17,10 @@
 #include <QVariantMap>
 #include <QDataStream>
 
-class PhoneApi;
+namespace phone
+{
+
+class Phone;
 
 /**
  * This class handles a specific call.
@@ -56,11 +59,11 @@ public:
 
     /**
      * Constructor
-     * @param phone_api A reference to the phone_api
-     * @param type Which type the call is (where it is created)
+     * @param phone_ Parent Phone
+     * @param type Call type
      * @param status Call status
      */
-    Call(PhoneApi *phone_api, const Type type = TYPE_UNKNOWN,
+    Call(Phone *phone_, const Type type = TYPE_UNKNOWN,
          const Status status = STATUS_UNKNOWN);
 
     /**
@@ -271,7 +274,7 @@ private:
     QDateTime close_time_;
     int duration_;
 
-    PhoneApi *phone_api_;
+    Phone *phone_;
 
     int type_;
     int status_;
@@ -287,7 +290,9 @@ private:
     QString user_data_;
 };
 
-QDataStream &operator<<(QDataStream &out, const Call &call);
-QDataStream &operator>>(QDataStream &in, Call &call);
+} // phone::
+
+QDataStream &operator<<(QDataStream &out, const phone::Call &call);
+QDataStream &operator>>(QDataStream &in, phone::Call &call);
 
 #endif // CALL_INCLUDE_H

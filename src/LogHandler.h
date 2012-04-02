@@ -65,12 +65,11 @@ public:
      */
     void deleteLogFile(const QString &file_name);
 
-public slots:
     /**
      * Get log information to write it into a file and try to send it to webkit
      * @param info The log information data
      */
-    void slotLogData(const LogInfo &info);
+    void logData(const LogInfo &info);
 
 signals:
     /**

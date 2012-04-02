@@ -11,32 +11,38 @@
 
 #include <QFile>
 #include <QDataStream>
-#include "call.h"
-#include "phone_api.h"
-#include "log_info.h"
-#include "log_handler.h"
-#include "javascript_handler.h"
-#include "account.h"
-#include "phone.h"
+#include "../Config.h"
+#include "../LogInfo.h"
+#include "../LogHandler.h"
+#include "../JavascriptHandler.h"
+#include "../Sound.h"
+#include "api/Interface.h"
+#include "Call.h"
+#include "Account.h"
+#include "Phone.h"
+
+namespace phone
+{
 
 //-----------------------------------------------------------------------------
-Phone::Phone(PhoneApi *api) : phone_api_(api)
+Phone::Phone(api::Interface *api) : api_(api)
 {
-    phone_api_->init();
-
-    connect(phone_api_, SIGNAL(signalAccountRegState(const int)),
-            this,       SLOT(accountRegState(const int)));
-    connect(phone_api_, SIGNAL(signalIncomingCall(Call*)),
-            this,       SLOT(slotIncomingCall(Call*)));
-    connect(phone_api_, SIGNAL(signalCallState(int,int,int)),
-            this,       SLOT(slotCallState(int,int,int)));
-    connect(phone_api_, SIGNAL(signalSoundLevel(int)),
-            this,       SLOT(slotSoundLevel(int)));
-
-    connect(phone_api_, SIGNAL(signalMicrophoneLevel(int)),
-            this,       SLOT(slotMicrophoneLevel(int)));
-    connect(phone_api_,                 SIGNAL(signalLogData(const LogInfo&)),
-            &LogHandler::getInstance(), SLOT(slotLogData(const LogInfo&)));
+    connect(api_, SIGNAL(signalAccountRegState(const int)),
+            this, SLOT(slotAccountRegState(const int)));
+    connect(api_, SIGNAL(signalIncomingCall(int, QString, QString)),
+            this, SLOT(slotIncomingCall(int, QString, QString)));
+    connect(api_, SIGNAL(signalCallState(int,int,int)),
+            this, SLOT(slotCallState(int,int,int)));
+    connect(api_, SIGNAL(signalSoundLevel(int)),
+            this, SLOT(slotSoundLevel(int)));
+    connect(api_, SIGNAL(signalMicrophoneLevel(int)),
+            this, SLOT(slotMicrophoneLevel(int)));
+    connect(api_, SIGNAL(signalLog(const LogInfo&)),
+            this, SLOT(slotLogData(const LogInfo&)));
+    connect(api_, SIGNAL(signalRingSound()),
+            this, SLOT(slotRingSound()));
+    connect(api_, SIGNAL(signalStopSound()),
+            this, SLOT(slotStopSound()));
 }
 
 //-----------------------------------------------------------------------------
@@ -53,25 +59,45 @@ Phone::~Phone()
         delete call;
     }
     call_list_.clear();
-    delete phone_api_;
+
+    delete api_;
 }
 
 //-----------------------------------------------------------------------------
-void Phone::setJsHandler(JavascriptHandler *js_handler)
+bool Phone::init()
+{
+    Config &config = Config::getInstance();
+    return api_->init(config.getStunServer());
+}
+
+//-----------------------------------------------------------------------------
+void Phone::setJavascriptHandler(JavascriptHandler *js_handler)
 {
     js_handler_ = js_handler;
 }
 
 //-----------------------------------------------------------------------------
+api::Interface *Phone::getApi()
+{
+    return api_;
+}
+
+//-----------------------------------------------------------------------------
+const QString &Phone::getErrorMessage() const
+{
+    return error_msg_;
+}
+
+//-----------------------------------------------------------------------------
 bool Phone::checkAccountStatus()
 {
-    return phone_api_->checkAccountStatus();
+    return api_->checkAccountStatus();
 }
 
 //-----------------------------------------------------------------------------
 bool Phone::registerUser(const Account &acc)
 {
-    if (phone_api_->registerUser(acc) == -1) {
+    if (api_->registerUser(acc.getUsername(), acc.getPassword(), acc.getHost()) == -1) {
         return false;
     }
     return true;
@@ -80,7 +106,7 @@ bool Phone::registerUser(const Account &acc)
 //-----------------------------------------------------------------------------
 void Phone::getAccountInfo(QVariantMap &account_info)
 {
-    phone_api_->getAccountInfo(account_info);
+    api_->getAccountInfo(account_info);
 }
 
 //-----------------------------------------------------------------------------
@@ -113,7 +139,7 @@ Call *Phone::getCallFromList(const int call_id)
 //-----------------------------------------------------------------------------
 int Phone::makeCall(const QString &url)
 {
-    Call *call = new Call(phone_api_, Call::TYPE_OUTGOING);
+    Call *call = new Call(this, Call::TYPE_OUTGOING);
 
     call->setUrl(url);
 
@@ -136,7 +162,7 @@ void Phone::answerCall(const int call_id)
     if (call) {
         call->answerCall();
     } else {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Call to answer doesn't exist!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Call to answer doesn't exist!"));
     }
 }
 
@@ -150,11 +176,10 @@ void Phone::hangUp(const int call_id)
     }
 }
 
-
 //-----------------------------------------------------------------------------
 void Phone::hangUpAll()
 {
-    phone_api_->hangUpAll();
+    api_->hangUpAll();
     for (int i=0; i < call_list_.size(); i++) {
         call_list_[i]->setInactive();
     }
@@ -194,19 +219,19 @@ bool Phone::addCallToConference(const int call_src, const int call_dest)
     Call *call = getCallFromList(call_src);
     Call *dest_call = getCallFromList(call_dest);
     if (!call || !dest_call) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
         return false;
     }
     if (!call->isActive() || !dest_call->isActive()) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
         return false;
     }
     if (!call->addCallToConference(*dest_call)) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to source!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to source!"));
         return false;
     }
     if (!dest_call->addCallToConference(*call)) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to destination!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to connect to destination!"));
         return false;
     }
     return true;
@@ -218,19 +243,19 @@ bool Phone::removeCallFromConference(const int call_src, const int call_dest)
     Call *call = getCallFromList(call_src);
     Call *dest_call = getCallFromList(call_dest);
     if (!call || !dest_call) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls does NOT exist!"));
         return false;
     }
     if (!call->isActive() || !dest_call->isActive()) {;
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: one of the selected calls just ended!"));
         return false;
     }
     if (call->removeCallFromConference(*dest_call)) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from source!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from source!"));
         return false;
     }
     if(dest_call->removeCallFromConference(*call)) {
-        LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from destination!"));
+        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "phone", 0, "Error: failed to remove from destination!"));
         return false;
     }
     return true;
@@ -283,7 +308,7 @@ void Phone::getActiveCallList(QVariantList &call_list)
 void Phone::muteSound(const bool mute, const int call_id)
 {
     if (call_id == -1) {
-        phone_api_->muteSound(mute);
+        api_->muteSound(mute);
     } else {
         Call *call = getCallFromList(call_id);
         if (call) {
@@ -296,7 +321,7 @@ void Phone::muteSound(const bool mute, const int call_id)
 void Phone::muteMicrophone(const bool mute, const int call_id)
 {
     if (call_id == -1) {
-        phone_api_->muteMicrophone(mute);
+        api_->muteMicrophone(mute);
     } else {
         Call *call = getCallFromList(call_id);
         if (call) {
@@ -308,18 +333,23 @@ void Phone::muteMicrophone(const bool mute, const int call_id)
 //-----------------------------------------------------------------------------
 void Phone::getSignalInformation(QVariantMap &signal_info)
 {
-    phone_api_->getSignalInformation(signal_info);
+    api_->getSignalInformation(signal_info);
 }
 
 //-----------------------------------------------------------------------------
 void Phone::unregister()
 {
-    phone_api_->unregister();
+    api_->unregister();
 }
 
 //-----------------------------------------------------------------------------
-void Phone::slotIncomingCall(Call *call)
+void Phone::slotIncomingCall(int call_id, const QString &url, const QString &name)
 {
+    Call *call = new Call(this, Call::TYPE_INCOMING);
+    call->setCallId(call_id);
+    call->setUrl(url);
+    call->setName(name);
+
     if (!addToCallList(call)) {
         delete call;
         return;
@@ -353,7 +383,30 @@ void Phone::slotMicrophoneLevel(int level)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::accountRegState(const int state)
+void Phone::slotAccountRegState(const int state)
 {
     js_handler_->accountState(state);
 }
+
+//-----------------------------------------------------------------------------
+void Phone::slotLogData(const LogInfo &info)
+{
+    if (info.status_ >= LogInfo::STATUS_ERROR) {
+        error_msg_ = info.msg_;
+    }
+    LogHandler::getInstance().logData(info);
+}
+
+//-----------------------------------------------------------------------------
+void Phone::slotRingSound()
+{
+    Sound::getInstance().startRing();
+}
+
+//-----------------------------------------------------------------------------
+void Phone::slotStopSound()
+{
+    Sound::getInstance().stop();
+}
+
+} // phone::

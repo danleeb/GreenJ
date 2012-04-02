@@ -9,15 +9,19 @@
 **
 ****************************************************************************/
 
-#include "phone_api.h"
-#include "sound.h"
-#include "log_info.h"
-#include "log_handler.h"
-#include "call.h"
+#include "../Sound.h"
+#include "../LogInfo.h"
+#include "../LogHandler.h"
+#include "api/Interface.h"
+#include "Phone.h"
+#include "Call.h"
+
+namespace phone
+{
 
 //-----------------------------------------------------------------------------
-Call::Call(PhoneApi *phone_api, const Type type, const Status status) :
-    phone_api_(phone_api), 
+Call::Call(Phone *phone, const Type type, const Status status) :
+    phone_(phone), 
     type_(type), status_(status), active_(false), 
     call_id_(-1), call_state_(0), media_state_(0), 
     speaker_level_(1.f), mic_level_(1.f), 
@@ -30,7 +34,7 @@ int Call::makeCall()
 {
     Sound::getInstance().startDial();
 
-    int id = phone_api_->makeCall(url_);
+    int id = phone_->getApi()->makeCall(url_);
     active_ = true;
 
     if (id < 0) {
@@ -45,7 +49,7 @@ int Call::makeCall()
 void Call::answerCall() const
 {
     if (call_id_ != -1) {
-        phone_api_->answerCall(call_id_);
+        phone_->getApi()->answerCall(call_id_);
     }
 }
 
@@ -53,7 +57,7 @@ void Call::answerCall() const
 void Call::hangUp()
 {
     if (call_id_ != -1) {
-        phone_api_->hangUp(call_id_);
+        phone_->getApi()->hangUp(call_id_);
     }
     setInactive();
 }
@@ -61,19 +65,19 @@ void Call::hangUp()
 //-----------------------------------------------------------------------------
 bool Call::addCallToConference(const Call &call_dest) const
 {
-    return phone_api_->addCallToConference(call_id_, call_dest.getCallId());
+    return phone_->getApi()->addCallToConference(call_id_, call_dest.getCallId());
 }
 
 //-----------------------------------------------------------------------------
 bool Call::removeCallFromConference(const Call &call_dest) const
 {
-    return phone_api_->removeCallFromConference(call_id_, call_dest.getCallId());
+    return phone_->getApi()->removeCallFromConference(call_id_, call_dest.getCallId());
 }
 
 //-----------------------------------------------------------------------------
 int Call::redirectCall(const QString &dest_uri) const
 {
-    return phone_api_->redirectCall(call_id_, dest_uri);
+    return phone_->getApi()->redirectCall(call_id_, dest_uri);
 }
 
 //-----------------------------------------------------------------------------
@@ -97,8 +101,8 @@ const int Call::getCallId() const
 //-----------------------------------------------------------------------------
 void Call::getCallInfo(QVariantMap &call_info) const
 {
-    if (phone_api_) {
-        phone_api_->getCallInfo(call_id_, call_info);
+    if (phone_) {
+        phone_->getApi()->getCallInfo(call_id_, call_info);
     } else {
         call_info.insert("number", url_);
         call_info.insert("duration", duration_);
@@ -230,7 +234,7 @@ void Call::setActive()
 //-----------------------------------------------------------------------------
 void Call::setInactive()
 {
-    LogHandler::getInstance().slotLogData(LogInfo(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive"));
+    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive"));
 
     active_ = false;
     close_time_ = QDateTime::currentDateTime();
@@ -267,23 +271,15 @@ void Call::setMediaState(const int state)
 //-----------------------------------------------------------------------------
 void Call::muteSound(const bool mute)
 {
-    if (mute) {
-        speaker_level_ = 0.f;
-    } else {
-        speaker_level_ = 1.f;
-    }
-    phone_api_->muteSoundForCall(call_id_, speaker_level_);
+    speaker_level_ = mute ? 0.f : 1.f;
+    phone_->getApi()->muteSound(call_id_, speaker_level_);
 }
 
 //-----------------------------------------------------------------------------
 void Call::muteMicrophone(const bool mute)
 {
-    if (mute) {
-        mic_level_ = 0.f;
-    } else {
-        mic_level_ = 1.f;
-    }
-    phone_api_->muteMicrophoneForCall(call_id_, mic_level_);
+    mic_level_ = mute ? 0.f : 1.f;
+    phone_->getApi()->muteMicrophone(call_id_, mic_level_);
 }
 
 //-----------------------------------------------------------------------------
@@ -293,10 +289,12 @@ void Call::getSignalInformation(QVariantMap &signal_info) const
     signal_info.insert("micro", mic_level_);
 }
 
+} // phone::
+
 //-----------------------------------------------------------------------------
 // OVERLOADING QDataStream
 //-----------------------------------------------------------------------------
-QDataStream &operator<<(QDataStream &out, const Call &call)
+QDataStream &operator<<(QDataStream &out, const phone::Call &call)
 {
     out << call.getType() << call.getCallId() << call.getCallUrl()
         << call.getStatus() << call.getStartTime() << call.getAcceptTime()
@@ -305,7 +303,7 @@ QDataStream &operator<<(QDataStream &out, const Call &call)
 }
 
 //-----------------------------------------------------------------------------
-QDataStream &operator>>(QDataStream &in, Call &call)
+QDataStream &operator>>(QDataStream &in, phone::Call &call)
 {
     int type;
     int call_id;
@@ -318,7 +316,7 @@ QDataStream &operator>>(QDataStream &in, Call &call)
     QString user_data;
     in >> type >> call_id >> call_url >> status >> start_time >> accept_time
        >> close_time >> duration >> user_data;
-    call = Call(0, (Call::Type)type, (Call::Status)status);
+    call = phone::Call(0, (phone::Call::Type)type, (phone::Call::Status)status);
     call.setCallId(call_id);
     call.setUrl(call_url);
     call.setUserData(user_data);

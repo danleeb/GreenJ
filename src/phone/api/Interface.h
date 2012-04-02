@@ -17,23 +17,26 @@
 #include <QVariantMap>
 
 class LogInfo;
-class Account;
-class Call;
+
+namespace phone
+{
+    namespace api
+    {
 
 /**
- * Abstract class for phone implementations.
+ * Interface for phone implementations.
  */
-class PhoneApi : public QObject
+class Interface : public QObject
 {
     Q_OBJECT
 
 public:
-    virtual ~PhoneApi() {}
+    virtual ~Interface() {}
 
     /**
      * Initializing the phone
      */
-    virtual void init() = 0;
+    virtual bool init(const QString &stun) = 0;
 
     /**
      * Checks if account is valid
@@ -46,7 +49,7 @@ public:
      * @param acc Account
      * @return true, if registration was successful
      */
-    virtual int registerUser(const Account &acc) = 0;
+    virtual int registerUser(const QString &user, const QString &password, const QString &domain) = 0;
 
     /**
      * Get information about the account
@@ -120,7 +123,7 @@ public:
      * @param call_id ID of a specific call
      * @param mute true, if call should be muted
      */
-    virtual void muteSoundForCall(const int call_id, const float mute) = 0;
+    virtual void muteSound(const int call_id, const float mute) = 0;
 
     /**
      * Switch microphone on/off
@@ -133,7 +136,7 @@ public:
      * @param call_id ID of a specific call
      * @param mute true, if microphone should be muted
      */
-    virtual void muteMicrophoneForCall(const int call_id, const float mute) = 0;
+    virtual void muteMicrophone(const int call_id, const float mute) = 0;
 
     /**
      * Get information about signal levels of sound and microphone
@@ -158,7 +161,7 @@ signals:
      * Send signal on incoming calls
      * @param call Incoming call object
      */
-    void signalIncomingCall(Call *call);
+    void signalIncomingCall(int call_id, const QString &url, const QString &name);
 
     /**
      * Send signal on changing call state
@@ -172,7 +175,7 @@ signals:
      * Send signal to handle log data
      * @param LogInfo The log data
      */
-    void signalLogData(const LogInfo&);
+    void signalLog(const LogInfo&);
 
     /**
      * Send a signal when the sound signal level changed
@@ -185,6 +188,18 @@ signals:
      * @param level New microphone signal level (0...off, 255...full)
      */
     void signalMicrophoneLevel(int level);
+    
+    /**
+     * Send signal to stop sounds
+     */
+    void signalRingSound();
+
+    /**
+     * Send signal to stop sounds
+     */
+    void signalStopSound();
 };
+
+}} // phone::api::
 
 #endif // PHONEAPI_INCLUDE_H

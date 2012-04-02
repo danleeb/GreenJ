@@ -14,26 +14,28 @@
 
 #include <pjsua-lib/pjsua.h>
 #include <QVector>
-#include "phone_api.h"
+#include "Interface.h"
 
-class Gui;
-class Phone;
+namespace phone
+{
+    class Phone;
+
+    namespace api
+    {
 
 /**
  * This class is an implementation of PhoneApi for sip-Protocol
  */
-class SipPhone : public PhoneApi
+class Sip : public Interface
 {
-    Q_OBJECT
-
 public:
-    SipPhone();
-    ~SipPhone();
+    Sip();
+    ~Sip();
 
-    virtual void init();
+    virtual bool init(const QString &stun);
 
     virtual bool checkAccountStatus();
-    virtual int registerUser(const Account &acc);
+    virtual int registerUser(const QString &user, const QString &password, const QString &domain);
     virtual void getAccountInfo(QVariantMap &account_info);
 
     virtual int makeCall(const QString &url);
@@ -49,9 +51,9 @@ public:
     virtual void getCallInfo(const int call_id, QVariantMap &call_info);
 
     virtual void muteSound(const bool mute);
-    virtual void muteSoundForCall(const int call_id, const float mute);
+    virtual void muteSound(const int call_id, const float mute);
     virtual void muteMicrophone(const bool mute);
-    virtual void muteMicrophoneForCall(const int call_id, const float mute);
+    virtual void muteMicrophone(const int call_id, const float mute);
     virtual void getSignalInformation(QVariantMap &signal_info);
 
     virtual void unregister();
@@ -67,7 +69,7 @@ private:
     /**
      * Pointer to the instance for using static methods
      */
-    static SipPhone *self_;
+    static Sip *self_;
 
     float speaker_level_;
     float mic_level_;
@@ -75,7 +77,7 @@ private:
     /**
      * AccountID we got from our registration
      */
-    pjsua_acc_id acc_id_;
+    pjsua_acc_id account_id_;
 
     /**
      * Stop ringing
@@ -111,5 +113,7 @@ private:
      */
     static void regStateCb(pjsua_acc_id acc);
 };
+
+}} // phone::api::
 
 #endif // SIPPHONE_INCLUDE_H

@@ -31,7 +31,7 @@ public:
         STATUS_MESSAGE,
         STATUS_WARNING,
         STATUS_ERROR,
-        STATUS_FATAL_ERROR
+        STATUS_FATAL
     };
 
     /**

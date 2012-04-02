@@ -12,27 +12,27 @@
 #include <QApplication>
 #include <QWebFrame>
 #include <QWebInspector>
-#include "config.h"
-#include "log_info.h"
-#include "log_handler.h"
-#include "sip_phone.h"
-#include "web_page.h"
-#include "gui.h"
+#include "Config.h"
+#include "LogInfo.h"
+#include "LogHandler.h"
+#include "phone/phone.h"
+#include "WebPage.h"
+#include "Gui.h"
 
 //-----------------------------------------------------------------------------
-Gui::Gui(QWidget *parent, Qt::WFlags flags) :
+Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
     QMainWindow(parent, flags),
-    phone_(new SipPhone),
+    phone_(phone),
     print_handler_(*this)
 {
     qRegisterMetaType<LogInfo>("LogInfo");
     ui_.setupUi(this);
-    
+
     Config &config = Config::getInstance();
 
     js_handler_ = new JavascriptHandler(phone_, ui_.webview);
 
-    phone_.setJsHandler(js_handler_);
+    phone_.setJavascriptHandler(js_handler_);
 
     ui_.webview->setPage(new WebPage());
     //ui_.webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);

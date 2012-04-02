@@ -18,9 +18,12 @@
 #include <QUrl>
 #include <QWebView>
 
-class Phone;
 class LogInfo;
-class Call;
+
+namespace phone {
+    class Phone;
+    class Call;
+}
 
 /**
  * This class is the bridge between Qt and website-javascript
@@ -35,7 +38,7 @@ public:
      * @param phone To access the phone methods
      * @param web_view WebView needed to call the JS functions
      */
-    JavascriptHandler(Phone &phone, QWebView *web_view);
+    JavascriptHandler(phone::Phone &phone, QWebView *web_view);
 
     /**
      * Send current account state
@@ -55,7 +58,7 @@ public:
      * Notify about an incoming call
      * @param call
      */
-    void incomingCall(const Call &call) const;
+    void incomingCall(const phone::Call &call) const;
 
     /**
      * Request the url of a page to print
@@ -279,7 +282,7 @@ public slots:
     void deleteLogFile(const QString &file_name) const;
 
 private:
-    Phone &phone_;
+    phone::Phone &phone_;
     QWebView *web_view_;
 
     QString js_callback_handler_;

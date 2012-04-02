@@ -9,10 +9,13 @@
 **
 ****************************************************************************/
 
-#include "account.h"
+#include "Account.h"
+
+namespace phone
+{
 
 //-----------------------------------------------------------------------------
-Account::Account() : user_name_(""), password_(""), host_("")
+Account::Account() : username_(""), password_(""), host_("")
 {
 }
 
@@ -22,9 +25,9 @@ Account::~Account()
 }
 
 //-----------------------------------------------------------------------------
-void Account::setUserName(const QString &user_name)
+void Account::setUsername(const QString &username)
 {
-  user_name_ = user_name;
+  username_ = username;
 }
 
 //-----------------------------------------------------------------------------
@@ -40,9 +43,9 @@ void Account::setHost(const QString &host)
 }
 
 //-----------------------------------------------------------------------------
-const QString &Account::getUserName() const
+const QString &Account::getUsername() const
 {
-    return user_name_;
+    return username_;
 }
 
 //-----------------------------------------------------------------------------
@@ -56,3 +59,5 @@ const QString &Account::getHost() const
 {
     return host_;
 }
+
+} // phone::

@@ -16,10 +16,18 @@
 #include <QVector>
 #include <QVariantMap>
 
-class PhoneApi;
-class Account;
-class Call;
+class Config;
 class JavascriptHandler;
+class LogInfo;
+
+namespace phone
+{
+    class Account;
+    class Call;
+
+    namespace api {
+        class Interface;
+    }
 
 /**
  * Base phone class
@@ -33,16 +41,33 @@ public:
      * Constructor
      * @param api Pointer to the phone API
      */
-    Phone(PhoneApi *api);
+    Phone(api::Interface *api);
+
     /**
      * Destructor
      */
     virtual ~Phone();
 
     /**
-     * Set the JavaScript handler object
+     * Initialize the phone
      */
-    void setJsHandler(JavascriptHandler *js_handler);
+    bool init();
+    
+    /**
+     * Set the javascript handler object
+     */
+    void setJavascriptHandler(JavascriptHandler *js_handler);
+
+    /**
+     * @return Phone API implementation
+     */
+    api::Interface *getApi();
+
+    /**
+     * Return last error message
+     * @return error message
+     */
+    const QString &getErrorMessage() const;
 
     /**
      * Checks if account is valid
@@ -182,7 +207,7 @@ public slots:
      * This slot gets called on incoming calls
      * @param call Call*, the call handler class
      */
-    void slotIncomingCall(Call *call);
+    void slotIncomingCall(int call_id, const QString &url, const QString &name);
 
     /**
      * This slot gets called when the state of a call has changed
@@ -208,19 +233,39 @@ public slots:
      * This slot gets called when the account registration state has changed
      * @param state The new account state
      */
-    void accountRegState(const int state);
+    void slotAccountRegState(const int state);
+
+    /**
+     * Slot to log messages
+     * @param info
+     */
+    void slotLogData(const LogInfo &info);
+
+    /**
+     * Slot to start ring sound
+     */
+    void slotRingSound();
+    
+    /**
+     * Slot to stop sounds
+     */
+    void slotStopSound();
 
 signals:
     void signalIncomingCall(const QString &call);
 
 private:
-    PhoneApi *phone_api_;
+    api::Interface *api_;
     JavascriptHandler *js_handler_;
 
     QVector<Call*> call_list_;
 
+    QString error_msg_;
+
     bool addToCallList(Call *call);
     Call *getCallFromList(const int call_id);
 };
+
+} // phone::
 
 #endif // PHONE_INCLUDE_H

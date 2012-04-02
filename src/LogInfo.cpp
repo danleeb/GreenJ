@@ -9,10 +9,10 @@
 **
 ****************************************************************************/
 
-#include "log_info.h"
+#include "LogInfo.h"
 
 const QString LogInfo::STATUS_[] = { "DEBUG", "MESSAGE", "WARNING",
-                                     "ERROR", "FATALERROR" };
+                                     "ERROR", "FATAL" };
 
 //-----------------------------------------------------------------------------
 LogInfo::LogInfo(const Status status, const QString &domain, 

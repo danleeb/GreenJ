@@ -11,8 +11,8 @@
 
 #include <QPrinter>
 #include <QPrintPreviewDialog>
-#include "gui.h"
-#include "print_handler.h"
+#include "Gui.h"
+#include "PrintHandler.h"
 
 //-----------------------------------------------------------------------------
 PrintHandler::PrintHandler(Gui &gui) : gui_(gui)

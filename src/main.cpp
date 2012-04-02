@@ -10,7 +10,9 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
-#include "gui.h"
+#include "phone/Phone.h"
+#include "phone/api/Sip.h"
+#include "Gui.h"
 
 //-----------------------------------------------------------------------------
 int main(int argc, char *argv[])
@@ -18,8 +20,19 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":images/icon.xpm"));
 
-    Gui w;
-    w.show();
-
-    return a.exec();
+    phone::Phone phone(new phone::api::Sip());
+    if (phone.init()) {
+        Gui window(phone);
+        window.show();
+        return a.exec();
+    } else {
+        QMessageBox msgBox;
+        msgBox.setText("Initialization failed.");
+        msgBox.setInformativeText(phone.getErrorMessage());
+#ifdef DEBUG
+        msgBox.setDetailedText("See log files...");
+#endif
+        msgBox.exec();
+    }
+    return 1;
 }

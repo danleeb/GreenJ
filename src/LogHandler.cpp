@@ -12,9 +12,9 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QDir>
-#include "log_info.h"
-#include "config.h"
-#include "log_handler.h"
+#include "LogInfo.h"
+#include "Config.h"
+#include "LogHandler.h"
 
 //-----------------------------------------------------------------------------
 LogHandler::LogHandler() : 
@@ -98,7 +98,7 @@ void LogHandler::deleteLogFile(const QString &file_name)
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::slotLogData(const LogInfo &info)
+void LogHandler::logData(const LogInfo &info)
 {
     if (info.status_ >= Config::getInstance().getLogLevel()) {
         writeFile(info.toString());

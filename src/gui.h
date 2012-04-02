@@ -19,9 +19,8 @@
 #include <QMenu>
 #include <QShortcut>
 #include "ui_gui.h"
-#include "phone.h"
-#include "javascript_handler.h"
-#include "print_handler.h"
+#include "JavascriptHandler.h"
+#include "PrintHandler.h"
 
 /**
  * This class represents the main window of the application.
@@ -38,7 +37,7 @@ public:
      * @param parent The parent of the window, defaults to null
      * @param flags Flags for creating the window, default 0
      */
-    Gui(QWidget *parent = 0, Qt::WFlags flags = 0);
+    Gui(phone::Phone &phone, QWidget *parent = 0, Qt::WFlags flags = 0);
 
     /**
      * Destructor
@@ -82,7 +81,7 @@ private slots:
 private:
     Ui::MainWindow ui_;
 
-    Phone phone_;
+    phone::Phone &phone_;
 
     JavascriptHandler *js_handler_;
     PrintHandler print_handler_;

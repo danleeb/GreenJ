@@ -14,6 +14,9 @@
 
 #include <QString>
 
+namespace phone
+{
+
 /**
  * This class stores account data used for logging into the server.
  */
@@ -31,18 +34,20 @@ public:
     virtual ~Account();
 
     // Setters/Getters
-    void setUserName(const QString &user_name);
+    void setUsername(const QString &username);
     void setPassword(const QString &password);
     void setHost(const QString &host);
 
-    const QString &getUserName() const;
+    const QString &getUsername() const;
     const QString &getPassword() const;
     const QString &getHost() const;
 
 private:
-    QString user_name_;
+    QString username_;
     QString password_;
     QString host_;
 };
+
+} // phone::
 
 #endif // ACCOUNT_INCLUDE_H
