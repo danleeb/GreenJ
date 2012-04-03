@@ -32,11 +32,6 @@ class Interface : public QObject
 
 public:
     /**
-     * Destructor
-     */
-    virtual ~Interface() {};
-
-    /**
      * Initializing the phone
      */
     virtual bool init(unsigned int port, const QString &stun) = 0;
