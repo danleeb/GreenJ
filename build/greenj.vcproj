@@ -286,14 +286,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\src\LogInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\LogInfo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\main.cpp"
 				>
 			</File>

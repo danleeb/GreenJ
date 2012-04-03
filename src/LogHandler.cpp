@@ -20,10 +20,12 @@
 LogHandler::LogHandler() : 
     file_("log-" + QDateTime::currentDateTime().toString("MM-yyyy") + ".log")
 {
+    level_ = Config::getInstance().getApplicationLogLevel();
+
     QDir current(".");
     QStringList filters;
     filters << "*.log";
-    log_list_ << current.entryList(filters);
+    file_list_ << current.entryList(filters);
 
     QString msg("========== ");
     msg.append(QDateTime::currentDateTime().toString("ddd dd.MM.yyyy hh:mm:ss"));
@@ -48,29 +50,22 @@ LogHandler &LogHandler::getInstance()
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::logFromJs(const LogInfo &info)
+void LogHandler::setLevel(const uint level)
 {
-    if (info.status_ >= Config::getInstance().getLogLevel()) {
-        writeFile(info.toString());
-    }
+    level_ = level;
+    Config::getInstance().setLogLevel(level);
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::setLogLevel(const unsigned int log_level)
+const QStringList &LogHandler::getFileList() const
 {
-    Config::getInstance().setLogLevel(log_level);
+    return file_list_;
 }
 
 //-----------------------------------------------------------------------------
-const QStringList &LogHandler::getLogFileList() const
+QString LogHandler::getFileContent(const QString &file_name) const
 {
-    return log_list_;
-}
-
-//-----------------------------------------------------------------------------
-QString LogHandler::getLogFileContent(const QString &file_name) const
-{
-    if (log_list_.contains(file_name)) {
+    if (file_list_.contains(file_name)) {
         QFile log_file(file_name);
         if (!log_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             return "";
@@ -88,22 +83,30 @@ QString LogHandler::getLogFileContent(const QString &file_name) const
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::deleteLogFile(const QString &file_name)
+void LogHandler::deleteFile(const QString &file_name)
 {
-    int index = log_list_.indexOf(file_name);
+    int index = file_list_.indexOf(file_name);
     if (index != -1) {
-        log_list_.removeAt(index);
+        file_list_.removeAt(index);
         QFile::remove(file_name);
     }
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::logData(const LogInfo &info)
+void LogHandler::log(const LogInfo &info, bool signal)
 {
-    if (info.status_ >= Config::getInstance().getLogLevel()) {
+    if (info.status_ >= level_) {
         writeFile(info.toString());
-        signalLogMessage(info);
+        if (signal) {
+            signalLogMessage(info);
+        }
     }
+}
+
+//-----------------------------------------------------------------------------
+void LogHandler::logFromJs(const LogInfo &info)
+{
+    log(info, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -119,4 +122,34 @@ void LogHandler::writeFile(const QString &msg)
     }
 
     lock_.unlock();
+}
+
+//-----------------------------------------------------------------------------
+// LogInfo
+
+const QString LogInfo::STATUS_[] = { "DEBUG", "MESSAGE", "WARNING",
+                                     "ERROR", "FATAL" };
+
+//-----------------------------------------------------------------------------
+LogInfo::LogInfo(const Status status, const QString &domain, 
+                 const int code, const QString &msg) : 
+    status_(status), domain_(domain), code_(code), msg_(msg), 
+    time_(QDateTime::currentDateTime())
+{
+}
+
+//-----------------------------------------------------------------------------
+const QString &LogInfo::getStatusString() const
+{
+    return STATUS_[status_];
+}
+
+//-----------------------------------------------------------------------------
+QString LogInfo::toString() const
+{
+    return time_.toString("hh:mm:ss") + " [" 
+         + getStatusString() + "] " 
+         + domain_ + ": [" 
+         + QString::number(code_) + "] " 
+         + msg_ + "\n";
 }

@@ -10,7 +10,6 @@
 ****************************************************************************/
 
 #include "../Sound.h"
-#include "../LogInfo.h"
 #include "../LogHandler.h"
 #include "api/Interface.h"
 #include "Phone.h"
@@ -227,7 +226,7 @@ void Call::setActive()
 //-----------------------------------------------------------------------------
 void Call::setInactive()
 {
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive"));
 
     active_ = false;
     close_time_ = QDateTime::currentDateTime();

@@ -18,12 +18,12 @@ Sound::Sound() : ring_(0), dial_(0)
 {
     Config &config = Config::getInstance();
 
-    if (QFile::exists(config.getRingSoundFilename())) {
-        ring_ = new QSound(config.getRingSoundFilename());
+    if (QFile::exists(config.getSoundRingfile())) {
+        ring_ = new QSound(config.getSoundRingfile());
         ring_->setLoops(-1);
     }
-    if (QFile::exists(config.getDialSoundFilename())) {
-        dial_ = new QSound(config.getDialSoundFilename());
+    if (QFile::exists(config.getSoundDialfile())) {
+        dial_ = new QSound(config.getSoundDialfile());
         dial_->setLoops(-1);
     }
 }

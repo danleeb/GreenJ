@@ -60,7 +60,7 @@ Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
     connect(&phone_, SIGNAL(signalIncomingCall(const QString&)),
             this,    SLOT(slotAlertIncomingCall(const QString&)));
 
-    QUrl server_url = config.getWebpageUrl();
+    QUrl server_url = config.getBrowserUrl();
     if (server_url.isRelative()) {
         QFileInfo fileinfo = QFileInfo(server_url.toString());
         if (fileinfo.exists()) {
@@ -153,7 +153,7 @@ void Gui::slotAlertIncomingCall(const QString &url)
 //-----------------------------------------------------------------------------
 void Gui::slotUpdateWebPage()
 {
-    const QUrl &server_url = Config::getInstance().getWebpageUrl();
+    const QUrl &server_url = Config::getInstance().getBrowserUrl();
     if (!server_url.isEmpty()) {
         ui_.webview->setUrl(server_url);
     }
@@ -205,7 +205,7 @@ void Gui::createShortcuts()
 void Gui::readSettings()
 {
     Config &config = Config::getInstance();
-    QSettings settings(config.getAppDeveloper(), config.getAppName());
+    QSettings settings(config.getApplicationDeveloper(), config.getApplicationName());
 
     settings.beginGroup("GuiMainWindow");
     resize(settings.value("size", QSize(800, 600)).toSize());
@@ -213,14 +213,14 @@ void Gui::readSettings()
     setWindowState((Qt::WindowStates)settings.value("state", QVariant(Qt::WindowMaximized)).toInt());
     settings.endGroup();
 
-    setWindowTitle(config.getAppName());
+    setWindowTitle(config.getApplicationName());
 }
 
 //-----------------------------------------------------------------------------
 void Gui::writeSettings() const
 {
     Config &config = Config::getInstance();
-    QSettings settings(config.getAppDeveloper(), config.getAppName());
+    QSettings settings(config.getApplicationDeveloper(), config.getApplicationName());
     
     settings.beginGroup("GuiMainWindow");
     if (!isFullScreen()) {

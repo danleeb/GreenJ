@@ -16,7 +16,6 @@
 #include <QVector>
 #include <QVariantMap>
 
-class Config;
 class JavascriptHandler;
 class LogInfo;
 
@@ -30,6 +29,15 @@ namespace phone
     }
 
 /**
+ * Phone settings
+ */
+struct Settings
+{
+    unsigned int port_;
+    QString stun_server_;
+};
+
+/**
  * Base phone class
  */
 class Phone : public QObject
@@ -37,6 +45,8 @@ class Phone : public QObject
     Q_OBJECT
 
 public:
+    static const QString ERROR_FILE;
+
     /**
      * Constructor
      * @param api Pointer to the phone API
@@ -51,7 +61,7 @@ public:
     /**
      * Initialize the phone
      */
-    bool init();
+    bool init(const Settings &settings);
     
     /**
      * Set the javascript handler object
@@ -73,7 +83,7 @@ public:
      * Checks if account is valid
      * @return true, if account is valid
      */
-    bool checkAccountStatus();
+    bool checkAccountStatus() const;
 
     /**
      * Registers the account
@@ -86,7 +96,7 @@ public:
      * Get information about the account
      * @return Map with account information
      */
-    QVariantMap getAccountInfo();
+    QVariantMap getAccountInfo() const;
 
     /**
      * Starting a call to the given address
@@ -194,9 +204,7 @@ signals:
 private:
     api::Interface *api_;
     JavascriptHandler *js_handler_;
-
-    QVector<Call*> call_list_;
-
+    QVector<Call*> calls_;
     QString error_msg_;
 
     bool addToCallList(Call *call);

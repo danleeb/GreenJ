@@ -27,66 +27,62 @@ public:
      * @return Instance
      */
     static Config &getInstance();
-
+    
     /**
-     * Get url of the webpage 
-     * @return webpage url
-     */
-    const QUrl &getWebpageUrl() const;
-
-    /**
-     * Get address and port of the stun server
-     * @return address of the stun server
-     */
-    const QString &getStunServer() const;
-
-    /**
-     * Get filename of ringing sound
-     * @return ring-filename
-     */
-    const QString &getRingSoundFilename() const;
-
-    /**
-     * Get filename of dial sound
-     * @return dial-filename
-     */
-    const QString &getDialSoundFilename() const;
-
-    /**
-     * Get stored log level
-     * @return log level
-     */
-    unsigned int getLogLevel() const;
-
-    /**
-     * Get config version
      * @return config version
      */
-    int getConfigVersion();
+    const int getConfigVersion() const;
 
     /**
-     * Get application version
      * @return Appication version as a string
      */
-    QString getAppVersion();
+    const QString getApplicationVersion() const;
 
     /**
-     * Get name of application
      * @return application name
      */
-    QString getAppName();
+    const QString getApplicationName() const;
 
     /**
-     * Get name of the developer
      * @return developer name
      */
-    QString getAppDeveloper();
+    const QString getApplicationDeveloper() const;
+
+    /**
+     * @return log level
+     */
+    const uint getApplicationLogLevel() const;
+
+    /**
+     * @return webpage url (browser startsite)
+     */
+    const QUrl getBrowserUrl() const;
+
+    /**
+     * @return phone port
+     */
+    const uint getPhonePort() const;
+
+    /**
+     * @return address and port of the stun server
+     */
+    const QString getPhoneStunServer() const;
+
+    /**
+     * @return ring-filename
+     */
+    const QString getSoundRingfile() const;
+
+    /**
+     * @return dial-filename
+     */
+    const QString getSoundDialfile() const;
 
     /**
      * Set log level
      * @param val new log level
      */
-    void setLogLevel(const unsigned val);
+    void setLogLevel(const uint val);
 
     /**
      * Get data of an option
@@ -103,14 +99,9 @@ public:
     void setOption(const QString &name, const QVariant &option);
     
 private:
-    int log_level_;
+    static const QString SETTINGS_FILE;
 
     QString file_name_;
-    QUrl url_;
-    QString stun_;
-    QString sound_file_name_;
-    QString sound_dial_file_name_;
-
     QSettings settings_;
 
     /**
@@ -119,8 +110,13 @@ private:
      * default data
      */
     Config();
-    Config(const Config&);
+    Config(const Config &original);
     virtual ~Config();
+
+    /**
+     * Set default configuration settings
+     */
+    void setDefaults();
 };
 
 #endif // CONFIG_INCLUDE_H

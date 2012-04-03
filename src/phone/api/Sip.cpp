@@ -10,7 +10,7 @@
 ****************************************************************************/
 
 #include <QTextDocument>
-#include "../../LogInfo.h"
+#include "../../LogHandler.h"
 #include "../Phone.h"
 #include "Sip.h"
 
