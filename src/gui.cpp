@@ -28,10 +28,7 @@ Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
     qRegisterMetaType<LogInfo>("LogInfo");
     ui_.setupUi(this);
 
-    Config &config = Config::getInstance();
-
-    js_handler_ = new JavascriptHandler(phone_, ui_.webview);
-
+    js_handler_ = new JavascriptHandler(ui_.webview, phone_);
     phone_.setJavascriptHandler(js_handler_);
 
     ui_.webview->setPage(new WebPage());
@@ -60,7 +57,7 @@ Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
     connect(&phone_, SIGNAL(signalIncomingCall(const QString&)),
             this,    SLOT(slotAlertIncomingCall(const QString&)));
 
-    QUrl server_url = config.getBrowserUrl();
+    QUrl server_url = Config::getInstance().getBrowserUrl();
     if (server_url.isRelative()) {
         QFileInfo fileinfo = QFileInfo(server_url.toString());
         if (fileinfo.exists()) {

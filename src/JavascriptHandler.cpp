@@ -24,8 +24,8 @@ using phone::Call;
 using phone::Account;
 
 //-----------------------------------------------------------------------------
-JavascriptHandler::JavascriptHandler(Phone &phone, QWebView *web_view) :
-    phone_(phone), web_view_(web_view), js_callback_handler_("")
+JavascriptHandler::JavascriptHandler(QWebView *web_view, Phone &phone) :
+    web_view_(web_view), phone_(phone), js_callback_handler_("")
 {
 }
 
@@ -346,18 +346,17 @@ void JavascriptHandler::setOption(const QString &name, const QVariant &option)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::printPage(const QString &url_str)
 {
-    QUrl url(url_str);
-    signalPrintPage(url);
+    signalPrintPage(QUrl(url_str));
 }
 
 //-----------------------------------------------------------------------------
 bool JavascriptHandler::sendLogMessage(const QVariantMap &log) const
 {
-    QVariant time = log["time"];
+    QVariant time   = log["time"];
     QVariant status = log["status"];
     QVariant domain = log["domain"];
-    QVariant code = log["code"];
-    QVariant msg = log["message"];
+    QVariant code   = log["code"];
+    QVariant msg    = log["message"];
 
     if (!time.convert(QVariant::String) || !status.convert(QVariant::UInt)
         || !domain.convert(QVariant::String) || !code.convert(QVariant::Int)

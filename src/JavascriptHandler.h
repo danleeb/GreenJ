@@ -35,10 +35,10 @@ class JavascriptHandler : public QObject
 public:
     /**
      * Constructor
-     * @param phone To access the phone methods
      * @param web_view WebView needed to call the JS functions
+     * @param phone To access the phone methods
      */
-    JavascriptHandler(phone::Phone &phone, QWebView *web_view);
+    JavascriptHandler(QWebView *web_view, phone::Phone &phone);
 
     /**
      * Send current account state
@@ -282,8 +282,8 @@ public slots:
     void deleteLogFile(const QString &file_name) const;
 
 private:
-    phone::Phone &phone_;
     QWebView *web_view_;
+    phone::Phone &phone_;
 
     QString js_callback_handler_;
 
