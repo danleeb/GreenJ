@@ -55,6 +55,7 @@ public:
 
     /**
      * Destructor
+     * Delete calls and api
      */
     virtual ~Phone();
 
@@ -144,8 +145,7 @@ public:
     QVariantMap getSignalInformation() const;
 
     /**
-     * Hangs up all active calls, unregisters the account
-     * and shuts down the phone
+     * Hangup all active calls and unregister account
      */
     void unregister();
 

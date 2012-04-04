@@ -53,24 +53,20 @@ Phone::~Phone()
     QDataStream out(&file);
     for (int i = 0; i < calls_.size(); i++) {
         Call *call = calls_[i];
-        if (call) {
-            if (call->isActive()) {
-                out << *call;
-            }
-            delete call;
+        if (call && call->isActive()) {
+            out << *call;
         }
+        delete call;
     }
     calls_.clear();
 
-    if (api_) {
-        delete api_;
-    }
+    delete api_;
 }
 
 //-----------------------------------------------------------------------------
 bool Phone::init(const Settings &settings)
 {
-    return api_->init(settings.port_, settings.stun_server_);
+    return api_->init(settings);
 }
 
 //-----------------------------------------------------------------------------
@@ -136,7 +132,7 @@ Call *Phone::makeCall(const QString &url)
     Call *call = new Call(this, Call::TYPE_OUTGOING);
     if (call->makeCall(url) < 0 || !addToCallList(call)) {
         delete call;
-        return NULL;
+        call = NULL;
     }
     return call;
 }
