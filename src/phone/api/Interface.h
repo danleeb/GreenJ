@@ -20,6 +20,8 @@ class LogInfo;
 
 namespace phone
 {
+    class Settings;
+
     namespace api
     {
 
@@ -34,7 +36,7 @@ public:
     /**
      * Initializing the phone
      */
-    virtual bool init(unsigned int port, const QString &stun) = 0;
+    virtual bool init(const Settings &settings) = 0;
 
     /**
      * Registers the account

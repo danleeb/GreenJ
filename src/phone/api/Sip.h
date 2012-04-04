@@ -19,6 +19,7 @@
 namespace phone
 {
     class Phone;
+    class Settings;
 
     namespace api
     {
@@ -32,7 +33,7 @@ public:
     Sip();
     ~Sip();
 
-    virtual bool init(unsigned int port, const QString &stun);
+    virtual bool init(const Settings &settings);
 
     virtual int registerUser(const QString &user, const QString &password, const QString &domain);
     virtual bool checkAccountStatus();

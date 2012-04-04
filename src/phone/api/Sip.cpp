@@ -34,7 +34,7 @@ Sip::~Sip()
 }
 
 //-----------------------------------------------------------------------------
-bool Sip::init(unsigned int port, const QString &stun)
+bool Sip::init(const Settings &settings)
 {
     // Create pjsua first
     pj_status_t status = pjsua_create();
@@ -44,12 +44,12 @@ bool Sip::init(unsigned int port, const QString &stun)
     }
 
     // Init pjsua
-    if (!_initPjsua(stun)) {
+    if (!_initPjsua(settings.stun_server_)) {
         return false;
     }
 
     // Add UDP transport
-    if (!_addTransport(PJSIP_TRANSPORT_UDP, port)) {
+    if (!_addTransport(PJSIP_TRANSPORT_UDP, settings.port_)) {
         return false;
     }
     
