@@ -58,15 +58,10 @@ public:
      */
     const QUrl getBrowserUrl() const;
 
-    /**
-     * @return phone port
-     */
     const uint getPhonePort() const;
-
-    /**
-     * @return address and port of the stun server
-     */
     const QString getPhoneStunServer() const;
+    const float getPhoneSoundLevel() const;
+    const float getPhoneMicroLevel() const;
 
     /**
      * @return ring-filename

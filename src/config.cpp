@@ -55,6 +55,8 @@ void Config::setDefaults()
     settings_.beginGroup("phone");
     settings_.setValue("port", 5060);
     settings_.setValue("stun_server", "");
+    settings_.setValue("sound_level", 1.f);
+    settings_.setValue("micro_level", 1.f);
     settings_.endGroup();
 }
 
@@ -92,7 +94,7 @@ const QString Config::getApplicationDeveloper() const
 //-----------------------------------------------------------------------------
 const uint Config::getApplicationLogLevel() const
 {
-    return settings_.value("application/log_level").toUInt();
+    return settings_.value("application/log_level", QVariant(LogInfo::STATUS_WARNING)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
@@ -104,25 +106,37 @@ const QUrl Config::getBrowserUrl() const
 //-----------------------------------------------------------------------------
 const uint Config::getPhonePort() const
 {
-    return settings_.value("phone/port").toUInt();
+    return settings_.value("phone/port", QVariant(5060)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
 const QString Config::getPhoneStunServer() const
 {
-    return settings_.value("phone/stun_server").toString();
+    return settings_.value("phone/stun_server", QVariant("")).toString();
+}
+
+//-----------------------------------------------------------------------------
+const float Config::getPhoneSoundLevel() const
+{
+    return settings_.value("phone/sound_level", QVariant(1.f)).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+const float Config::getPhoneMicroLevel() const
+{
+    return settings_.value("phone/micro_level", QVariant(1.f)).toFloat();
 }
 
 //-----------------------------------------------------------------------------
 const QString Config::getSoundRingfile() const
 {
-    return settings_.value("sound/ringfile").toString();
+    return settings_.value("sound/ringfile", QVariant("")).toString();
 }
 
 //-----------------------------------------------------------------------------
 const QString Config::getSoundDialfile() const
 {
-    return settings_.value("sound/dialfile").toString();
+    return settings_.value("sound/dialfile", QVariant("")).toString();
 }
 
 //-----------------------------------------------------------------------------
