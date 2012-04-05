@@ -27,16 +27,16 @@ const QString Phone::ERROR_FILE = "error.log";
 //-----------------------------------------------------------------------------
 Phone::Phone(api::Interface *api) : api_(api), js_handler_(NULL)
 {
-    connect(api_, SIGNAL(signalAccountRegState(const int)),
-            this, SLOT(slotAccountRegState(const int)));
+    connect(api_, SIGNAL(signalAccountState(const int)),
+            this, SLOT(slotAccountState(const int)));
     connect(api_, SIGNAL(signalIncomingCall(int, QString, QString)),
             this, SLOT(slotIncomingCall(int, QString, QString)));
     connect(api_, SIGNAL(signalCallState(int,int,int)),
             this, SLOT(slotCallState(int,int,int)));
     connect(api_, SIGNAL(signalSoundLevel(int)),
             this, SLOT(slotSoundLevel(int)));
-    connect(api_, SIGNAL(signalMicrophoneLevel(int)),
-            this, SLOT(slotMicrophoneLevel(int)));
+    connect(api_, SIGNAL(signalMicroLevel(int)),
+            this, SLOT(slotMicroLevel(int)));
     connect(api_, SIGNAL(signalLog(const LogInfo&)),
             this, SLOT(slotLogData(const LogInfo&)));
     connect(api_, SIGNAL(signalRingSound()),
@@ -175,36 +175,22 @@ QVariantList Phone::getActiveCallList() const
 }
 
 //-----------------------------------------------------------------------------
-void Phone::muteSound(const bool mute, const int call_id)
+void Phone::setSoundSignal(const float soundLevel)
 {
-    if (call_id == -1) {
-        api_->muteSound(mute);
-    } else {
-        Call *call = getCall(call_id);
-        if (call) {
-            call->muteSound(mute);
-        }
-    }
+    api_->setSoundSignal(soundLevel);
 }
 
 //-----------------------------------------------------------------------------
-void Phone::muteMicrophone(const bool mute, const int call_id)
+void Phone::setMicroSignal(const float microLevel)
 {
-    if (call_id == -1) {
-        api_->muteMicrophone(mute);
-    } else {
-        Call *call = getCall(call_id);
-        if (call) {
-            call->muteMicrophone(mute);
-        }
-    }
+    api_->setMicroSignal(microLevel);
 }
 
 //-----------------------------------------------------------------------------
-QVariantMap Phone::getSignalInformation() const
+QVariantMap Phone::getSignalLevels() const
 {
     QVariantMap info;
-    api_->getSignalInformation(info);
+    api_->getSignalLevels(info);
     return info;
 }
 
@@ -255,7 +241,7 @@ void Phone::slotSoundLevel(int level)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::slotMicrophoneLevel(int level)
+void Phone::slotMicroLevel(int level)
 {
     if (js_handler_) {
         js_handler_->microphoneLevel(level);
@@ -263,10 +249,10 @@ void Phone::slotMicrophoneLevel(int level)
 }
 
 //-----------------------------------------------------------------------------
-void Phone::slotAccountRegState(const int state)
+void Phone::slotAccountState(const int state)
 {
     if (js_handler_) {
-        js_handler_->accountState(state);
+        js_handler_->accountStateChanged(state);
     }
 }
 

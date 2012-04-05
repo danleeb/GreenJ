@@ -23,6 +23,8 @@ using phone::Phone;
 using phone::Call;
 using phone::Account;
 
+const QString JavascriptHandler::OBJECT_NAME = "qt_handler";
+
 //-----------------------------------------------------------------------------
 JavascriptHandler::JavascriptHandler(QWebView *web_view, Phone &phone) :
     web_view_(web_view), phone_(phone), js_callback_handler_("")
@@ -30,7 +32,7 @@ JavascriptHandler::JavascriptHandler(QWebView *web_view, Phone &phone) :
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::accountState(const int state) const
+void JavascriptHandler::accountStateChanged(const int state) const
 {
     evaluateJavaScript("accountStateChanged(" + QString::number(state) + ")");
 }
@@ -53,7 +55,7 @@ void JavascriptHandler::incomingCall(const Call &call) const
 }
 
 //-----------------------------------------------------------------------------
-QUrl JavascriptHandler::getPrintPage() const
+QUrl JavascriptHandler::getPrintUrl() const
 {
     QVariant url = evaluateJavaScript("getPrintUrl();");
 
@@ -77,18 +79,6 @@ void JavascriptHandler::soundLevel(int level) const
 void JavascriptHandler::microphoneLevel(int level) const
 {
     evaluateJavaScript("microphoneLevel(" + QString::number(level) + ")");
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::logMessage(const LogInfo &info) const
-{
-    QString json = "{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
-                 + "','status':" + QString::number(info.status_) 
-                 + ",'domain':'" + info.domain_
-                 + "','code':" + QString::number(info.code_) 
-                 + ",'message':'" + info.msg_ + "'}";
-
-    evaluateJavaScript("logMessage(" + json + ")");
 }
 
 //-----------------------------------------------------------------------------
@@ -313,19 +303,33 @@ QVariantList JavascriptHandler::getActiveCallList() const
 //-----------------------------------------------------------------------------
 void JavascriptHandler::muteSound(const bool mute, const int call_id) const
 {
-    phone_.muteSound(mute, call_id);
+    if (call_id < 0) {
+        phone_.setSoundSignal(mute ? 0.0f : 1.0f);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setSoundSignal(mute ? 0.0f : 1.0f);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::muteMicrophone(const bool mute, const int call_id) const
 {
-    phone_.muteMicrophone(mute, call_id);
+    if (call_id < 0) {
+        phone_.setMicroSignal(mute ? 0.0f : 1.0f);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setMicroSignal(mute ? 0.0f : 1.0f);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
 QVariantMap JavascriptHandler::getSignalInformation() const
 {
-    return phone_.getSignalInformation();
+    return phone_.getSignalLevels();
 }
 
 //-----------------------------------------------------------------------------
@@ -368,7 +372,7 @@ bool JavascriptHandler::sendLogMessage(const QVariantMap &log) const
     LogInfo info((LogInfo::Status)status.toUInt(), domain.toString(), code.toInt(), msg.toString());
     info.time_.fromString(time.toString(), "dd.MM.yyyy hh:mm:ss");
 
-    LogHandler::getInstance().logFromJs(info);
+    LogHandler::getInstance().log(info, false);
     return true;
 }
 
@@ -388,4 +392,20 @@ QString JavascriptHandler::getLogFileContent(const QString &file_name) const
 void JavascriptHandler::deleteLogFile(const QString &file_name) const
 {
     LogHandler::getInstance().deleteFile(file_name);
+}
+
+//-----------------------------------------------------------------------------
+// Private slots
+// Will be excluded from JavaScript.
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::slotLogMessage(const LogInfo &info) const
+{
+    QString json = "{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
+                 + "','status':" + QString::number(info.status_) 
+                 + ",'domain':'" + info.domain_
+                 + "','code':" + QString::number(info.code_) 
+                 + ",'message':'" + info.msg_ + "'}";
+
+    evaluateJavaScript("logMessage(" + json + ")");
 }

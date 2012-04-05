@@ -65,14 +65,9 @@ public:
     /**
      * Get log information to write it into a file and try to send it to webkit
      * @param info The log information data
+     * @param signal True, if the log message should be signaled
      */
     void log(const LogInfo &info, bool signal = true);
-
-    /**
-     * Get log information from webkit to write it into a file
-     * @param info The log information data
-     */
-    void logFromJs(const LogInfo &info);
 
 signals:
     /**

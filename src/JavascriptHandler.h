@@ -33,6 +33,8 @@ class JavascriptHandler : public QObject
     Q_OBJECT
 
 public:
+    static const QString OBJECT_NAME;
+
     /**
      * Constructor
      * @param web_view WebView needed to call the JS functions
@@ -44,7 +46,7 @@ public:
      * Send current account state
      * @param state
      */
-    void accountState(const int state) const;
+    void accountStateChanged(const int state) const;
 
     /**
      * Send call state
@@ -64,7 +66,7 @@ public:
      * Request the url of a page to print
      * @return The url of the webpage that should be printed
      */
-    QUrl getPrintPage() const;
+    QUrl getPrintUrl() const;
 
     /**
      * Sound level has changed
@@ -77,12 +79,6 @@ public:
      * @param level New microphone level
      */
     void microphoneLevel(int level) const;
-
-    /**
-     * Prints errors, warning and debug messages
-     * @param info Log information and message
-     */
-    void logMessage(const LogInfo &info) const;
 
 signals:
     /**
@@ -280,6 +276,13 @@ public slots:
      * @param file_name File name of log file that should be deleted
      */
     void deleteLogFile(const QString &file_name) const;
+
+private slots:
+    /**
+     * Prints errors, warning and debug messages
+     * @param info Log information and message
+     */
+    void slotLogMessage(const LogInfo &info) const;
 
 private:
     QWebView *web_view_;

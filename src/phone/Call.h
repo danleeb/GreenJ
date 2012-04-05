@@ -105,6 +105,18 @@ public:
     int redirect(const QString &dest_uri) const;
 
     /**
+     * Get information about call like SIP address, state, etc
+     * @return Call information
+     */
+    QVariantMap getInfo() const;
+
+    /**
+     * Get the call ID
+     * @return Call ID
+     */
+    const int getId() const;
+
+    /**
      * Get the SIP address
      * @return SIP address
      */
@@ -115,18 +127,6 @@ public:
      * @return the name
      */
     const QString &getName() const;
-
-    /**
-     * Get the call ID
-     * @return Call ID
-     */
-    const int getId() const;
-
-    /**
-     * Get information about call like SIP address, state, etc
-     * @return Call information
-     */
-    QVariantMap getInfo() const;
 
     /**
      * Get call status
@@ -163,30 +163,6 @@ public:
      * @return duration in seconds
      */
     const int getDuration() const;
-
-    /**
-     * Set the start time, only needed for error logging
-     * @param start_time time to set
-     */
-    void setStartTime(const QDateTime &start_time);
-
-    /**
-     * Set the accept time, only needed for error logging
-     * @param accept_time time to set
-     */
-    void setAcceptTime(const QDateTime &accept_time);
-
-    /**
-     * Set the close time, only needed for error logging
-     * @param close_time time to set
-     */
-    void setCloseTime(const QDateTime &close_time);
-
-    /**
-     * Set the duration, only needed for error logging
-     * @param duration seconds
-     */
-    void setDuration(const int duration);
 
     /**
      * Get custom user data
@@ -247,22 +223,30 @@ public:
     void setMediaState(const int state);
 
     /**
-     * Switch sound on/off
-     * @param mute true, if callee should be muted
+     * Set sound level
+     * @param soundLevel 0.0f (mute) to 1.0f (full)
      */
-    void muteSound(const bool mute);
+    void setSoundSignal(const float soundLevel);
 
     /**
-     * Switch microphone on/off
-     * @param mute true, if microphone should be muted
+     * Set microphone level
+     * @param microLevel 0.0f (mute) to 1.0f (full)
      */
-    void muteMicrophone(const bool mute);
+    void setMicroSignal(const float microLevel);
 
     /**
      * Get information about signal levels of sound and microphone
-     * @param signal_info Map to store current sound and micro signal levels
+     * @param Map with 'sound' and 'micro' signal levels (floats)
      */
-    void getSignalInformation(QVariantMap &signal_info) const;
+    QVariantMap getSignalLevels() const;
+
+    /**
+     * Setters, only needed for error logging
+     */
+    void setStartTime(const QDateTime &start_time);
+    void setAcceptTime(const QDateTime &accept_time);
+    void setCloseTime(const QDateTime &close_time);
+    void setDuration(const int duration);
 
 private:
     QDateTime start_time_;
@@ -278,8 +262,6 @@ private:
     int id_;
     int call_state_;
     int media_state_;
-    float speaker_level_;
-    float mic_level_;
 
     QString url_;
     QString name_;

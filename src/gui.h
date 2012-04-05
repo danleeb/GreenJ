@@ -65,19 +65,13 @@ private slots:
      * call has been detected. (blinking short message in system tray)
      * @param url Number or url of caller
      */
-    void slotAlertIncomingCall(const QString &url);
+    void slotIncomingCall(const QString &url);
 
     /**
      * Load webpage in internal browser
      */
     void slotUpdateWebPage();
     
-    /**
-     * Prints errors, warning and debug messages
-     * @param info Log information and message
-     */
-    void slotLogMessage(const LogInfo &info);
-
 private:
     Ui::MainWindow ui_;
 

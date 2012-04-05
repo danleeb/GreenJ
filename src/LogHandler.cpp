@@ -104,12 +104,6 @@ void LogHandler::log(const LogInfo &info, bool signal)
 }
 
 //-----------------------------------------------------------------------------
-void LogHandler::logFromJs(const LogInfo &info)
-{
-    log(info, false);
-}
-
-//-----------------------------------------------------------------------------
 void LogHandler::writeFile(const QString &msg)
 {
     lock_.lockForWrite();

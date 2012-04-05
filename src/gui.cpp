@@ -41,35 +41,35 @@ Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
     ui_.webview->setContextMenuPolicy(Qt::NoContextMenu);
 #endif
 
-    connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
-            this,                       SLOT(slotLogMessage(const LogInfo&)));
-
+    
     connect(ui_.webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), 
             this,                             SLOT(slotCreateJavascriptWindowObject()));
     connect(ui_.webview,                      SIGNAL(linkClicked(const QUrl&)), 
             this,                             SLOT(slotLinkClicked(const QUrl&)));
 
+    connect(&LogHandler::getInstance(), SIGNAL(signalLogMessage(const LogInfo&)),
+            js_handler_,                SLOT(slotLogMessage(const LogInfo&)));
     connect(js_handler_, SIGNAL(signalWebPageChanged()),
             this,        SLOT(slotUpdateWebPage()));
     connect(js_handler_, SIGNAL(signalPrintPage(const QUrl&)),
             this,        SLOT(slotPrintPage(const QUrl&)));
 
     connect(&phone_, SIGNAL(signalIncomingCall(const QString&)),
-            this,    SLOT(slotAlertIncomingCall(const QString&)));
+            this,    SLOT(slotIncomingCall(const QString&)));
 
-    QUrl server_url = Config::getInstance().getBrowserUrl();
-    if (server_url.isRelative()) {
-        QFileInfo fileinfo = QFileInfo(server_url.toString());
+    QUrl url(Config::getInstance().getBrowserUrl());
+    if (url.isRelative()) {
+        QFileInfo fileinfo = QFileInfo(url.toString());
         if (fileinfo.exists()) {
             if (fileinfo.isRelative()) {
-                server_url = QUrl::fromLocalFile(fileinfo.absoluteFilePath());
+                url = QUrl::fromLocalFile(fileinfo.absoluteFilePath());
             } else {
-                server_url = QUrl::fromLocalFile(fileinfo.fileName());
+                url = QUrl::fromLocalFile(fileinfo.fileName());
             }
         }
     }
-    if (!server_url.isEmpty() && server_url.isValid()) {
-        ui_.webview->setUrl(server_url);
+    if (!url.isEmpty() && url.isValid()) {
+        ui_.webview->setUrl(url);
     }
 
     createSystemTray();
@@ -119,7 +119,7 @@ void Gui::slotToggleFullScreen()
 //-----------------------------------------------------------------------------
 void Gui::slotPrintKeyPressed()
 {
-    QUrl url = js_handler_->getPrintPage();
+    QUrl url = js_handler_->getPrintUrl();
     if (url != QUrl("about:blank")) {
         print_handler_.loadPrintPage(url);
     }
@@ -135,31 +135,25 @@ void Gui::slotPrintPage(const QUrl &url)
 void Gui::slotCreateJavascriptWindowObject()
 {
     ui_.webview->page()->mainFrame()
-        ->addToJavaScriptWindowObject("qt_handler", js_handler_);
+        ->addToJavaScriptWindowObject(JavascriptHandler::OBJECT_NAME, js_handler_);
 }
 
 //-----------------------------------------------------------------------------
-void Gui::slotAlertIncomingCall(const QString &url)
+void Gui::slotIncomingCall(const QString &url)
 {
     QApplication::alert(this);
     if (!QApplication::focusWidget()) {
-        system_tray_icon_->showMessage("Anruf", url+" versucht Sie zu kontaktieren");
+        system_tray_icon_->showMessage("GreenJ", "Incoming call from " + url);
     }
 }
 
 //-----------------------------------------------------------------------------
 void Gui::slotUpdateWebPage()
 {
-    const QUrl &server_url = Config::getInstance().getBrowserUrl();
-    if (!server_url.isEmpty()) {
-        ui_.webview->setUrl(server_url);
+    const QUrl &url = Config::getInstance().getBrowserUrl();
+    if (!url.isEmpty()) {
+        ui_.webview->setUrl(url);
     }
-}
-
-//-----------------------------------------------------------------------------
-void Gui::slotLogMessage(const LogInfo &info)
-{
-    js_handler_->logMessage(info);
 }
 
 //-----------------------------------------------------------------------------

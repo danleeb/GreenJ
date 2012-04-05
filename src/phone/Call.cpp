@@ -23,7 +23,6 @@ Call::Call(Phone *phone, const Type type, const Status status) :
     phone_(phone), 
     type_(type), status_(status), active_(false), 
     id_(-1), call_state_(0), media_state_(0), 
-    speaker_level_(1.f), mic_level_(1.f), 
     start_time_(QDateTime::currentDateTime())
 {
 }
@@ -77,24 +76,6 @@ int Call::redirect(const QString &dest_uri) const
 }
 
 //-----------------------------------------------------------------------------
-const QString &Call::getUrl() const
-{
-    return url_;
-}
-
-//-----------------------------------------------------------------------------
-const QString &Call::getName() const
-{
-    return name_;
-}
-
-//-----------------------------------------------------------------------------
-const int Call::getId() const
-{
-    return id_;
-}
-
-//-----------------------------------------------------------------------------
 QVariantMap Call::getInfo() const
 {
     QVariantMap info;
@@ -112,6 +93,24 @@ QVariantMap Call::getInfo() const
     info.insert("closeTime", close_time_.toMSecsSinceEpoch());
     info.insert("userData", user_data_);
     return info;
+}
+
+//-----------------------------------------------------------------------------
+const int Call::getId() const
+{
+    return id_;
+}
+
+//-----------------------------------------------------------------------------
+const QString &Call::getUrl() const
+{
+    return url_;
+}
+
+//-----------------------------------------------------------------------------
+const QString &Call::getName() const
+{
+    return name_;
 }
 
 //-----------------------------------------------------------------------------
@@ -148,30 +147,6 @@ const QDateTime &Call::getCloseTime() const
 const int Call::getDuration() const
 {
     return duration_;
-}
-
-//-----------------------------------------------------------------------------
-void Call::setStartTime(const QDateTime &start_time)
-{
-    start_time_ = start_time;
-}
-
-//-----------------------------------------------------------------------------
-void Call::setAcceptTime(const QDateTime &accept_time)
-{
-    accept_time_ = accept_time;
-}
-
-//-----------------------------------------------------------------------------
-void Call::setCloseTime(const QDateTime &close_time)
-{
-    close_time_ = close_time;
-}
-
-//-----------------------------------------------------------------------------
-void Call::setDuration(const int duration)
-{
-    duration_ = duration;
 }
 
 //-----------------------------------------------------------------------------
@@ -261,30 +236,55 @@ void Call::setMediaState(const int state)
 }
 
 //-----------------------------------------------------------------------------
-void Call::muteSound(const bool mute)
+void Call::setSoundSignal(const float soundLevel)
 {
-    speaker_level_ = mute ? 0.f : 1.f;
-    phone_->getApi()->muteSound(id_, speaker_level_);
+    phone_->getApi()->setSoundSignal(soundLevel, id_);
 }
 
 //-----------------------------------------------------------------------------
-void Call::muteMicrophone(const bool mute)
+void Call::setMicroSignal(const float microLevel)
 {
-    mic_level_ = mute ? 0.f : 1.f;
-    phone_->getApi()->muteMicrophone(id_, mic_level_);
+    phone_->getApi()->setMicroSignal(microLevel, id_);
 }
 
 //-----------------------------------------------------------------------------
-void Call::getSignalInformation(QVariantMap &signal_info) const
+QVariantMap Call::getSignalLevels() const
 {
-    signal_info.insert("sound", speaker_level_);
-    signal_info.insert("micro", mic_level_);
+    QVariantMap info;
+    phone_->getApi()->getSignalLevels(info, id_);
+    return info;
+}
+
+//-----------------------------------------------------------------------------
+void Call::setStartTime(const QDateTime &start_time)
+{
+    start_time_ = start_time;
+}
+
+//-----------------------------------------------------------------------------
+void Call::setAcceptTime(const QDateTime &accept_time)
+{
+    accept_time_ = accept_time;
+}
+
+//-----------------------------------------------------------------------------
+void Call::setCloseTime(const QDateTime &close_time)
+{
+    close_time_ = close_time;
+}
+
+//-----------------------------------------------------------------------------
+void Call::setDuration(const int duration)
+{
+    duration_ = duration;
 }
 
 } // phone::
 
 //-----------------------------------------------------------------------------
 // OVERLOADING QDataStream
+//-----------------------------------------------------------------------------
+
 //-----------------------------------------------------------------------------
 QDataStream &operator<<(QDataStream &out, const phone::Call &call)
 {
@@ -297,17 +297,13 @@ QDataStream &operator<<(QDataStream &out, const phone::Call &call)
 //-----------------------------------------------------------------------------
 QDataStream &operator>>(QDataStream &in, phone::Call &call)
 {
-    int type;
-    int call_id;
-    QString call_url;
-    QDateTime start_time;
-    QDateTime accept_time;
-    QDateTime close_time;
-    int duration;
-    int status;
-    QString user_data;
+    int type, call_id, duration, status;
+    QString call_url, user_data;
+    QDateTime start_time, accept_time, close_time;
+
     in >> type >> call_id >> call_url >> status >> start_time >> accept_time
        >> close_time >> duration >> user_data;
+    
     call = phone::Call(0, (phone::Call::Type)type, (phone::Call::Status)status);
     call.setId(call_id);
     call.setUrl(call_url);

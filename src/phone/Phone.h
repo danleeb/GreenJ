@@ -35,6 +35,9 @@ struct Settings
 {
     unsigned int port_;
     QString stun_server_;
+
+    float sound_level_;
+    float micro_level_;
 };
 
 /**
@@ -125,24 +128,22 @@ public:
     QVariantList getActiveCallList() const;
 
     /**
-     * Switch sound on/off
-     * @param mute true, if call should be muted
-     * @param call_id Optional id of a specific call
+     * Set sound level
+     * @param soundLevel 0.0f (mute) to 1.0f (full)
      */
-    void muteSound(const bool mute, const int call_id = -1);
+    void setSoundSignal(const float soundLevel);
 
     /**
-     * Switch microphone on/off
-     * @param mute true, if microphone should be muted
-     * @param call_id Optional id of a specific call
+     * Set microphone level
+     * @param microLevel 0.0f (mute) to 1.0f (full)
      */
-    void muteMicrophone(const bool mute, const int call_id = -1);
+    void setMicroSignal(const float microLevel);
 
     /**
      * Get information about signal levels of sound and microphone
-     * @param Map with sound and micro signal levels
+     * @param Map with 'sound' and 'micro' signal levels (floats)
      */
-    QVariantMap getSignalInformation() const;
+    QVariantMap getSignalLevels() const;
 
     /**
      * Hangup all active calls and unregister account
@@ -174,13 +175,13 @@ public slots:
      * This slot gets called when the microphone level has changed
      * @param level The new micro level
      */
-    void slotMicrophoneLevel(int level);
+    void slotMicroLevel(int level);
 
     /**
      * This slot gets called when the account registration state has changed
      * @param state The new account state
      */
-    void slotAccountRegState(const int state);
+    void slotAccountState(const int state);
 
     /**
      * Slot to log messages

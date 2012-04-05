@@ -52,11 +52,9 @@ public:
 
     virtual void getCallInfo(const int call_id, QVariantMap &call_info);
 
-    virtual void muteSound(const bool mute);
-    virtual void muteSound(const int call_id, const float mute);
-    virtual void muteMicrophone(const bool mute);
-    virtual void muteMicrophone(const int call_id, const float mute);
-    virtual void getSignalInformation(QVariantMap &signal_info);
+    virtual void setSoundSignal(const float soundLevel, const int call_id = -1);
+    virtual void setMicroSignal(const float microLevel, const int call_id = -1);
+    virtual void getSignalLevels(QVariantMap &levels, const int call_id = -1);
     
     /**
      * Get the sip-address of a given call
@@ -70,9 +68,6 @@ private:
      * Pointer to the instance for using static methods
      */
     static Sip *self_;
-
-    float speaker_level_;
-    float mic_level_;
 
     /**
      * AccountID we got from our registration

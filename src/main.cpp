@@ -25,7 +25,9 @@ int main(int argc, char *argv[])
     phone::Settings settings;
     settings.port_ = config.getPhonePort();
     settings.stun_server_ = config.getPhoneStunServer();
-    
+    settings.sound_level_ = config.getPhoneSoundLevel();
+    settings.micro_level_ = config.getPhoneMicroLevel();
+
     phone::Phone phone(new phone::api::Sip());
     if (phone.init(settings)) {
         Gui window(phone);
