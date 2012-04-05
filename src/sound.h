@@ -12,16 +12,13 @@
 #ifndef SOUND_INCLUDE_H
 #define SOUND_INCLUDE_H
 
-#include <QObject>
 #include <QSound>
 
 /**
  * Singleton that handles sounds
  */
-class Sound : QObject
+class Sound
 {
-    Q_OBJECT
-
 public:
     /**
      * Get the instance of the object
@@ -43,22 +40,6 @@ public:
      * Stop sounds
      */
     void stop();
-
-signals:
-    /**
-     * Send signal to start ring sound
-     */
-    void signalStartRing();
-
-    /**
-     * Send signal to stop all running sounds
-     */
-    void signalStop();
-
-    /**
-     * Send signal to start dial sound
-     */
-    void signalStartDial();
 
 private:
     QSound *ring_;
