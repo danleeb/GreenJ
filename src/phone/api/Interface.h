@@ -135,7 +135,7 @@ public:
     virtual void setMicroSignal(const float microLevel, const int call_id = -1) = 0;
     
     /**
-     * Get information about signal levels of sound and microphone
+     * Get information about signal levels of sound and microphone (0...255)
      * @param signal_info Map to save sound and micro signal levels in
      * @param call_id ID of a specific call, or -1 for general signal levels
      */

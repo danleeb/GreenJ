@@ -482,8 +482,8 @@ void Sip::getSignalLevels(QVariantMap &levels, const int call_id)
         slot = ci.conf_slot;
     }
     pjsua_conf_get_signal_level(slot, &tx_level, &rx_level);
-    levels.insert("sound", static_cast<float>(rx_level) / 255.f);
-    levels.insert("micro", static_cast<float>(tx_level) / 255.f);
+    levels.insert("sound", rx_level);
+    levels.insert("micro", tx_level);
 }
 
 }} // phone::api::
