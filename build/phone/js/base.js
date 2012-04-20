@@ -1,7 +1,7 @@
 /**
  * @package    Javascript
  * @subpackage Base
- * @copyright  Copyright (c) 2011 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
+ * @copyright  Copyright (c) 2012 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
  *
  * GNU General Public License
  * This file may be used under the terms of the GNU General Public License
@@ -299,6 +299,8 @@ if (typeof window.console.log === 'undefined') {
          * <pre>
          *  'onError'       triggered, when an error occured (even if options.debug = false!)
          *                  { errorCode: code, errorMessage: message[code], errorData: output }
+         *  'onLog'         triggered, when a log message has been sent to the errorHandler
+         *                  { message: logMessage }
          * </pre>
          * @namespace Namespace in li for error handling.
          * @augments li.BaseObject
@@ -366,6 +368,7 @@ if (typeof window.console.log === 'undefined') {
                 if (this.isset(console) && this.isset(console.log)) {
                     console.log(v);
                 }
+                this.trigger('onLog', { message: v });
                 this._renderLog(logTo ? logTo : this.options.logTo, v);
             },
             /**

@@ -1,7 +1,7 @@
 /**
  * @package    Javascript
  * @subpackage Phone
- * @copyright  Copyright (c) 2011 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
+ * @copyright  Copyright (c) 2012 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
  *
  * GNU General Public License
  * This file may be used under the terms of the GNU General Public License

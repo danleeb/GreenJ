@@ -1,69 +1,58 @@
 <!DOCTYPE html><html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" >
-    <title>testphone</title>		
-    <link href="css/common.css" media="screen" rel="stylesheet" type="text/css" >
-    <link href="css/jquery-ui-1.8.14.custom.css" media="screen" rel="stylesheet" type="text/css" >
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="js/jquery.quickflip.min.js"></script>
-    <script type="text/javascript" src="js/jquery.blockUI.js"></script>
-    <script type="text/javascript">
-    //<!--
-        jQuery.noConflict();    
-    //-->
-    </script>
-    <script type="text/javascript" src="js/lilib.js"></script>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>GreenJ Phone</title>
+    <link href="css/jquery-ui-1.8.14.custom.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" media="screen" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/jquery.plugin.tinyscrollbar.js"></script>
+    <script type="text/javascript" src="js/base.js"></script>
     <script type="text/javascript" src="js/phone-lib.js"></script>
     <script type="text/javascript" src="js/qt-dummy.js"></script>
-    <link href="css/testphone.css" rel="stylesheet" type="text/css" media="screen" />
-    <script type="text/javascript" src="js/testphone.js"></script>
-    <body>
-	  <div id="container">
-        <div id="quickflip-wrapper">
-          <div class="phonebox">
-            <div class="phonebox-content">
-              <div id="display">
-                <span class="protokoll inputadditional">sip:</span><input type="text" name="phonenumber" id="numstring"/><span class=" inputadditional">@<span class="hostname"></span></span><br />
-              </div>
-              <a class="accept deactivateable" href="#">Call</a>
-              <a class="hangup" href="#">Hangup</a>
-              <div id="dialbox">
-                <a class="number" href="#">1</a>
-                <a class="number" href="#">2</a>
-                <a class="number" href="#">3</a><br />
-                <a class="number" href="#">4</a>
-                <a class="number" href="#">5</a>
-                <a class="number" href="#">6</a><br />
-                <a class="number" href="#">7</a>
-                <a class="number" href="#">8</a>
-                <a class="number" href="#">9</a><br />
-                <a class="number" href="#">*</a>
-                <a class="number" href="#">0</a>
-                <a class="number" href="#">#</a>
-              </div>
-              <div class="wrapper">
-                <div id="call-list">
+    <script type="text/javascript" src="js/script.js"></script>
+</head>
+<body>
+    <ul id="nav">
+        <li id="navcontacts" class="active"><div>Contacts</div></li>
+        <li id="navphone" class="active"><div>Phone</div></li>
+        <li id="navcalls" class="active"><div>Calls</div></li>
+    </ul>
+    <div id="container">
+        <div id="contacts">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    <div class="content"></div>
                 </div>
-              </div>
-              <div class="revert">
-                <img src="images/flip.png" alt="Flip" />
-              </div>
             </div>
-          </div>
-          <div class="phonebox">
-            <div class="phonebox-content">
-              <div class="history-wrapper">
-                <div id="call-history">
-                </div>
-              </div>
-              <div class="revert">
-                <img src="images/flip.png" alt="Flip" />
-              </div>
-            </div>
-          </div>
         </div>
-        <div id="log">Log:<br/></div>
-	  </div>
-    </body>
+        <div id="phone">
+            <input type="text" id="number" maxlength="50" />
+            <div id="clearNumber">X</div>
+            <div id="addNumber">Add contact</div>
+            <div id="numblock">
+                <button>1</button><button>2</button><button>3</button>
+                <button>4</button><button>5</button><button>6</button>
+                <button>7</button><button>8</button><button>9</button>
+                <button>+</button><button>0</button><button>&lt;</button>
+            </div>
+            <div id="phoneControls">
+                <button id="buttonCall">Call</button>
+                <button id="buttonHangUpAll">End All</button>
+                <input type="checkbox" id="buttonMuteSound" />
+                <input type="checkbox" id="buttonMuteMicro" />
+            </div>
+        </div>
+        <div id="calls">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    <div class="content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="log"></div>
+</body>
 </html>

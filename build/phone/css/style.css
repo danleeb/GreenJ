@@ -1,0 +1,338 @@
+/************ CSS reset ************/
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td { margin:0; padding:0; }
+table { border-collapse:collapse; border-spacing:0; }
+fieldset,img { border:0; }
+address,caption,cite,code,dfn,em,strong,th,var { font-style:normal; font-weight:normal; }
+ol,ul { list-style:none; }
+caption,th { text-align:left; }
+h1,h2,h3,h4,h5,h6 { font-size:100%; font-weight:normal; }
+q:before,q:after { content:''; }
+abbr,acronym { border:0; }
+/************* Clearfix *************/
+.clearfix:after { clear:both; content:' '; display:block; font-size:0; line-height:0; visibility:hidden; width:0; height:0; }
+.clearfix { display:inline-block; }
+* html .clearfix { height:1%; }
+.clearfix { display:block; }
+
+
+html, body { width:100%; height:100%; font-family:Helvetica; background:black; overflow:hidden; }
+
+.col1 #contacts, .col1 #phone, .col1 #calls { left:0; right:0; }
+.col2 #contacts, .col2 #phone { left:0; right:50%; }
+.col2 #navcontacts { left:0; right:75%; }
+.col2 #navphone { left:25%; right:50%; }
+.col2 #calls, .col2 #navcalls { left:50%; right:0; }
+
+#nav {
+    z-index:0;
+    position:absolute;
+    left:0; right:0; top:0;
+    height:50px;
+    opacity:0.8;
+    overflow:hidden;
+}
+#nav li {
+    position:absolute;
+    background:-webkit-gradient(linear, left -10%, left 40%, from(#046), to(#012));
+    cursor:pointer;
+}
+#contacts, #phone, #calls {
+    position:absolute;
+}
+#navcontacts, #contacts {
+    z-index:2;
+    left:0; right:66%;
+}
+#navphone, #phone {
+    z-index:1;
+    left:33%; right:33%;
+}
+#navcalls, #calls {
+    z-index:2;
+    left:66%; right:0;
+}
+#nav li.active {
+    background:-webkit-gradient(linear, left 0%, left 50%, from(#2ae), to(#18b));
+}
+#nav .active div {
+    color:#fff;
+}
+#nav div {
+    height:33px;
+    padding-top:17px;
+    color:#18b;
+	text-align:center;
+    font-weight:normal;
+    font-size:17px;
+}
+#navcontacts div { border-right:1px solid #036; }
+#navcalls div { border-left:1px solid #036; }
+#navcontacts.active div { border-color:#2ae; }
+#navcalls.active div { border-color:#2ae; }
+#container {
+    z-index:1;
+    position:absolute;
+    top:50px; bottom:0; left:0; right:0;
+    border-top:3px solid #18b;
+    overflow:hidden;
+}
+#contacts, #phone, #calls {
+    min-height:390px;
+    background:#000;
+    height:100%;
+    /*overflow-y:auto;
+    overflow-x:hidden;
+*/}
+#contacts .content { height:100%; border-right:1px solid #333; }
+#calls .content { height:100%; border-left:1px solid #333; }
+
+#contacts .content > div {
+    position:relative;
+    height:46px;
+    padding:7px 7px 7px 25px;
+    background:-webkit-gradient(linear, left top, left 40%, from(#111), to(#000));
+    border-bottom:1px solid #222;
+    color:#aaa;
+}
+#contacts .content > div:hover {
+    padding-right:110px;
+    background:-webkit-gradient(linear, left top, left 40%, from(#111), to(#050505));
+}
+#contacts .name, #contacts .number {
+    width:100%;
+    background:transparent;
+    border:none;
+    color:#aaa;
+    font-size:20px;
+    font-weight:bold;
+    outline:none;
+}
+#contacts .name {
+    font-size:20px;
+}
+#contacts .number {
+    font-size:12px;
+}
+#contacts .name:focus,
+#contacts .number:focus { color:#fff; }
+#contacts .select { 
+    display:none;
+    top:0;
+    right:30px;
+    height:100%;
+    border-radius:0px;
+}
+#contacts .content > div:hover .select,
+#contacts .content > div:hover .delete { display:block; }
+#contacts .delete {
+    display:none;
+    position:absolute;
+    top:0;
+    right:0;
+    width:30px;
+    height:100%;
+    background:-webkit-gradient(linear, left top, left 66%, from(#444), to(#333));
+    border:none;
+    border-top:1px solid #444;
+    border-bottom:1px solid #333;
+    color:#111;
+    font-size:18px;
+    font-weight:bold;
+    line-height:10px;
+    cursor:pointer;
+    opacity:0.7;
+}
+#contacts .delete:hover {
+    opacity:1.0;
+}
+
+#phone {
+    background:-webkit-gradient(linear, left top, left 66%, from(#333), to(#111));
+    text-align:center;
+}
+#number {
+    width:100%;
+    height:60px;
+    background:black;
+    border:none;
+    border-bottom:1px solid #393939;
+    color:white;
+    text-align:center;
+    font-size:23px;
+    font-weight:bold;
+    outline:none;
+}
+#clearNumber {
+    display:none;
+    position:absolute;
+    right:20px;
+    top:20px;
+    height:20px;
+    width:25px;
+    background:-webkit-gradient(linear, left top, left 66%, from(#bbb), to(#999));
+    border-top:1px solid #ccc;
+    border-bottom:1px solid #aaa;
+    border-radius:2px;
+    color:#000;
+    font-size:15px;
+    line-height:22px;
+    font-weight:bold;
+    cursor:pointer;
+}
+#clearNumber:hover {
+    background:-webkit-gradient(linear, left top, left 66%, from(#eee), to(#ccc));
+    color:#444;
+}
+#numblock, #phoneControls {
+    width:220px;
+    margin:auto;
+}
+#numblock {
+    padding:10px 0px;
+    border-bottom:1px solid #111;
+}
+#phoneControls {
+    padding-top:2px;
+    border-top:1px solid #282828;
+}
+#numblock button, #buttonCall, #buttonHangUpAll,
+#calls .accept, #calls .close, .select {
+    height:40px;
+    margin:4px;
+    border:none;
+    border-radius:3px;
+    font-size:21px;
+    font-weight:bold;
+    cursor:pointer;
+    display:inline-block;
+    line-height:10px;
+}
+#calls .accept, #calls .close, .select {
+    height:30px;
+    margin:3px;
+    font-size:18px;
+    line-height:10px;
+}
+#addNumber, #numblock button {
+    width:65px;
+    background:-webkit-gradient(linear, left top, left bottom, from(#555), to(#444));
+    border-top:1px solid #666;
+    border-bottom:1px solid #555;
+    color:#ccc;
+}
+#addNumber:hover, #numblock button:hover {
+    background:-webkit-gradient(linear, left top, left bottom, from(#666), to(#555));
+    color:#ddd;
+}
+#addNumber {
+    visibility:hidden;
+    width:100%;
+    height:30px;
+    padding-top:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+#buttonCall, #calls .accept {
+    width:90px;
+    background:-webkit-gradient(linear, left top, left bottom, from(#181), to(#070));
+    border-top:1px solid #292;
+    border-bottom:1px solid #181;
+    color:#ddd;
+}
+#buttonCall:hover, #calls .accept:hover {
+    background:-webkit-gradient(linear, left top, left bottom, from(#2a2), to(#191));
+    color:#eee;
+}
+#buttonHangUpAll, #calls .close {
+    width:110px;
+    background:-webkit-gradient(linear, left top, left bottom, from(#a22), to(#911));
+    border-top:1px solid #c33;
+    border-bottom:1px solid #b22;
+    color:#eaa;
+}
+#buttonHangUpAll:hover, #calls .close:hover {
+    background:-webkit-gradient(linear, left top, left bottom, from(#c33), to(#b22));
+    color:#fbb;
+}
+#calls .content > div {
+    position:relative;
+    padding:7px;
+    height:35px;
+    background:-webkit-gradient(linear, left top, left 13%, from(#111), to(#000));
+    border-bottom:1px solid #222;
+    color:#aaa;
+}
+#calls .content > div:hover {
+    background:-webkit-gradient(linear, left top, left 13%, from(#111), to(#050505));
+}
+#calls .content > div.accepted {
+    background:-webkit-gradient(linear, left top, left 13%, from(#141), to(#052205));
+}
+#calls .content > div.accepted.closed {
+    background:-webkit-gradient(linear, left top, left 13%, from(#111), to(#000));
+}
+#calls .content > div.closed { color:#444; }
+#calls .accept, #calls .close, .select {
+    position:absolute;
+    top:10px;
+    margin:0;
+}
+.select {
+    right:20px;
+    width:70px;
+    background:-webkit-gradient(linear, left top, left bottom, from(#e62), to(#d51));
+    border-top:1px solid #f73;
+    border-bottom:1px solid #e62;
+    color:#eee;
+    opacity:0.7;
+}
+.select:hover { opacity:1.0; }
+#calls dt {
+    font-size:10px;
+    font-weight:bold;
+    text-transform:uppercase;
+}
+#calls dd {
+    font-size:20px;
+    font-weight:bold;
+}
+#calls .accept {
+    width:75px;
+    right:115px;
+}
+#calls .close {
+    right:20px;
+    width:90px;
+}
+#calls .select { display:none; }
+#calls .content > div:hover .select { display:block; }
+
+#log {
+    z-index:2;
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:100px;
+    overflow-y:scroll;
+    background-color:#ddd;
+    border-top:5px solid #777;
+    color:#444;
+    font-family:Courier;
+    font-size:11px;
+}
+#log div { border-bottom:1px solid #ccc; }
+
+.viewport { width:100%; height:100%; overflow:hidden; position:relative; }
+.overview { list-style:none; position:absolute; left:0; top:0; right:0; }
+.thumb .end,
+.thumb { background-color:#eee; }
+.scrollbar { position:absolute; z-index:1; left:0; top:0; bottom:0; width:15px; }
+.track { background-color:#111; height:100%; width:15px; position:relative; padding:0; }
+.thumb { height:20px; width:15px; cursor:pointer; overflow:hidden; position:absolute; top:0; }
+.thumb .end { overflow:hidden; height:5px; width:15px; }
+.disable { display:none; }
+.scrollbar { opacity:0.15; }
+#calls .scrollbar { left:auto; right:0; }
+#contacts:hover .scrollbar, #calls:hover .scrollbar { opacity:0.3; }
+#contacts:hover .scrollbar:hover, #calls .scrollbar:hover { opacity:0.7; }
