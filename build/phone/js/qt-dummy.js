@@ -23,8 +23,8 @@ window.qt_handler = {
     
     nextid:             5,
     calls:              [],
-    sound:              1,
-    micro:              1,
+    sound:              255,
+    micro:              255,
     
     phoneHandler:       null,
     
@@ -137,13 +137,21 @@ window.qt_handler = {
     setCallUserData: function(id, data) {
         if (typeof this.calls[id] === 'undefined') { return; }
         this.calls[id].data = data;
-    },    
+    },
     muteSound: function(mute) {
-        this.sound = (mute ? 0 : 1);
+        this.sound = (mute ? 0 : 255);
         this.triggerSoundLevel(this.sound);
     },
     muteMicrophone: function(mute) {
-        this.micro = (mute ? 0 : 1);
+        this.micro = (mute ? 0 : 255);
+        this.triggerMicrophoneLevel(this.micro);
+    },
+    setSoundLevel: function(level) {
+        this.sound = level;
+        this.triggerSoundLevel(this.sound);
+    },
+    setMicrophoneLevel: function(level) {
+        this.micro = level;
         this.triggerMicrophoneLevel(this.micro);
     },
     getSignalInformation: function() {

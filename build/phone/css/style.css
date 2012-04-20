@@ -45,7 +45,7 @@ html, body { width:100%; height:100%; font-family:Helvetica; background:black; o
 }
 #navphone, #phone {
     z-index:1;
-    left:33%; right:33%;
+    left:34%; right:34%;
 }
 #navcalls, #calls {
     z-index:2;
@@ -77,12 +77,10 @@ html, body { width:100%; height:100%; font-family:Helvetica; background:black; o
     overflow:hidden;
 }
 #contacts, #phone, #calls {
-    min-height:390px;
+    min-height:410px;
     background:#000;
     height:100%;
-    /*overflow-y:auto;
-    overflow-x:hidden;
-*/}
+}
 #contacts .content { height:100%; border-right:1px solid #333; }
 #calls .content { height:100%; border-left:1px solid #333; }
 
@@ -96,7 +94,7 @@ html, body { width:100%; height:100%; font-family:Helvetica; background:black; o
 }
 #contacts .content > div:hover {
     padding-right:110px;
-    background:-webkit-gradient(linear, left top, left 40%, from(#111), to(#050505));
+    background:-webkit-gradient(linear, left top, left 40%, from(#181818), to(#0a0a0a));
 }
 #contacts .name, #contacts .number {
     width:100%;
@@ -195,6 +193,67 @@ html, body { width:100%; height:100%; font-family:Helvetica; background:black; o
     padding-top:2px;
     border-top:1px solid #282828;
 }
+#settingsControls {
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:40px;
+    background:#000;
+    border-top:1px solid #333;
+}
+#settingsControls > div {
+    width:220px;
+    text-align:center;
+    margin:auto;
+}
+#settingsControls > div > div {
+    position:relative;
+    display:inline-block;
+}
+#settingsControls .button {
+    height:100%;
+    padding:10px 8px;
+    color:#888;
+    text-align:center;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+#settingsControls .button:hover {
+    background:-webkit-gradient(linear, left 50%, left bottom, from(#000), to(#222));
+    color:#eee;
+}
+#settingsControls .button.mute { text-decoration:line-through; }
+.slider {
+    box-shadow:0 0 10px #000;
+    position:absolute;
+    bottom:100%;
+    left:0;
+    padding:15px 26px;
+    border-radius:10px 10px 0px 0px;
+    background:#000;
+}
+.ui-slider {
+    width:8px;
+    height:190px;
+    border-radius:3px;
+    background:#0f0f0f;
+    border:none;
+}
+.ui-slider-range { background:#555; border-radius:3px; }
+.ui-slider .ui-slider-handle { 
+    left:-3px;
+    width:14px;
+    height:9px;
+    margin-bottom:-6px;
+    background:#aaa;
+    border-radius:3px;
+    border:none;
+    border-top:1px solid #ccc;
+    border-bottom:1px solid #777;
+}
+.ui-state-focus { outline:none; }
 #numblock button, #buttonCall, #buttonHangUpAll,
 #calls .accept, #calls .close, .select {
     height:40px;
@@ -254,6 +313,29 @@ html, body { width:100%; height:100%; font-family:Helvetica; background:black; o
     background:-webkit-gradient(linear, left top, left bottom, from(#c33), to(#b22));
     color:#fbb;
 }
+.bg {
+    position:absolute;
+    left:0; right:0; top:0; bottom:0;
+    overflow:hidden;
+}
+.bg div {
+    padding-top:140px;
+    text-align:center;
+    color:#0b0b0b;
+    font-family:Calibri;
+    font-style:italic;
+    font-size:180px;
+}
+#calls .bg { 
+    border-left:1px solid #222;
+}
+#contacts .bg {
+    border-right:1px solid #222;
+}
+#contacts .bg div {
+    padding-top:180px;
+    font-size:130px;
+}
 #calls .content > div {
     position:relative;
     padding:7px;
@@ -263,7 +345,7 @@ html, body { width:100%; height:100%; font-family:Helvetica; background:black; o
     color:#aaa;
 }
 #calls .content > div:hover {
-    background:-webkit-gradient(linear, left top, left 13%, from(#111), to(#050505));
+    background:-webkit-gradient(linear, left top, left 13%, from(#181818), to(#0a0a0a));
 }
 #calls .content > div.accepted {
     background:-webkit-gradient(linear, left top, left 13%, from(#141), to(#052205));

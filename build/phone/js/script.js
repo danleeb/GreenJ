@@ -16,17 +16,23 @@ jQuery(document).ready(function($) {
      * - Log show/hide "button"
      * - Improve persisting of calls (data?)
      * - call number!
+     * - settings panel
+     * - connection to server / server-less calls
+     * - EditName/EditNumber dynamic input size
+     * - if no input has focus, send keypress to number input
      */
     
     //-------------------------------------------------------------------------
     // Application
     var app = {
+        phone: null,
         maxCallLogLength: 30,
         db: window.localStorage,
         contacts: [],
         calls: [],
         
         exec: function() {
+            this.db.calls = "";
             if (this.db.contacts) {
                 var contacts = JSON.parse(this.db.contacts), i;
                 for (i = 0; i < contacts.length; i++) {
@@ -42,6 +48,14 @@ jQuery(document).ready(function($) {
             }
         },
         exit: function() {
+        },
+        registerPhone: function() {
+            // Register phone
+            this.phone.register({
+                host:   settings.host,
+                name:   settings.sipaccount,
+                secret: settings.sipsecret
+            });
         },
         addContact: function(contact, skipPersist) {
             var self = this;
@@ -172,17 +186,27 @@ jQuery(document).ready(function($) {
     //-------------------------------------------------------------------------
     // Phone
     try {
-        li.phone = phone = new li.Phone({
+        li.phone = app.phone = new li.Phone({
             qthandler: 				settings.qthandler,
             forceOutgoingNumber:	settings.forceOutgoing,
             mode:					settings.mode
         });
-        settings.qthandler.registerJsCallbackHandler("window.li.phone" + phone.getHandlerName());
+        settings.qthandler.registerJsCallbackHandler("window.li.phone" + app.phone.getHandlerName());
         
         if (!settings.host) {
             app.exec();
         }
-        phone.addListener('onAccountState', function(data) {
+        app.phone.addListener('onRegister', function() {
+            $('#sound .ui-slider').slider('value', this.getSoundLevel());
+            $('#micro .ui-slider').slider('value', this.getMicroLevel());
+            if (this.isMutePhoneSound()) {
+                $('#sound .button').addClass('mute');
+            }
+            if (this.isMutePhoneMicro()) {
+                $('#micro .button').addClass('mute');
+            }
+        });
+        app.phone.addListener('onAccountState', function(data) {
             if (data.state < li.Phone.SIP_SC_BAD_REQUEST) {
                 app.exec();
             } else {
@@ -191,7 +215,7 @@ jQuery(document).ready(function($) {
                 li.errorHandler.add(li.errorType.PHONE_ERROR, { output: data.state });
             }
         });
-        phone.addListener('onIncomingCall', function(data) {
+        app.phone.addListener('onIncomingCall', function(data) {
             if (typeof data.incomingCall === 'undefined' || false === data.incomingCall) {
                 return li.errorHandler.add(li.errorType.ERROR);
             }
@@ -200,7 +224,7 @@ jQuery(document).ready(function($) {
             app.addCall(call);
         });
         // Listener to print log messages
-        phone.addListener('onLogMessage', function(obj) {
+        app.phone.addListener('onLogMessage', function(obj) {
             $('#log').append('<div>' + obj.time + ': (' + obj.status + ') <' + obj.domain + '> [' 
                                      + obj.code + '] ' + obj.message + '</div>');
         });
@@ -213,17 +237,11 @@ jQuery(document).ready(function($) {
         });
         
         // Check, if there are some errors from the last execution of GreenJ
-        var data = phone.getErrorLog();
+        var data = app.phone.getErrorLog();
         if (data && data.length > 0) {
             li.errorHandler.add(li.errorType.PHONE_DEBUG, { output: data });
-            phone.clearErrorLog();
+            app.phone.clearErrorLog();
         }
-        // Register phone
-        phone.register({
-            host:   settings.host,
-            name:   settings.sipaccount,
-            secret: settings.sipsecret
-        });
         
 	} catch (e) {
 		li.errorHandler.add(li.errorType.DEFAULT, { exception: e } );
@@ -266,7 +284,7 @@ jQuery(document).ready(function($) {
         var number = $.trim($('#number').val());
         if (number.length) {
             try {
-                var call = phone.makeCall({ number: number });
+                var call = app.phone.makeCall({ number: number });
                 if (call) {
                     app.addCall(call);
                 }
@@ -278,7 +296,7 @@ jQuery(document).ready(function($) {
     
     $('#buttonHangUpAll').click(function() {
         try {
-            phone.hangUpAll();
+            app.phone.hangUpAll();
         } catch (e) {
             li.errorHandler.add(li.errorType.PHONE_ERROR, { exception: e, output: e } );
         }
@@ -293,18 +311,46 @@ jQuery(document).ready(function($) {
     
     $('#contacts').tinyscrollbar();
     $('#calls').tinyscrollbar();
+    $('<div class="slider"><div></div></div>').appendTo('#sound, #micro').hide().find('div')
+        .slider({
+			orientation: "vertical",
+			range: "min",
+			min: 0,
+			max: 255,
+			value: 60
+		});
+    $('#sound .ui-slider').slider('option', 'slide', function(event, ui) {
+            app.phone.setSoundLevel(ui.value);
+        });
+    $('#micro .ui-slider').slider('option', 'slide', function(event, ui) {
+            app.phone.setMicroLevel(ui.value);
+        });
+    $('#sound, #micro')
+        .hover(function() {
+            $(this).find('.slider').show();
+        }, function() {
+            $(this).find('.slider').hide();
+        });
+    $('#sound .button').click(function() {
+            $(this).toggleClass('mute');
+            app.phone.mutePhoneSound($(this).hasClass('mute'));
+        });
+    $('#micro .button').click(function() {
+            $(this).toggleClass('mute');
+            app.phone.muteMicroSound($(this).hasClass('mute'));
+        });
     
     var cols = 0;
     $(window).resize(function() {
         var width = $(window).width();
-        if (width < 450) {
+        if (width < 500) {
             if (cols !== 1) {
                 cols = 1;
                 $('body').removeClass('col2 col3').addClass('col1');
                 $('#phone').show().siblings().hide();
                 $('#navphone').addClass('active').siblings().removeClass('active');
             }
-        } else if (width < 730) {
+        } else if (width < 770) {
             if (cols !== 2) {
                 cols = 2;
                 $('body').removeClass('col1 col3').addClass('col2');
@@ -320,4 +366,8 @@ jQuery(document).ready(function($) {
         $('#contacts').tinyscrollbar_update('relative');
         $('#calls').tinyscrollbar_update('relative');
     }).trigger('resize');
+    
+    // Register phone
+    app.registerPhone();
+        
 });
