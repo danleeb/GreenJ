@@ -33,6 +33,10 @@ Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
 
     ui_.webview->setPage(new WebPage());
     //ui_.webview->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+
+    ui_.webview->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
+    ui_.webview->settings()->setLocalStoragePath(QDir::homePath() + "/.greenj/");
+
 #ifdef DEBUG
     // Enable webkit Debugger
     ui_.webview->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
@@ -41,7 +45,6 @@ Gui::Gui(phone::Phone &phone, QWidget *parent, Qt::WFlags flags) :
     ui_.webview->setContextMenuPolicy(Qt::NoContextMenu);
 #endif
 
-    
     connect(ui_.webview->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), 
             this,                             SLOT(slotCreateJavascriptWindowObject()));
     connect(ui_.webview,                      SIGNAL(linkClicked(const QUrl&)), 
@@ -204,6 +207,7 @@ void Gui::readSettings()
     setWindowState((Qt::WindowStates)settings.value("state", QVariant(Qt::WindowMaximized)).toInt());
     settings.endGroup();
 
+    setMinimumSize(config.getWindowMinimumWidth(), config.getWindowMinimumHeight());
     setWindowTitle(config.getApplicationName());
 }
 

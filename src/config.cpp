@@ -42,6 +42,11 @@ void Config::setDefaults()
     settings_.setValue("developer", "Lorem Ipsum");
     settings_.setValue("log_level", LogInfo::STATUS_WARNING);
     settings_.endGroup();
+    
+    settings_.beginGroup("window");
+    settings_.setValue("minwidth", 260);
+    settings_.setValue("minheight", 480);
+    settings_.endGroup();
 
     settings_.beginGroup("sound");
     settings_.setValue("ringfile", "ring.wav");
@@ -95,6 +100,18 @@ const QString Config::getApplicationDeveloper() const
 const uint Config::getApplicationLogLevel() const
 {
     return settings_.value("application/log_level", QVariant(LogInfo::STATUS_WARNING)).toUInt();
+}
+
+//-----------------------------------------------------------------------------
+const uint Config::getWindowMinimumWidth() const
+{
+    return settings_.value("window/minwidth", QVariant(260)).toUInt();
+}
+
+//-----------------------------------------------------------------------------
+const uint Config::getWindowMinimumHeight() const
+{
+    return settings_.value("window/minheight", QVariant(480)).toUInt();
 }
 
 //-----------------------------------------------------------------------------

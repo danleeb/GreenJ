@@ -28,34 +28,16 @@ public:
      */
     static Config &getInstance();
     
-    /**
-     * @return config version
-     */
     const int getConfigVersion() const;
 
-    /**
-     * @return Appication version as a string
-     */
     const QString getApplicationVersion() const;
-
-    /**
-     * @return application name
-     */
     const QString getApplicationName() const;
-
-    /**
-     * @return developer name
-     */
     const QString getApplicationDeveloper() const;
-
-    /**
-     * @return log level
-     */
     const uint getApplicationLogLevel() const;
 
-    /**
-     * @return webpage url (browser startsite)
-     */
+    const uint getWindowMinimumWidth() const;
+    const uint getWindowMinimumHeight() const;
+
     const QUrl getBrowserUrl() const;
 
     const uint getPhonePort() const;
@@ -63,14 +45,7 @@ public:
     const float getPhoneSoundLevel() const;
     const float getPhoneMicroLevel() const;
 
-    /**
-     * @return ring-filename
-     */
     const QString getSoundRingfile() const;
-
-    /**
-     * @return dial-filename
-     */
     const QString getSoundDialfile() const;
 
     /**
