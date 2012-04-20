@@ -327,6 +327,46 @@ void JavascriptHandler::muteMicrophone(const bool mute, const int call_id) const
 }
 
 //-----------------------------------------------------------------------------
+void JavascriptHandler::setSoundLevel(const int level, const int call_id) const
+{
+    float flevel = static_cast<float>(level) / 255.f;
+    if (flevel > 1.0f) {
+        flevel = 1.0f;
+    } else if (flevel < 0.0f) {
+        flevel = 0.0f;
+    }
+    
+    if (call_id < 0) {
+        phone_.setSoundSignal(flevel);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setSoundSignal(flevel);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::setMicrophoneLevel(const int level, const int call_id) const
+{
+    float flevel = static_cast<float>(level) / 255.f;
+    if (flevel > 1.0f) {
+        flevel = 1.0f;
+    } else if (flevel < 0.0f) {
+        flevel = 0.0f;
+    }
+    
+    if (call_id < 0) {
+        phone_.setMicroSignal(flevel);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setMicroSignal(flevel);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
 QVariantMap JavascriptHandler::getSignalInformation() const
 {
     return phone_.getSignalLevels();

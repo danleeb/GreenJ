@@ -227,6 +227,20 @@ public slots:
     void muteMicrophone(const bool mute, const int call_id = -1) const;
 
     /**
+     * Set sound level
+     * @param level new sound level (0..255)
+     * @param call_id ID of call, or -1
+     */
+    void setSoundLevel(const int level, const int call_id) const;
+
+    /**
+     * Set microphone level
+     * @param level new microphone level (0..255)
+     * @param call_id ID of call, or -1
+     */
+    void setMicrophoneLevel(const int level, const int call_id) const;
+
+    /**
      * Get information about signal levels
      * @return Map with sound and micro signal levels
      */
