@@ -23,14 +23,16 @@ using phone::Phone;
 using phone::Call;
 using phone::Account;
 
+const QString JavascriptHandler::OBJECT_NAME = "qt_handler";
+
 //-----------------------------------------------------------------------------
-JavascriptHandler::JavascriptHandler(Phone &phone, QWebView *web_view) :
-    phone_(phone), web_view_(web_view), js_callback_handler_("")
+JavascriptHandler::JavascriptHandler(QWebView *web_view, Phone &phone) :
+    web_view_(web_view), phone_(phone), js_callback_handler_("")
 {
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::accountState(const int state) const
+void JavascriptHandler::accountStateChanged(const int state) const
 {
     evaluateJavaScript("accountStateChanged(" + QString::number(state) + ")");
 }
@@ -53,13 +55,13 @@ void JavascriptHandler::incomingCall(const Call &call) const
 }
 
 //-----------------------------------------------------------------------------
-QUrl JavascriptHandler::getPrintPage() const
+QUrl JavascriptHandler::getPrintUrl() const
 {
     QVariant url = evaluateJavaScript("getPrintUrl();");
 
     if (!url.convert(QVariant::Url)) {
         if (!url.isNull()) {
-            LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Print page: Wrong url format"));
+            LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Print page: Wrong url format"));
         }
         return QUrl("about:blank");
     }
@@ -77,18 +79,6 @@ void JavascriptHandler::soundLevel(int level) const
 void JavascriptHandler::microphoneLevel(int level) const
 {
     evaluateJavaScript("microphoneLevel(" + QString::number(level) + ")");
-}
-
-//-----------------------------------------------------------------------------
-void JavascriptHandler::logMessage(const LogInfo &info) const
-{
-    QString json = "{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
-                 + "','status':" + QString::number(info.status_) 
-                 + ",'domain':'" + info.domain_
-                 + "','code':" + QString::number(info.code_) 
-                 + ",'message':'" + info.msg_ + "'}";
-
-    evaluateJavaScript("logMessage(" + json + ")");
 }
 
 //-----------------------------------------------------------------------------
@@ -127,7 +117,7 @@ QVariantMap JavascriptHandler::getAccountInformation() const
 bool JavascriptHandler::registerToServer(const QString &host, const QString &user_name,
                                          const QString &password) const
 {
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "register"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "register"));
 
     Account acc;
     acc.setUsername(user_name);
@@ -140,7 +130,7 @@ bool JavascriptHandler::registerToServer(const QString &host, const QString &use
 //-----------------------------------------------------------------------------
 void JavascriptHandler::unregisterFromServer() const
 {
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "unregister"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "unregister"));
 
     phone_.unregister();
 }
@@ -150,10 +140,10 @@ int JavascriptHandler::makeCall(const QString &number) const
 {
     Call *call = phone_.makeCall(number);
     if (!call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "makeCall: failed"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "makeCall: failed"));
         return -1;
     }
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "calling " + number));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "calling " + number));
     return call->getId();
 }
 
@@ -162,10 +152,10 @@ void JavascriptHandler::callAccept(const int call_id) const
 {
     Call *call = phone_.getCall(call_id);
     if (call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "accepting call " + QString::number(call_id)));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "accepting call " + QString::number(call_id)));
         call->answerCall();
     } else {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "callAccept: Call doesn't exist!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "callAccept: Call doesn't exist!"));
     }
 }
 
@@ -174,24 +164,24 @@ void JavascriptHandler::hangup(const int call_id) const
 {    
     Call *call = phone_.getCall(call_id);
     if (call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup call " + QString::number(call_id)));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup call " + QString::number(call_id)));
         call->hangUp();
     } else {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Hangup: Call doesn't exist!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Hangup: Call doesn't exist!"));
     }
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::hangupAll() const
 {
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup all calls"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "hangup all calls"));
     phone_.hangUpAll();
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::setLogLevel(const unsigned int log_level) const
 {
-    LogHandler::getInstance().setLogLevel(log_level);
+    LogHandler::getInstance().setLevel(log_level);
 }
 
 //-----------------------------------------------------------------------------
@@ -199,10 +189,10 @@ QString JavascriptHandler::getCallUserData(const int call_id) const
 {
     Call *call = phone_.getCall(call_id);
     if (call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get userdata for call " + QString::number(call_id)));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Get userdata for call " + QString::number(call_id)));
         return call->getUserData();
     }
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "getCallUserData: Call doesn't exist!"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "getCallUserData: Call doesn't exist!"));
     return "";
 }
 
@@ -211,28 +201,26 @@ void JavascriptHandler::setCallUserData(const int call_id, const QString &data) 
 {
     Call *call = phone_.getCall(call_id);
     if (call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Set userdata for call " + QString::number(call_id)));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Set userdata for call " + QString::number(call_id)));
         return call->setUserData(data);
     } else {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "setCallUserData: Call doesn't exist!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "setCallUserData: Call doesn't exist!"));
     }
 }
 
 //-----------------------------------------------------------------------------
 QVariantList JavascriptHandler::getErrorLogData() const
 {
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Read error log data"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Read error log data"));
 
     QVariantList log_data;
-    QFile file("error.log");
+    QFile file(Phone::ERROR_FILE);
     file.open(QIODevice::ReadOnly);
     QDataStream in(&file);
     while (!in.atEnd()) {
-        QVariantMap current;
         Call call;
         in >> call;
-        current = call.getInfo();
-        log_data << current;
+        log_data << call.getInfo();
     }
 
     return log_data;
@@ -241,9 +229,9 @@ QVariantList JavascriptHandler::getErrorLogData() const
 //-----------------------------------------------------------------------------
 void JavascriptHandler::deleteErrorLogFile() const
 {
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Delete error log file"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Delete error log file"));
 
-    QFile::remove("error.log");
+    QFile::remove(Phone::ERROR_FILE);
 }
 
 //-----------------------------------------------------------------------------
@@ -252,19 +240,19 @@ bool JavascriptHandler::addToConference(const int src_id, const int dst_id) cons
     Call *call = phone_.getCall(src_id);
     Call *dest_call = phone_.getCall(dst_id);
     if (!call || !dest_call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls doesn't exist!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls doesn't exist!"));
         return false;
     }
     if (!call->isActive() || !dest_call->isActive()) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls isn't active!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls isn't active!"));
         return false;
     }
     if (!call->addToConference(*dest_call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to connect to source!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to connect to source!"));
         return false;
     }
     if (!dest_call->addToConference(*call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to connect to destination!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to connect to destination!"));
         return false;
     }
     return true;
@@ -276,19 +264,19 @@ bool JavascriptHandler::removeFromConference(const int src_id, const int dst_id)
     Call *call = phone_.getCall(src_id);
     Call *dest_call = phone_.getCall(dst_id);
     if (!call || !dest_call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls doesn't exist!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls doesn't exist!"));
         return false;
     }
     if (!call->isActive() || !dest_call->isActive()) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls isn't active!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: one of the selected calls isn't active!"));
         return false;
     }
     if (call->removeFromConference(*dest_call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to remove from source!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to remove from source!"));
         return false;
     }
     if (dest_call->removeFromConference(*call)) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to remove from destination!"));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Error: failed to remove from destination!"));
         return false;
     }
     return true;
@@ -299,10 +287,10 @@ int JavascriptHandler::redirectCall(const int call_id, const QString &dst_uri) c
 {
     Call *call = phone_.getCall(call_id);
     if (call) {
-        LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Redirected call " + QString::number(call_id) + " to " + dst_uri));
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "Redirected call " + QString::number(call_id) + " to " + dst_uri));
         return call->redirect(dst_uri);
     }
-    LogHandler::getInstance().logData(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "redirectCall: Call doesn't exist!"));
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "redirectCall: Call doesn't exist!"));
     return -1;
 }
 
@@ -315,19 +303,73 @@ QVariantList JavascriptHandler::getActiveCallList() const
 //-----------------------------------------------------------------------------
 void JavascriptHandler::muteSound(const bool mute, const int call_id) const
 {
-    phone_.muteSound(mute, call_id);
+    if (call_id < 0) {
+        phone_.setSoundSignal(mute ? 0.0f : 1.0f);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setSoundSignal(mute ? 0.0f : 1.0f);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::muteMicrophone(const bool mute, const int call_id) const
 {
-    phone_.muteMicrophone(mute, call_id);
+    if (call_id < 0) {
+        phone_.setMicroSignal(mute ? 0.0f : 1.0f);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setMicroSignal(mute ? 0.0f : 1.0f);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::setSoundLevel(const int level, const int call_id) const
+{
+    float flevel = static_cast<float>(level) / 255.f;
+    if (flevel > 1.0f) {
+        flevel = 1.0f;
+    } else if (flevel < 0.0f) {
+        flevel = 0.0f;
+    }
+    
+    if (call_id < 0) {
+        phone_.setSoundSignal(flevel);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setSoundSignal(flevel);
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::setMicrophoneLevel(const int level, const int call_id) const
+{
+    float flevel = static_cast<float>(level) / 255.f;
+    if (flevel > 1.0f) {
+        flevel = 1.0f;
+    } else if (flevel < 0.0f) {
+        flevel = 0.0f;
+    }
+    
+    if (call_id < 0) {
+        phone_.setMicroSignal(flevel);
+    } else {
+        Call *call = phone_.getCall(call_id);
+        if (call) {
+            call->setMicroSignal(flevel);
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
 QVariantMap JavascriptHandler::getSignalInformation() const
 {
-    return phone_.getSignalInformation();
+    return phone_.getSignalLevels();
 }
 
 //-----------------------------------------------------------------------------
@@ -348,18 +390,17 @@ void JavascriptHandler::setOption(const QString &name, const QVariant &option)
 //-----------------------------------------------------------------------------
 void JavascriptHandler::printPage(const QString &url_str)
 {
-    QUrl url(url_str);
-    signalPrintPage(url);
+    signalPrintPage(QUrl(url_str));
 }
 
 //-----------------------------------------------------------------------------
 bool JavascriptHandler::sendLogMessage(const QVariantMap &log) const
 {
-    QVariant time = log["time"];
+    QVariant time   = log["time"];
     QVariant status = log["status"];
     QVariant domain = log["domain"];
-    QVariant code = log["code"];
-    QVariant msg = log["message"];
+    QVariant code   = log["code"];
+    QVariant msg    = log["message"];
 
     if (!time.convert(QVariant::String) || !status.convert(QVariant::UInt)
         || !domain.convert(QVariant::String) || !code.convert(QVariant::Int)
@@ -371,24 +412,40 @@ bool JavascriptHandler::sendLogMessage(const QVariantMap &log) const
     LogInfo info((LogInfo::Status)status.toUInt(), domain.toString(), code.toInt(), msg.toString());
     info.time_.fromString(time.toString(), "dd.MM.yyyy hh:mm:ss");
 
-    LogHandler::getInstance().logFromJs(info);
+    LogHandler::getInstance().log(info, false);
     return true;
 }
 
 //-----------------------------------------------------------------------------
 QStringList JavascriptHandler::getLogFileList() const
 {
-    return LogHandler::getInstance().getLogFileList();
+    return LogHandler::getInstance().getFileList();
 }
 
 //-----------------------------------------------------------------------------
 QString JavascriptHandler::getLogFileContent(const QString &file_name) const
 {
-    return LogHandler::getInstance().getLogFileContent(file_name);
+    return LogHandler::getInstance().getFileContent(file_name);
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::deleteLogFile(const QString &file_name) const
 {
-    LogHandler::getInstance().deleteLogFile(file_name);
+    LogHandler::getInstance().deleteFile(file_name);
+}
+
+//-----------------------------------------------------------------------------
+// Private slots
+// Will be excluded from JavaScript.
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::slotLogMessage(const LogInfo &info) const
+{
+    QString json = "{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
+                 + "','status':" + QString::number(info.status_) 
+                 + ",'domain':'" + info.domain_
+                 + "','code':" + QString::number(info.code_) 
+                 + ",'message':'" + info.msg_ + "'}";
+
+    evaluateJavaScript("logMessage(" + json + ")");
 }

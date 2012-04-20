@@ -16,7 +16,6 @@
 #include <QVector>
 #include <QVariantMap>
 
-class Config;
 class JavascriptHandler;
 class LogInfo;
 
@@ -30,6 +29,18 @@ namespace phone
     }
 
 /**
+ * Phone settings
+ */
+struct Settings
+{
+    unsigned int port_;
+    QString stun_server_;
+
+    float sound_level_;
+    float micro_level_;
+};
+
+/**
  * Base phone class
  */
 class Phone : public QObject
@@ -37,6 +48,8 @@ class Phone : public QObject
     Q_OBJECT
 
 public:
+    static const QString ERROR_FILE;
+
     /**
      * Constructor
      * @param api Pointer to the phone API
@@ -45,13 +58,14 @@ public:
 
     /**
      * Destructor
+     * Delete calls and api
      */
     virtual ~Phone();
 
     /**
      * Initialize the phone
      */
-    bool init();
+    bool init(const Settings &settings);
     
     /**
      * Set the javascript handler object
@@ -73,7 +87,7 @@ public:
      * Checks if account is valid
      * @return true, if account is valid
      */
-    bool checkAccountStatus();
+    bool checkAccountStatus() const;
 
     /**
      * Registers the account
@@ -86,7 +100,7 @@ public:
      * Get information about the account
      * @return Map with account information
      */
-    QVariantMap getAccountInfo();
+    QVariantMap getAccountInfo() const;
 
     /**
      * Starting a call to the given address
@@ -114,28 +128,25 @@ public:
     QVariantList getActiveCallList() const;
 
     /**
-     * Switch sound on/off
-     * @param mute true, if call should be muted
-     * @param call_id Optional id of a specific call
+     * Set sound level
+     * @param soundLevel 0.0f (mute) to 1.0f (full)
      */
-    void muteSound(const bool mute, const int call_id = -1);
+    void setSoundSignal(const float soundLevel);
 
     /**
-     * Switch microphone on/off
-     * @param mute true, if microphone should be muted
-     * @param call_id Optional id of a specific call
+     * Set microphone level
+     * @param microLevel 0.0f (mute) to 1.0f (full)
      */
-    void muteMicrophone(const bool mute, const int call_id = -1);
+    void setMicroSignal(const float microLevel);
 
     /**
      * Get information about signal levels of sound and microphone
-     * @param Map with sound and micro signal levels
+     * @param Map with 'sound' and 'micro' signal levels (floats)
      */
-    QVariantMap getSignalInformation() const;
+    QVariantMap getSignalLevels() const;
 
     /**
-     * Hangs up all active calls, unregisters the account
-     * and shuts down the phone
+     * Hangup all active calls and unregister account
      */
     void unregister();
 
@@ -164,13 +175,13 @@ public slots:
      * This slot gets called when the microphone level has changed
      * @param level The new micro level
      */
-    void slotMicrophoneLevel(int level);
+    void slotMicroLevel(int level);
 
     /**
      * This slot gets called when the account registration state has changed
      * @param state The new account state
      */
-    void slotAccountRegState(const int state);
+    void slotAccountState(const int state);
 
     /**
      * Slot to log messages
@@ -194,9 +205,7 @@ signals:
 private:
     api::Interface *api_;
     JavascriptHandler *js_handler_;
-
-    QVector<Call*> call_list_;
-
+    QVector<Call*> calls_;
     QString error_msg_;
 
     bool addToCallList(Call *call);

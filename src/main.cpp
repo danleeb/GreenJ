@@ -10,6 +10,7 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
+#include "Config.h"
 #include "phone/Phone.h"
 #include "phone/api/Sip.h"
 #include "Gui.h"
@@ -20,8 +21,15 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":images/icon.xpm"));
 
+    Config &config = Config::getInstance();
+    phone::Settings settings;
+    settings.port_ = config.getPhonePort();
+    settings.stun_server_ = config.getPhoneStunServer();
+    settings.sound_level_ = config.getPhoneSoundLevel();
+    settings.micro_level_ = config.getPhoneMicroLevel();
+
     phone::Phone phone(new phone::api::Sip());
-    if (phone.init()) {
+    if (phone.init(settings)) {
         Gui window(phone);
         window.show();
         return a.exec();

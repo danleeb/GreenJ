@@ -33,18 +33,20 @@ class JavascriptHandler : public QObject
     Q_OBJECT
 
 public:
+    static const QString OBJECT_NAME;
+
     /**
      * Constructor
-     * @param phone To access the phone methods
      * @param web_view WebView needed to call the JS functions
+     * @param phone To access the phone methods
      */
-    JavascriptHandler(phone::Phone &phone, QWebView *web_view);
+    JavascriptHandler(QWebView *web_view, phone::Phone &phone);
 
     /**
      * Send current account state
      * @param state
      */
-    void accountState(const int state) const;
+    void accountStateChanged(const int state) const;
 
     /**
      * Send call state
@@ -64,7 +66,7 @@ public:
      * Request the url of a page to print
      * @return The url of the webpage that should be printed
      */
-    QUrl getPrintPage() const;
+    QUrl getPrintUrl() const;
 
     /**
      * Sound level has changed
@@ -77,12 +79,6 @@ public:
      * @param level New microphone level
      */
     void microphoneLevel(int level) const;
-
-    /**
-     * Prints errors, warning and debug messages
-     * @param info Log information and message
-     */
-    void logMessage(const LogInfo &info) const;
 
 signals:
     /**
@@ -231,6 +227,20 @@ public slots:
     void muteMicrophone(const bool mute, const int call_id = -1) const;
 
     /**
+     * Set sound level
+     * @param level new sound level (0..255)
+     * @param call_id ID of call, or -1
+     */
+    void setSoundLevel(const int level, const int call_id) const;
+
+    /**
+     * Set microphone level
+     * @param level new microphone level (0..255)
+     * @param call_id ID of call, or -1
+     */
+    void setMicrophoneLevel(const int level, const int call_id) const;
+
+    /**
      * Get information about signal levels
      * @return Map with sound and micro signal levels
      */
@@ -281,9 +291,16 @@ public slots:
      */
     void deleteLogFile(const QString &file_name) const;
 
+private slots:
+    /**
+     * Prints errors, warning and debug messages
+     * @param info Log information and message
+     */
+    void slotLogMessage(const LogInfo &info) const;
+
 private:
-    phone::Phone &phone_;
     QWebView *web_view_;
+    phone::Phone &phone_;
 
     QString js_callback_handler_;
 

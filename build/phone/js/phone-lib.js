@@ -1,7 +1,7 @@
 /**
  * @package    Javascript
  * @subpackage Phone
- * @copyright  Copyright (c) 2011 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
+ * @copyright  Copyright (c) 2012 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
  *
  * GNU General Public License
  * This file may be used under the terms of the GNU General Public License
@@ -55,6 +55,8 @@ li.Phone = function(options) {
         forceOutgoingNumber: false,
         mutePhoneSound:      false,             // phone sound status (if true, effects all calls)
         mutePhoneMicro:      false,             // phone micro status (if true, effects all calls)
+        soundLevel:          255,
+        microLevel:          255,
         mode:                li.Phone.MODE_IO
     };
     this.setOptions(options);
@@ -92,6 +94,8 @@ li.Phone = function(options) {
         });
     this.addListener('onRegister', function() {
             var obj = self.getQtHandler().getSignalInformation();
+            self.options.soundLevel = obj.sound;
+            self.options.microLevel = obj.micro;
             self.options.mutePhoneSound = (obj.sound > 0 ? false : true);
             self.options.mutePhoneMicro = (obj.micro > 0 ? false : true);
         });
@@ -140,6 +144,8 @@ li.Phone.prototype = {
      *      forceOutgoingNumber: false: don't force number, otherwise number as string
      *      mutePhoneSound:      boolean: phone sound status (if true, effects all calls)
      *      mutePhoneMicro:      boolean: phone micro status (if true, effects all calls)
+     *      soundLevel:          int: sound level (0...255)
+     *      microLevel:          int: microphone level (0...255)
      *      mode:                li.Phone.MODE_IO (default) or
      *                                   .MODE_IN (only incoming calls) or
      *                                   .MODE_OUT (only outgoing calls)
@@ -532,6 +538,40 @@ li.Phone.prototype = {
     isMutePhoneMicro: function() {
         return this.options.mutePhoneMicro;
     },
+    /**
+     * Set phone sound level
+     * @param {int} level   0...255
+     * @return this
+     */
+    setSoundLevel: function(level) {
+        this.options.soundLevel = this.defaults(level, 255);
+        this.getQtHandler().setSoundLevel(this.options.soundLevel);
+        return this;
+    },
+    /**
+     * Set phone micro level
+     * @param {int} level   0...255
+     * @return this
+     */
+    setMicroLevel: function(level) {
+        this.options.microLevel = this.defaults(level, 255);
+        this.getQtHandler().setMicrophoneLevel(this.options.microLevel);
+        return this;
+    },
+    /**
+     * Get phone sound level
+     * @return {int} 0...255
+     */
+    getSoundLevel: function() {
+        return this.options.soundLevel;
+    },
+    /**
+     * Get phone micro level
+     * @return {int} 0...255
+     */
+    getMicroLevel: function() {
+        return this.options.microLevel;
+    },
 
     /**
      * Get applications error log data
@@ -808,6 +848,7 @@ li.Phone.Call.prototype = {
     isMuteMicro: function() {
         return this.data.muteMicro;
     },
+    //TODO: Implement setSoundLevel and setMicroLevel for calls
 
     /**
      * Get time from call to accept.

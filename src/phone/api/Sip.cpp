@@ -10,7 +10,7 @@
 ****************************************************************************/
 
 #include <QTextDocument>
-#include "../../LogInfo.h"
+#include "../../LogHandler.h"
 #include "../Phone.h"
 #include "Sip.h"
 
@@ -34,7 +34,7 @@ Sip::~Sip()
 }
 
 //-----------------------------------------------------------------------------
-bool Sip::init(unsigned int port, const QString &stun)
+bool Sip::init(const Settings &settings)
 {
     // Create pjsua first
     pj_status_t status = pjsua_create();
@@ -44,12 +44,12 @@ bool Sip::init(unsigned int port, const QString &stun)
     }
 
     // Init pjsua
-    if (!_initPjsua(stun)) {
+    if (!_initPjsua(settings.stun_server_)) {
         return false;
     }
 
     // Add UDP transport
-    if (!_addTransport(PJSIP_TRANSPORT_UDP, port)) {
+    if (!_addTransport(PJSIP_TRANSPORT_UDP, settings.port_)) {
         return false;
     }
     
@@ -60,10 +60,8 @@ bool Sip::init(unsigned int port, const QString &stun)
         return false;
     }
 
-    speaker_level_ = 1.f;
-    mic_level_ = 1.f;
-    pjsua_conf_adjust_rx_level(0, speaker_level_);
-    pjsua_conf_adjust_tx_level(0, mic_level_);
+    pjsua_conf_adjust_rx_level(0, settings.sound_level_);
+    pjsua_conf_adjust_tx_level(0, settings.micro_level_);
     
     return true;
 }
@@ -302,7 +300,7 @@ void Sip::registerStateCb(pjsua_acc_id acc_id)
     } else {
         self_->signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip-account", acc_info.status, msg));
     }
-    self_->signalAccountRegState(acc_info.status);
+    self_->signalAccountState(acc_info.status);
 }
 
 //-----------------------------------------------------------------------------
@@ -442,46 +440,50 @@ void Sip::getCallInfo(const int call_id, QVariantMap &call_info)
 }
 
 //-----------------------------------------------------------------------------
-void Sip::muteSound(const bool mute)
+void Sip::setSoundSignal(const float soundLevel, const int call_id)
 {
-    speaker_level_ = mute ? 0.f : 1.f;
-    QString str = mute ? "true" : "false";
-    signalLog(LogInfo(LogInfo::STATUS_DEBUG, "phone", 0, "mute sound: " + str));
-    pjsua_conf_adjust_tx_level(0, speaker_level_);
-    signalSoundLevel(int(speaker_level_ * 255));
+    QString call;
+    pjsua_conf_port_id slot = 0;
+    if (call_id >= 0) {
+        pjsua_call_info ci;
+        pjsua_call_get_info(call_id, &ci);
+        slot = ci.conf_slot;
+        call = "call " + QString::number(call_id) + " ";
+    }
+    signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, call + "sound level: " + QString::number(soundLevel)));
+    pjsua_conf_adjust_rx_level(slot, soundLevel);
+    signalSoundLevel(int(soundLevel * 255));
 }
 
 //-----------------------------------------------------------------------------
-void Sip::muteSound(const int call_id, const float mute)
+void Sip::setMicroSignal(const float microLevel, const int call_id)
 {
-    pjsua_call_info ci;
-    pjsua_call_get_info(call_id, &ci);
-    pjsua_conf_adjust_rx_level(ci.conf_slot, mute);
+    QString call;
+    pjsua_conf_port_id slot = 0;
+    if (call_id >= 0) {
+        pjsua_call_info ci;
+        pjsua_call_get_info(call_id, &ci);
+        slot = ci.conf_slot;
+        call = "call " + QString::number(call_id) + " ";
+    }
+    signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, call + "micro level: " + QString::number(microLevel)));
+    pjsua_conf_adjust_tx_level(slot, microLevel);
+    signalMicroLevel(int(microLevel * 255));
 }
 
 //-----------------------------------------------------------------------------
-void Sip::muteMicrophone(const bool mute)
+void Sip::getSignalLevels(QVariantMap &levels, const int call_id)
 {
-    mic_level_ = mute ? 0.f : 1.f;
-    QString str = mute ? "true" : "false";
-    signalLog(LogInfo(LogInfo::STATUS_DEBUG, "phone", 0, "mute microphone: " + str));
-    pjsua_conf_adjust_rx_level(0, mic_level_);
-    signalMicrophoneLevel(int(mic_level_ * 255));
-}
-
-//-----------------------------------------------------------------------------
-void Sip::muteMicrophone(const int call_id, const float mute)
-{
-    pjsua_call_info ci;
-    pjsua_call_get_info(call_id, &ci);
-    pjsua_conf_adjust_tx_level(ci.conf_slot, mute);
-}
-
-//-----------------------------------------------------------------------------
-void Sip::getSignalInformation(QVariantMap &signal_info)
-{
-    signal_info.insert("sound", speaker_level_);
-    signal_info.insert("micro", mic_level_);
+    unsigned int tx_level, rx_level;
+    pjsua_conf_port_id slot = 0;
+    if (call_id >= 0) {
+        pjsua_call_info ci;
+        pjsua_call_get_info(call_id, &ci);
+        slot = ci.conf_slot;
+    }
+    pjsua_conf_get_signal_level(slot, &tx_level, &rx_level);
+    levels.insert("sound", rx_level);
+    levels.insert("micro", tx_level);
 }
 
 }} // phone::api::

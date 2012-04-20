@@ -20,6 +20,8 @@ class LogInfo;
 
 namespace phone
 {
+    class Settings;
+
     namespace api
     {
 
@@ -32,14 +34,9 @@ class Interface : public QObject
 
 public:
     /**
-     * Destructor
-     */
-    virtual ~Interface() {};
-
-    /**
      * Initializing the phone
      */
-    virtual bool init(unsigned int port, const QString &stun) = 0;
+    virtual bool init(const Settings &settings) = 0;
 
     /**
      * Registers the account
@@ -124,43 +121,32 @@ public:
     virtual void getCallInfo(const int call_id, QVariantMap &call_info) = 0;
 
     /**
-     * Switch sound on/off
-     * @param mute true, if sound should be muted
+     * Set sound level
+     * @param soundLevel 0.0f (mute) to 1.0f (full)
+     * @param call_id ID of a specific call, or -1 for general soundLevel
      */
-    virtual void muteSound(const bool mute) = 0;
-
-    /**
-     * Switch sound on/off
-     * @param call_id ID of a specific call
-     * @param mute true, if call should be muted
-     */
-    virtual void muteSound(const int call_id, const float mute) = 0;
-
+    virtual void setSoundSignal(const float soundLevel, const int call_id = -1) = 0;
+    
     /**
      * Switch microphone on/off
-     * @param mute true, if microphone should be muted
+     * @param microLevel 0.0f (mute) to 1.0f (full)
+     * @param call_id ID of a specific call, or -1 for general microLevel
      */
-    virtual void muteMicrophone(const bool mute) = 0;
-
+    virtual void setMicroSignal(const float microLevel, const int call_id = -1) = 0;
+    
     /**
-     * Switch microphone on/off
-     * @param call_id ID of a specific call
-     * @param mute true, if microphone should be muted
-     */
-    virtual void muteMicrophone(const int call_id, const float mute) = 0;
-
-    /**
-     * Get information about signal levels of sound and microphone
+     * Get information about signal levels of sound and microphone (0...255)
      * @param signal_info Map to save sound and micro signal levels in
+     * @param call_id ID of a specific call, or -1 for general signal levels
      */
-    virtual void getSignalInformation(QVariantMap &signal_info) = 0;
+    virtual void getSignalLevels(QVariantMap &levels, const int call_id = -1) = 0;
 
 signals:
     /**
      * Send signal when account status changed
      * @param state The new state of the account
      */
-    void signalAccountRegState(const int state);
+    void signalAccountState(const int state);
 
     /**
      * Send signal on incoming calls
@@ -192,7 +178,7 @@ signals:
      * Send a signal when the microphone signal level changed
      * @param level New microphone signal level (0...off, 255...full)
      */
-    void signalMicrophoneLevel(int level);
+    void signalMicroLevel(int level);
     
     /**
      * Send signal to stop sounds

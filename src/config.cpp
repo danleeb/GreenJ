@@ -10,53 +10,59 @@
 ****************************************************************************/
 
 #include <QDir>
-#include "LogInfo.h"
+#include "LogHandler.h"
 #include "Config.h"
+
+const QString Config::SETTINGS_FILE = "/.greenj/settings.conf";
 
 //-----------------------------------------------------------------------------
 Config::Config() :
-    file_name_(QDir::homePath() + "/.greenj/settings.conf"), url_(""),
+    file_name_(QDir::homePath() + SETTINGS_FILE), 
     settings_(file_name_, QSettings::IniFormat)
 {
-    // Create basic config if file does not exist
-    if (!QFile::exists(file_name_)) {
-        settings_.beginGroup("application");
-        settings_.setValue("configversion", "1");
-        settings_.setValue("version", "1.0");
-        settings_.setValue("name", "GreenJ");
-        settings_.setValue("developer", "Lorem Ipsum");
-        settings_.setValue("log_level", LogInfo::STATUS_WARNING);
-        settings_.endGroup();
-
-        settings_.beginGroup("sound");
-        settings_.setValue("soundfile", "ring.wav");
-        settings_.setValue("sounddialfile", "dial_tone.wav");
-        settings_.endGroup();
-
-        settings_.beginGroup("server");
-        settings_.setValue("url", "phone/index.html");
-        settings_.setValue("stun", "");
-        settings_.endGroup();
+    if (!QFile::exists(file_name_) || getConfigVersion() != 11) {
+        settings_.clear();
+        setDefaults();
     }
-
-    settings_.beginGroup("application");
-    log_level_ = settings_.value("log_level").toUInt();
-    settings_.endGroup();
-
-    settings_.beginGroup("server");
-    url_ = settings_.value("url").toUrl();
-    stun_ = settings_.value("stun").toString();
-    settings_.endGroup();
-
-    settings_.beginGroup("sound");
-    sound_file_name_ = settings_.value("soundfile").toString();
-    sound_dial_file_name_ = settings_.value("sounddialfile").toString();
-    settings_.endGroup();
 }
 
 //-----------------------------------------------------------------------------
 Config::~Config()
 {
+}
+
+//-----------------------------------------------------------------------------
+void Config::setDefaults()
+{
+    settings_.setValue("configversion", 11);
+    
+    settings_.beginGroup("application");
+    settings_.setValue("version", "1.0");
+    settings_.setValue("name", "GreenJ");
+    settings_.setValue("developer", "Lorem Ipsum");
+    settings_.setValue("log_level", LogInfo::STATUS_WARNING);
+    settings_.endGroup();
+    
+    settings_.beginGroup("window");
+    settings_.setValue("minwidth", 260);
+    settings_.setValue("minheight", 480);
+    settings_.endGroup();
+
+    settings_.beginGroup("sound");
+    settings_.setValue("ringfile", "ring.wav");
+    settings_.setValue("dialfile", "dial_tone.wav");
+    settings_.endGroup();
+
+    settings_.beginGroup("browser");
+    settings_.setValue("url", "phone/index.html");
+    settings_.endGroup();
+
+    settings_.beginGroup("phone");
+    settings_.setValue("port", 5060);
+    settings_.setValue("stun_server", "");
+    settings_.setValue("sound_level", 1.f);
+    settings_.setValue("micro_level", 1.f);
+    settings_.endGroup();
 }
 
 //-----------------------------------------------------------------------------
@@ -67,93 +73,107 @@ Config &Config::getInstance()
 }
 
 //-----------------------------------------------------------------------------
-const QUrl &Config::getWebpageUrl() const
+const int Config::getConfigVersion() const
 {
-    return url_;
+    return settings_.value("configversion").toInt();
 }
 
 //-----------------------------------------------------------------------------
-const QString &Config::getStunServer() const
+const QString Config::getApplicationVersion() const
 {
-    return stun_;
+    return settings_.value("application/version").toString();
 }
 
 //-----------------------------------------------------------------------------
-const QString &Config::getRingSoundFilename() const
+const QString Config::getApplicationName() const
 {
-    return sound_file_name_;
+    return settings_.value("application/name").toString();
 }
 
 //-----------------------------------------------------------------------------
-const QString &Config::getDialSoundFilename() const
+const QString Config::getApplicationDeveloper() const
 {
-    return sound_dial_file_name_;
+    return settings_.value("application/developer").toString();
 }
 
 //-----------------------------------------------------------------------------
-unsigned Config::getLogLevel() const
+const uint Config::getApplicationLogLevel() const
 {
-    return log_level_;
+    return settings_.value("application/log_level", QVariant(LogInfo::STATUS_WARNING)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
-int Config::getConfigVersion()
+const uint Config::getWindowMinimumWidth() const
 {
-    settings_.beginGroup("application");
-    int ret = settings_.value("configversion").toInt();
-    settings_.endGroup();
-    return ret;
+    return settings_.value("window/minwidth", QVariant(260)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
-QString Config::getAppVersion()
+const uint Config::getWindowMinimumHeight() const
 {
-    settings_.beginGroup("application");
-    QString ret = settings_.value("version").toString();
-    settings_.endGroup();
-    return ret;
+    return settings_.value("window/minheight", QVariant(480)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
-QString Config::getAppName()
+const QUrl Config::getBrowserUrl() const
 {
-    settings_.beginGroup("application");
-    QString ret = settings_.value("name").toString();
-    settings_.endGroup();
-    return ret;
+    return settings_.value("browser/url").toString();
 }
 
 //-----------------------------------------------------------------------------
-QString Config::getAppDeveloper()
+const uint Config::getPhonePort() const
 {
-    settings_.beginGroup("application");
-    QString ret = settings_.value("developer").toString();
-    settings_.endGroup();
-    return ret;
+    return settings_.value("phone/port", QVariant(5060)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
-void Config::setLogLevel(const unsigned val)
+const QString Config::getPhoneStunServer() const
 {
-    log_level_ = val;
-    settings_.beginGroup("application");
-    settings_.setValue("log_level", val);
-    settings_.endGroup();
+    return settings_.value("phone/stun_server", QVariant("")).toString();
+}
+
+//-----------------------------------------------------------------------------
+const float Config::getPhoneSoundLevel() const
+{
+    return settings_.value("phone/sound_level", QVariant(1.f)).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+const float Config::getPhoneMicroLevel() const
+{
+    return settings_.value("phone/micro_level", QVariant(1.f)).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+const QString Config::getSoundRingfile() const
+{
+    return settings_.value("sound/ringfile", QVariant("")).toString();
+}
+
+//-----------------------------------------------------------------------------
+const QString Config::getSoundDialfile() const
+{
+    return settings_.value("sound/dialfile", QVariant("")).toString();
+}
+
+//-----------------------------------------------------------------------------
+void Config::setLogLevel(const uint val)
+{
+    settings_.setValue("application/log_level", val);
 }
 
 //-----------------------------------------------------------------------------
 QVariant Config::getOption(const QString &name) const
 {
-    QVariant result(0);
+    QVariant result;
 
     if (name == "url") {
-        result.setValue(getWebpageUrl());
-    } else if (name == "stun") {
-        result.setValue(getStunServer());
+        result.setValue(getBrowserUrl());
+    } else if (name == "stun_server") {
+        result.setValue(getPhoneStunServer());
     } else if (name == "log_level") {
-        result.setValue(log_level_);
+        result.setValue(getApplicationLogLevel());
     }
-
     return result;
 }
 
@@ -161,19 +181,10 @@ QVariant Config::getOption(const QString &name) const
 void Config::setOption(const QString &name, const QVariant &option)
 {
     if (name == "url") {
-        url_ = option.toString();
-        settings_.beginGroup("server");
-        settings_.setValue("url", url_);
-        settings_.endGroup();
-    } else if (name == "stun") {
-        stun_ = option.toString();
-        settings_.beginGroup("server");
-        settings_.setValue("stun", stun_);
-        settings_.endGroup();
+        settings_.setValue("browser/url", option.toString());
+    } else if (name == "stun_server") {
+        settings_.setValue("phone/stun_server", option.toString());
     } else if (name == "log_level") {
-        log_level_ = option.toInt();
-        settings_.beginGroup("application");
-        settings_.setValue("log_level", log_level_);
-        settings_.endGroup();
+        settings_.setValue("application/log_level", option.toInt());
     }
 }

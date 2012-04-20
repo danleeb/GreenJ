@@ -14,9 +14,11 @@
 
 #include <QObject>
 #include <QFile>
-#include <QString>
 #include <QReadWriteLock>
+#include <QString>
 #include <QStringList>
+#include <QMetaType>
+#include <QDateTime>
 
 class LogInfo;
 
@@ -36,40 +38,36 @@ public:
     static LogHandler &getInstance();
 
     /**
-     * Get log information from webkit to write it into a file
-     * @param info The log information data
+     * Set the log level
+     * @param level New log level
      */
-    void logFromJs(const LogInfo &info);
-
-    /**
-     * Set the LogLevel
-     */
-    void setLogLevel(const unsigned int log_level);
+    void setLevel(const uint level);
 
     /**
      * Get a list of log files
      * @return List of filenames
      */
-    const QStringList &getLogFileList() const;
+    const QStringList &getFileList() const;
     
     /**
      * Get the content of a log file
      * @param file_name File name of log file
      * @return Log file content
      */
-    QString getLogFileContent(const QString &file_name) const;
+    QString getFileContent(const QString &file_name) const;
     
     /**
      * Delete a log file
      * @param file_name File name of log file that should be deleted
      */
-    void deleteLogFile(const QString &file_name);
+    void deleteFile(const QString &file_name);
 
     /**
      * Get log information to write it into a file and try to send it to webkit
      * @param info The log information data
+     * @param signal True, if the log message should be signaled
      */
-    void logData(const LogInfo &info);
+    void log(const LogInfo &info, bool signal = true);
 
 signals:
     /**
@@ -81,7 +79,8 @@ signals:
 private:
     QFile file_;
     QReadWriteLock lock_;
-    QStringList log_list_;
+    QStringList file_list_;
+    uint level_;
 
     LogHandler();
     LogHandler(const LogHandler&);
@@ -89,5 +88,64 @@ private:
 
     void writeFile(const QString &msg);
 };
+
+/**
+ * This class stores log information (status, message, time, etc)
+ */
+class LogInfo
+{
+public:
+    /**
+     * Log status codes
+     * Status codes are priorities of writing log messages.
+     */
+    enum Status {
+        STATUS_DEBUG = 0,
+        STATUS_MESSAGE,
+        STATUS_WARNING,
+        STATUS_ERROR,
+        STATUS_FATAL
+    };
+
+    /**
+     * Translations of status codes
+     */
+    static const QString STATUS_[];
+
+    Status status_;
+    QString domain_;
+    int code_;
+    QString msg_;
+    QDateTime time_;
+
+    /**
+     * Basic constructor, not really used but Q_DECLARE_METATYPE needs it
+     */
+    LogInfo() {}
+
+    /**
+     * Constructor
+     * @param status The status of the log message (STATUS_*)
+     * @param domain Used to identify where the log message came from
+     * @param code Some log messages use an error code
+     * @param msg Log message text
+     */
+    LogInfo(const Status status, const QString &domain, const int code,
+            const QString &msg);
+
+    /**
+     * Convert the status code into a string
+     * @return The text of current status_
+     */
+    const QString &getStatusString() const;
+    
+    /**
+     * Return a formatted string for this log info entry
+     * @return Log message string
+     */
+    QString toString() const;
+};
+
+Q_DECLARE_METATYPE(LogInfo)
 
 #endif // LOGHANDLER_INCLUDE_H

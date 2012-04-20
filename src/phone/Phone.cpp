@@ -11,8 +11,6 @@
 
 #include <QFile>
 #include <QDataStream>
-#include "../Config.h"
-#include "../LogInfo.h"
 #include "../LogHandler.h"
 #include "../JavascriptHandler.h"
 #include "../Sound.h"
@@ -24,19 +22,21 @@
 namespace phone
 {
 
+const QString Phone::ERROR_FILE = "error.log";
+
 //-----------------------------------------------------------------------------
-Phone::Phone(api::Interface *api) : api_(api)
+Phone::Phone(api::Interface *api) : api_(api), js_handler_(NULL)
 {
-    connect(api_, SIGNAL(signalAccountRegState(const int)),
-            this, SLOT(slotAccountRegState(const int)));
+    connect(api_, SIGNAL(signalAccountState(const int)),
+            this, SLOT(slotAccountState(const int)));
     connect(api_, SIGNAL(signalIncomingCall(int, QString, QString)),
             this, SLOT(slotIncomingCall(int, QString, QString)));
     connect(api_, SIGNAL(signalCallState(int,int,int)),
             this, SLOT(slotCallState(int,int,int)));
     connect(api_, SIGNAL(signalSoundLevel(int)),
             this, SLOT(slotSoundLevel(int)));
-    connect(api_, SIGNAL(signalMicrophoneLevel(int)),
-            this, SLOT(slotMicrophoneLevel(int)));
+    connect(api_, SIGNAL(signalMicroLevel(int)),
+            this, SLOT(slotMicroLevel(int)));
     connect(api_, SIGNAL(signalLog(const LogInfo&)),
             this, SLOT(slotLogData(const LogInfo&)));
     connect(api_, SIGNAL(signalRingSound()),
@@ -48,26 +48,25 @@ Phone::Phone(api::Interface *api) : api_(api)
 //-----------------------------------------------------------------------------
 Phone::~Phone()
 {
-    QFile file("error.log");
+    QFile file(ERROR_FILE);
     file.open(QIODevice::WriteOnly | QIODevice::Append);
     QDataStream out(&file);
-    for (int i = 0; i < call_list_.size(); i++) {
-        Call *call = call_list_[i];
-        if (call->isActive()) {
+    for (int i = 0; i < calls_.size(); i++) {
+        Call *call = calls_[i];
+        if (call && call->isActive()) {
             out << *call;
         }
         delete call;
     }
-    call_list_.clear();
+    calls_.clear();
 
     delete api_;
 }
 
 //-----------------------------------------------------------------------------
-bool Phone::init()
+bool Phone::init(const Settings &settings)
 {
-    Config &config = Config::getInstance();
-    return api_->init(5060, config.getStunServer());
+    return api_->init(settings);
 }
 
 //-----------------------------------------------------------------------------
@@ -89,7 +88,7 @@ const QString &Phone::getErrorMessage() const
 }
 
 //-----------------------------------------------------------------------------
-bool Phone::checkAccountStatus()
+bool Phone::checkAccountStatus() const
 {
     return api_->checkAccountStatus();
 }
@@ -104,7 +103,7 @@ bool Phone::registerUser(const Account &acc)
 }
 
 //-----------------------------------------------------------------------------
-QVariantMap Phone::getAccountInfo()
+QVariantMap Phone::getAccountInfo() const
 {
     QVariantMap info;
     api_->getAccountInfo(info);
@@ -114,16 +113,16 @@ QVariantMap Phone::getAccountInfo()
 //-----------------------------------------------------------------------------
 bool Phone::addToCallList(Call *call)
 {
-    for (int i = 0; i < call_list_.size(); i++) {
-        if (call_list_[i] == call) {
+    for (int i = 0; i < calls_.size(); i++) {
+        if (calls_[i] == call) {
             return true;
         }
-        if (call_list_[i]->getId() == call->getId()) {
+        if (calls_[i]->getId() == call->getId()) {
             return false;
         }
     }
 
-    call_list_.push_back(call);
+    calls_.push_back(call);
     return true;
 }
 
@@ -133,7 +132,7 @@ Call *Phone::makeCall(const QString &url)
     Call *call = new Call(this, Call::TYPE_OUTGOING);
     if (call->makeCall(url) < 0 || !addToCallList(call)) {
         delete call;
-        return NULL;
+        call = NULL;
     }
     return call;
 }
@@ -142,17 +141,17 @@ Call *Phone::makeCall(const QString &url)
 void Phone::hangUpAll()
 {
     api_->hangUpAll();
-    for (int i = 0; i < call_list_.size(); i++) {
-        call_list_[i]->setInactive();
+    for (int i = 0; i < calls_.size(); i++) {
+        calls_[i]->setInactive();
     }
 }
 
 //-----------------------------------------------------------------------------
 Call *Phone::getCall(const int call_id)
 {
-    for (int i = 0; i < call_list_.size(); i++) {
-        if (call_list_[i]->getId() == call_id) {
-            return call_list_[i];
+    for (int i = 0; i < calls_.size(); i++) {
+        if (calls_[i]->getId() == call_id) {
+            return calls_[i];
         }
     }
     return NULL;
@@ -162,8 +161,8 @@ Call *Phone::getCall(const int call_id)
 QVariantList Phone::getActiveCallList() const
 {
     QVariantList list;
-    for (int i = 0; i < call_list_.size(); ++i) {
-        Call *call = call_list_[i];
+    for (int i = 0; i < calls_.size(); ++i) {
+        Call *call = calls_[i];
         int id = call->getId();
         if (call->isActive()) {
             QVariantMap current;
@@ -176,36 +175,22 @@ QVariantList Phone::getActiveCallList() const
 }
 
 //-----------------------------------------------------------------------------
-void Phone::muteSound(const bool mute, const int call_id)
+void Phone::setSoundSignal(const float soundLevel)
 {
-    if (call_id == -1) {
-        api_->muteSound(mute);
-    } else {
-        Call *call = getCall(call_id);
-        if (call) {
-            call->muteSound(mute);
-        }
-    }
+    api_->setSoundSignal(soundLevel);
 }
 
 //-----------------------------------------------------------------------------
-void Phone::muteMicrophone(const bool mute, const int call_id)
+void Phone::setMicroSignal(const float microLevel)
 {
-    if (call_id == -1) {
-        api_->muteMicrophone(mute);
-    } else {
-        Call *call = getCall(call_id);
-        if (call) {
-            call->muteMicrophone(mute);
-        }
-    }
+    api_->setMicroSignal(microLevel);
 }
 
 //-----------------------------------------------------------------------------
-QVariantMap Phone::getSignalInformation() const
+QVariantMap Phone::getSignalLevels() const
 {
     QVariantMap info;
-    api_->getSignalInformation(info);
+    api_->getSignalLevels(info);
     return info;
 }
 
@@ -227,7 +212,9 @@ void Phone::slotIncomingCall(int call_id, const QString &url, const QString &nam
         delete call;
         return;
     }
-    js_handler_->incomingCall(*call);
+    if (js_handler_) {
+        js_handler_->incomingCall(*call);
+    }
 
     signalIncomingCall(call->getUrl());
 }
@@ -240,25 +227,33 @@ void Phone::slotCallState(int call_id, int call_state, int last_status)
         call->setState(call_state);
     }
 
-    js_handler_->callState(call_id, call_state, last_status);
+    if (js_handler_) {
+        js_handler_->callState(call_id, call_state, last_status);
+    }
 }
 
 //-----------------------------------------------------------------------------
 void Phone::slotSoundLevel(int level)
 {
-    js_handler_->soundLevel(level);
+    if (js_handler_) {
+        js_handler_->soundLevel(level);
+    }
 }
 
 //-----------------------------------------------------------------------------
-void Phone::slotMicrophoneLevel(int level)
+void Phone::slotMicroLevel(int level)
 {
-    js_handler_->microphoneLevel(level);
+    if (js_handler_) {
+        js_handler_->microphoneLevel(level);
+    }
 }
 
 //-----------------------------------------------------------------------------
-void Phone::slotAccountRegState(const int state)
+void Phone::slotAccountState(const int state)
 {
-    js_handler_->accountState(state);
+    if (js_handler_) {
+        js_handler_->accountStateChanged(state);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -267,7 +262,7 @@ void Phone::slotLogData(const LogInfo &info)
     if (info.status_ >= LogInfo::STATUS_ERROR) {
         error_msg_ = info.msg_;
     }
-    LogHandler::getInstance().logData(info);
+    LogHandler::getInstance().log(info);
 }
 
 //-----------------------------------------------------------------------------

@@ -11,29 +11,4 @@
 
 #include "LogInfo.h"
 
-const QString LogInfo::STATUS_[] = { "DEBUG", "MESSAGE", "WARNING",
-                                     "ERROR", "FATAL" };
 
-//-----------------------------------------------------------------------------
-LogInfo::LogInfo(const Status status, const QString &domain, 
-                 const int code, const QString &msg) : 
-    status_(status), domain_(domain), code_(code), msg_(msg), 
-    time_(QDateTime::currentDateTime())
-{
-}
-
-//-----------------------------------------------------------------------------
-const QString &LogInfo::getStatusString() const
-{
-    return STATUS_[status_];
-}
-
-//-----------------------------------------------------------------------------
-QString LogInfo::toString() const
-{
-    return time_.toString("hh:mm:ss") + " [" 
-         + getStatusString() + "] " 
-         + domain_ + ": [" 
-         + QString::number(code_) + "] " 
-         + msg_ + "\n";
-}

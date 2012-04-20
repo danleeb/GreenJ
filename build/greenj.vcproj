@@ -286,14 +286,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\src\LogInfo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\LogInfo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\main.cpp"
 				>
 			</File>
@@ -339,9 +331,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -349,9 +341,9 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 			</File>
@@ -597,18 +589,6 @@
 						/>
 					</FileConfiguration>
 				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_Sound.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
 			</Filter>
 			<Filter
 				Name="Debug"
@@ -677,18 +657,6 @@
 				</File>
 				<File
 					RelativePath="..\src\GeneratedFiles\Debug\moc_PrintHandler.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_Sound.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

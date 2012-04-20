@@ -27,66 +27,32 @@ public:
      * @return Instance
      */
     static Config &getInstance();
+    
+    const int getConfigVersion() const;
 
-    /**
-     * Get url of the webpage 
-     * @return webpage url
-     */
-    const QUrl &getWebpageUrl() const;
+    const QString getApplicationVersion() const;
+    const QString getApplicationName() const;
+    const QString getApplicationDeveloper() const;
+    const uint getApplicationLogLevel() const;
 
-    /**
-     * Get address and port of the stun server
-     * @return address of the stun server
-     */
-    const QString &getStunServer() const;
+    const uint getWindowMinimumWidth() const;
+    const uint getWindowMinimumHeight() const;
 
-    /**
-     * Get filename of ringing sound
-     * @return ring-filename
-     */
-    const QString &getRingSoundFilename() const;
+    const QUrl getBrowserUrl() const;
 
-    /**
-     * Get filename of dial sound
-     * @return dial-filename
-     */
-    const QString &getDialSoundFilename() const;
+    const uint getPhonePort() const;
+    const QString getPhoneStunServer() const;
+    const float getPhoneSoundLevel() const;
+    const float getPhoneMicroLevel() const;
 
-    /**
-     * Get stored log level
-     * @return log level
-     */
-    unsigned int getLogLevel() const;
-
-    /**
-     * Get config version
-     * @return config version
-     */
-    int getConfigVersion();
-
-    /**
-     * Get application version
-     * @return Appication version as a string
-     */
-    QString getAppVersion();
-
-    /**
-     * Get name of application
-     * @return application name
-     */
-    QString getAppName();
-
-    /**
-     * Get name of the developer
-     * @return developer name
-     */
-    QString getAppDeveloper();
+    const QString getSoundRingfile() const;
+    const QString getSoundDialfile() const;
 
     /**
      * Set log level
      * @param val new log level
      */
-    void setLogLevel(const unsigned val);
+    void setLogLevel(const uint val);
 
     /**
      * Get data of an option
@@ -103,14 +69,9 @@ public:
     void setOption(const QString &name, const QVariant &option);
     
 private:
-    int log_level_;
+    static const QString SETTINGS_FILE;
 
     QString file_name_;
-    QUrl url_;
-    QString stun_;
-    QString sound_file_name_;
-    QString sound_dial_file_name_;
-
     QSettings settings_;
 
     /**
@@ -119,8 +80,13 @@ private:
      * default data
      */
     Config();
-    Config(const Config&);
+    Config(const Config &original);
     virtual ~Config();
+
+    /**
+     * Set default configuration settings
+     */
+    void setDefaults();
 };
 
 #endif // CONFIG_INCLUDE_H
