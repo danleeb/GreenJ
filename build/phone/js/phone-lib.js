@@ -923,7 +923,7 @@ li.Phone.Call.prototype = {
      * @return {string} number
      */
     getNumber: function() {
-        var match = /<(.+):(.+)@(.+)>/i.exec(this.data.number);
+        var match = /<?(.+):(.+)@(.+)>?/i.exec(this.data.number);
         if (!match || match.length < 3) {
             return this.data.number;
         }
@@ -955,7 +955,7 @@ li.Phone.Call.prototype = {
      * @return {object} { number: 'number', protocol: 'sip', host: 'ip', port: 5060, info: 'additional information' }
      */
     getNumberDetail: function() {
-        var match = /<(.+):(.+)@(.+)[:(.+)][;(.+)]>/i.exec(this.data.number), data = {};
+        var match = /<?(.+):(.+)@(.+)[:(.+)][;(.+)]>?/i.exec(this.data.number), data = {};
         if (!match) {
             return data;
         }

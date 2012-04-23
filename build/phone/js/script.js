@@ -10,16 +10,13 @@ jQuery(document).ready(function($) {
     
     /**
      * Todo:
-     * - Header panel (color, selected)
-     * - Sort contacts by name (at insert and rename)
-     * - maxCallLogLength: cut array on persisting (not on load)
      * - Log show/hide "button"
-     * - Improve persisting of calls (data?)
-     * - call number!
+     * - Improve persisting of calls (accepted, missed, data?)
      * - settings panel
      * - connection to server / server-less calls
      * - EditName/EditNumber dynamic input size
-     * - if no input has focus, send keypress to number input
+     * - compact/detailed list switchers (contacts, calls)
+     * - clear log history button
      */
     
     //-------------------------------------------------------------------------
@@ -32,17 +29,15 @@ jQuery(document).ready(function($) {
         calls: [],
         
         exec: function() {
-            this.db.calls = "";
             if (this.db.contacts) {
                 var contacts = JSON.parse(this.db.contacts), i;
-                for (i = 0; i < contacts.length; i++) {
+                for (i = contacts.length - 1; i >= 0; i--) {
                     this.addContact(contacts[i], true);
                 }
             }
             if (this.db.calls) {
                 var calls = JSON.parse(this.db.calls), i;
-                var start = calls.length - this.maxCallLogLength;
-                for (i = start > 0 ? start : 0; i < calls.length; i++) {
+                for (i = 0; i < calls.length; i++) {
                     this.addCallLog(calls[i], true);
                 }
             }
@@ -50,7 +45,6 @@ jQuery(document).ready(function($) {
         exit: function() {
         },
         registerPhone: function() {
-            // Register phone
             this.phone.register({
                 host:   settings.host,
                 name:   settings.sipaccount,
@@ -59,17 +53,40 @@ jQuery(document).ready(function($) {
         },
         addContact: function(contact, skipPersist) {
             var self = this;
-            var pos = this.contacts.push(contact) - 1;
+            this.contacts.splice(0, 0, contact);
             var $contact = $('<div></div>').prependTo('#contacts .content');
             var $name = $('<input class="name" value="' + contact.name + '" title="Edit name" />').appendTo($contact)
                 .change(function() {
-                    var val = $(this).val();
+                    var val = $(this).val(), inserted = false;
                     if (val === '') {
                         $(this).val(contact.name);
                     } else {
                         contact.name = val;
                     }
+                    $contact.appendTo('#contacts .content');
+                    for (var i = 0; i < self.contacts.length; i++) {
+                        if (self.contacts[i] === contact) {
+                            self.contacts.splice(i, 1);
+                        }
+                    }
+                    // Sorted by name
+                    for (var i = 0; i < self.contacts.length; i++) {
+                        if (self.contacts[i].name > contact.name) {
+                            $('#contacts .content > div').eq(i).before($contact);
+                            self.contacts.splice(i, 0, contact);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                    if (!inserted) {
+                        self.contacts.push(contact);
+                    }
                     self.persistContacts();
+                })
+                .blur(function() {
+                    if ($(this).val() === 'New contact') {
+                        $(this).trigger('change');
+                    }
                 });
             var $number = $('<input class="number" value="' + contact.number + '" title="Edit number" />').appendTo($contact)
                 .change(function() {
@@ -87,7 +104,11 @@ jQuery(document).ready(function($) {
                 });
             var $delete = $('<button class="delete" title="Double-click to delete contact">X</button>').appendTo($contact)
                 .dblclick(function() {
-                    self.contacts.splice(pos, 1);
+                    for (var i = 0; i < self.contacts.length; i++) {
+                        if (self.contacts[i] === contact) {
+                            self.contacts.splice(i, 1);
+                        }
+                    }
                     $contact.remove();
                     $('#contacts').tinyscrollbar_update('relative');
                     self.persistContacts();
@@ -100,10 +121,12 @@ jQuery(document).ready(function($) {
             this.db.contacts = JSON.stringify(this.contacts);
         },
         addCall: function(call) {
-            var $call = $('<div></div>').prependTo('#calls .content');
-            $call.addClass(call.isOutgoing() ? 'outgoing' : 'incoming');
-            $call.append('<dt>' + (call.isOutgoing() ? 'Outgoing' : 'Incoming') + '</dt>');
-            $call.append('<dd title="' + call.getFullNumber() + '">' + call.getNumber() + '</dd>');
+            var $call = this.addCallLog({ 
+                    number: call.getNumber(), 
+                    fullnumber: call.getFullNumber(), 
+                    outgoing: call.isOutgoing(), 
+                    date: call.getData().callTime
+                }).removeClass('closed');
             var $accept = null;
             if (call.isIncoming()) {
                 $accept = $('<button class="accept">Accept</button>').appendTo($call)
@@ -116,33 +139,41 @@ jQuery(document).ready(function($) {
                 .click(function() {
                     call.hangUp();
                 });
-            var $select = $('<button class="select">Select</button>').appendTo($call)
-                .click(function() {
-                    $('#number').val(call.getNumber()).trigger('change');
-                })
-                .hide();
+            var $ringing = $('<div class="time"></div>').appendTo($call);
+            call.setInterval('ringTime', function() {
+                    $ringing.text(call.getRingTime());
+                }, 500, false, true);
             call.addListener('onAccept', function() {
+                this.clearInterval('ringTime');
+                call.setInterval('callTime', function() {
+                    $ringing.text(call.getCallTime());
+                }, 500, false, true);
                 $call.addClass('accepted');
                 if ($accept) {
                     $accept.remove();
                 }
             });
             call.addListener('onClose', function() {
+                this.clearInterval('ringTime');
+                this.clearInterval('callTime');
                 $call.addClass('closed');
-                $select.show();
                 $close.remove();
                 if ($accept) {
                     $accept.remove();
                 }
             });
             $('#calls').tinyscrollbar_update();
-            this.calls.push({ number: call.getNumber(), fullnumber: call.getFullNumber(), outgoing: call.isOutgoing() });
-            this.persistCalls();
         },
         addCallLog: function(call, skipPersist) {
             var $call = $('<div></div>').prependTo('#calls .content');
             $call.addClass(call.outgoing ? 'outgoing' : 'incoming').addClass('closed');
-            $call.append('<dt>' + (call.outgoing ? 'Outgoing' : 'Incoming') + '</dt>');
+            var date = new Date(call.date), now = new Date(), format = '';
+            if (date.getYear() !== now.getYear()) {
+                format += 'Y-m-j ';
+            } else if (date.getMonth() !== now.getMonth() || date.getDate() !== now.getDate()) {
+                format += 'M-j ';
+            }
+            $call.append('<dt title="' + date.format('Y-m-j G:i:s') + '">' + date.format(format + 'G:i') + ' - ' + (call.outgoing ? 'Outgoing' : 'Incoming') + '</dt>');
             $call.append('<dd title="' + call.fullnumber + '">' + call.number + '</dd>');
             var $select = $('<button class="select">Select</button>').appendTo($call)
                 .click(function() {
@@ -152,8 +183,12 @@ jQuery(document).ready(function($) {
             if (!skipPersist) {
                 this.persistCalls();
             }
+            return $call;
         },
         persistCalls: function() {
+            if (this.calls.length > this.maxCallLogLength) {
+                this.calls.splice(0, this.calls.length - this.maxCallLogLength);
+            }
             this.db.calls = JSON.stringify(this.calls);
         },
         selectTab: function(tab) {
@@ -168,6 +203,7 @@ jQuery(document).ready(function($) {
             }
         }
     };
+    $.extend(app, li.BaseObject.prototype);
     
     // Configurate error handler
     li.errorHandler.init({
@@ -181,7 +217,6 @@ jQuery(document).ready(function($) {
         blockIntervals:		false,      // true, to disable all intervals
         blockTimeouts:		false       // true, to disable all timeouts
     });
-    
     
     //-------------------------------------------------------------------------
     // Phone
@@ -219,16 +254,14 @@ jQuery(document).ready(function($) {
             if (typeof data.incomingCall === 'undefined' || false === data.incomingCall) {
                 return li.errorHandler.add(li.errorType.ERROR);
             }
-            var call = data.incomingCall;
             app.selectTab('calls');
-            app.addCall(call);
+            app.addCall(data.incomingCall);
         });
-        // Listener to print log messages
+        // Listeners to print log and error messages
         app.phone.addListener('onLogMessage', function(obj) {
             $('#log').append('<div>' + obj.time + ': (' + obj.status + ') <' + obj.domain + '> [' 
                                      + obj.code + '] ' + obj.message + '</div>');
         });
-        // Listener to print error messages
         li.errorHandler.addListener('onError', function(data) {
             $('#log').append('<div>' + data.errorMessage + ': ' + data.errorData + '</div>');
         });
@@ -242,7 +275,6 @@ jQuery(document).ready(function($) {
             li.errorHandler.add(li.errorType.PHONE_DEBUG, { output: data });
             app.phone.clearErrorLog();
         }
-        
 	} catch (e) {
 		li.errorHandler.add(li.errorType.DEFAULT, { exception: e } );
 	}
@@ -252,17 +284,17 @@ jQuery(document).ready(function($) {
     $('#log').hide();
     $('#numblock button').click(function() {
         var button = $(this).text(),
-            value = $('#number').val();
+            val = $('#number').val();
         if (button === '<') {
-            value = value.slice(0, -1);
+            val = val.slice(0, -1);
         } else {
-            value += button;
+            val += button;
         }
-        $('#number').val(value).trigger('change').focus();
+        $('#number').val(val).trigger('change').focus();
     });
     $('#number').change(function() {
         app.selectTab('phone');
-        if ($(this).val() === '') {
+        if ($.trim($(this).val()) === '') {
             $('#clearNumber').hide();
             $('#addNumber').css('visibility', 'hidden');
         } else {
@@ -274,7 +306,7 @@ jQuery(document).ready(function($) {
         $('#number').val('').trigger('change').focus();
     });
     $('#addNumber').click(function() {
-        app.addContact({ name: 'New contact', number: $('#number').val() });
+        app.addContact({ name: 'New contact', number: $.trim($('#number').val()) });
         app.selectTab('contacts');
         $('#contacts .name').first().focus();
         $('#contacts').tinyscrollbar_update();
@@ -293,7 +325,6 @@ jQuery(document).ready(function($) {
             }
         }
     });
-    
     $('#buttonHangUpAll').click(function() {
         try {
             app.phone.hangUpAll();
@@ -301,9 +332,6 @@ jQuery(document).ready(function($) {
             li.errorHandler.add(li.errorType.PHONE_ERROR, { exception: e, output: e } );
         }
     });
-    
-    $('#buttonMuteSound').change(function() {});
-    $('#buttonMuteMicro').change(function() {});
     
     $('#navcontacts').click(function() { app.selectTab('contacts'); });
     $('#navphone').click(function() { app.selectTab('phone'); });
@@ -337,7 +365,7 @@ jQuery(document).ready(function($) {
         });
     $('#micro .button').click(function() {
             $(this).toggleClass('mute');
-            app.phone.muteMicroSound($(this).hasClass('mute'));
+            app.phone.mutePhoneMicro($(this).hasClass('mute'));
         });
     
     var cols = 0;
@@ -367,7 +395,11 @@ jQuery(document).ready(function($) {
         $('#calls').tinyscrollbar_update('relative');
     }).trigger('resize');
     
-    // Register phone
+    $(document).keydown(function(event) {
+        if (!$(event.target).is('input')) {
+            $('#number').focus();
+        }
+    });
+
     app.registerPhone();
-        
 });
