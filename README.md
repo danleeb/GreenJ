@@ -1,3 +1,5 @@
+___GreenJ is currently under revision, see [branch 1.1](https://github.com/danleeb/GreenJ/tree/1.1). The code base has been improved and a new HTML/JavaScript phone is under development. The master branch still contains the stable 1.0 release.___
+
 # About GreenJ
 
 GreenJ is an open source Voice-over-IP phone software using pjsip and Qt. It can easily be used to build your own VoIP phone system. Our approach was not to build a complete phone with user interface, but instead provide an application that handles only the communication. The program logic and user interface are separated from the application by using an integrated browser. We use webkit as browser engine, which is well integrated into Qt (QWebView). A Javascript interface handles all communications between application and webpage. This means that you can use GreenJ as it is and create your VoIP phone entirely in HTML and JavaScript.
