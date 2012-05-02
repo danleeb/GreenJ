@@ -10,7 +10,9 @@ For a complete overview, see [building GreenJ under Windows or Linux](http://www
 
 In addition, I want to give a step by step guide on how GreenJ can be compiled under Ubuntu.
 
-## Ubuntu (11.10 32-bit)
+## Ubuntu (12.04 32-bit Desktop)
+
+_Note: Also tested under Ubuntu 11.10 32-bit Desktop with the exact same steps._
 
 Install dependencies:
 
@@ -20,7 +22,7 @@ Install dependencies:
     $ sudo apt-get install libasound2-dev
     $ sudo apt-get install libphonon-dev
 
-Download PJSIP (e.g. pjproject-1.12.tar.bz2) and extract it somewhere.
+[Download PJSIP](http://www.pjsip.org/download.htm) (e.g. pjproject-1.14.tar.bz2) and extract it somewhere.
 
     $ cd path/to/pjsip
     $ ./configure
