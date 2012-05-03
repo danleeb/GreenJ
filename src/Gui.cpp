@@ -15,7 +15,7 @@
 #include "Config.h"
 #include "LogInfo.h"
 #include "LogHandler.h"
-#include "phone/phone.h"
+#include "phone/Phone.h"
 #include "WebPage.h"
 #include "Gui.h"
 
