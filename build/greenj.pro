@@ -124,33 +124,31 @@ OBJECTS_DIR += $$BUILDDIR
 UI_DIR += $$SOURCEDIR/GeneratedFiles
 RCC_DIR += $$SOURCEDIR/GeneratedFiles
 
-HEADERS += $$SOURCEDIR/gui.h \
-    $$SOURCEDIR/call.h \
-    $$SOURCEDIR/gui_window_handler.h \
-    $$SOURCEDIR/phone_api.h \
-    $$SOURCEDIR/phone.h \
-    $$SOURCEDIR/sound.h \
-    $$SOURCEDIR/account.h \
-    $$SOURCEDIR/sip_phone.h \
-    $$SOURCEDIR/config_file_handler.h \
-    $$SOURCEDIR/javascript_handler.h \
-    $$SOURCEDIR/print_handler.h \
-    $$SOURCEDIR/log_handler.h \ 
-    $$SOURCEDIR/log_info.h \
-    $$SOURCEDIR/web_page.h
+HEADERS += $$SOURCEDIR/phone/api/Interface.h \
+    $$SOURCEDIR/phone/api/Sip.h \
+    $$SOURCEDIR/phone/Account.h \
+    $$SOURCEDIR/phone/Call.h \
+    $$SOURCEDIR/phone/Phone.h \
+    $$SOURCEDIR/Config.h \
+    $$SOURCEDIR/Gui.h \
+    $$SOURCEDIR/JavascriptHandler.h \
+    $$SOURCEDIR/LogHandler.h \ 
+    $$SOURCEDIR/LogInfo.h \
+    $$SOURCEDIR/PrintHandler.h \
+    $$SOURCEDIR/Sound.h \
+    $$SOURCEDIR/WebPage.h
 SOURCES += $$SOURCEDIR/main.cpp \
-    $$SOURCEDIR/call.cpp \
-    $$SOURCEDIR/gui.cpp \
-    $$SOURCEDIR/gui_window_handler.cpp \
-    $$SOURCEDIR/phone.cpp \
-    $$SOURCEDIR/sound.cpp \
-    $$SOURCEDIR/account.cpp \
-    $$SOURCEDIR/sip_phone.cpp \
-    $$SOURCEDIR/config_file_handler.cpp \
-    $$SOURCEDIR/javascript_handler.cpp \
-    $$SOURCEDIR/print_handler.cpp \
-    $$SOURCEDIR/log_handler.cpp \
-    $$SOURCEDIR/log_info.cpp
+    $$SOURCEDIR/phone/api/Sip.cpp \
+    $$SOURCEDIR/phone/Account.cpp \
+    $$SOURCEDIR/phone/Call.cpp \
+    $$SOURCEDIR/phone/Phone.cpp \
+    $$SOURCEDIR/Config.cpp \
+    $$SOURCEDIR/Gui.cpp \
+    $$SOURCEDIR/JavascriptHandler.cpp \
+    $$SOURCEDIR/LogHandler.cpp \
+    $$SOURCEDIR/LogInfo.cpp \
+    $$SOURCEDIR/PrintHandler.cpp \
+    $$SOURCEDIR/Sound.cpp
 FORMS += $$SOURCEDIR/gui.ui
 RESOURCES += $$RESOURCEDIR/gui.qrc
 
