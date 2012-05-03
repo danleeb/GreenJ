@@ -10,20 +10,41 @@ jQuery(document).ready(function($) {
     
     /**
      * Todo:
-     * - Log show/hide "button"
-     * - Improve persisting of calls (accepted, missed, data?)
+     * - Improve persisting of calls (accepted, missed, times, data?)
      * - settings panel
+     *      - change host/username/password (save in localStorage)
+     *      - change phone mode (MODE_IO, MODE_IN, MODE_OUT)
+     *      - set forceOutgoingNumber
+     *      - clear log history
+     *      - set maxCallLogs value
+     *      - debug settings (errorHandler, phone log level)
+     *      - show/hide log
+     * - log:
+     *      - show list of log files: getLogFileList
+     *      - show content of log file: getLogFileContent
+     *      - delete log file: deleteLogFile
      * - connection to server / server-less calls
-     * - EditName/EditNumber dynamic input size
+     *      - show registration/account status
      * - compact/detailed list switchers (contacts, calls)
-     * - clear log history button
+     *      - compact list: auto-switch if col is too small
+     * - show contact in call log and "add contact" if number matches
+     * - statistics (in settings?)
+     *      - avg. call time / call
+     *      - total call time
+     *      - total calls (incoming/outgoing)
+     *  - contact search
+     *  [- print contact list]
      */
     
     //-------------------------------------------------------------------------
     // Application
     var app = {
+        maxCallLogs: 30,
+        text: {
+            newContact: 'New contact'
+        },
+        
         phone: null,
-        maxCallLogLength: 30,
         db: window.localStorage,
         contacts: [],
         calls: [],
@@ -56,8 +77,9 @@ jQuery(document).ready(function($) {
             this.contacts.splice(0, 0, contact);
             var $contact = $('<div></div>').prependTo('#contacts .content');
             var $name = $('<input class="name" value="' + contact.name + '" title="Edit name" />').appendTo($contact)
+                .trigger('blur')
                 .change(function() {
-                    var val = $(this).val(), inserted = false;
+                    var val = $.trim($(this).val()), inserted = false;
                     if (val === '') {
                         $(this).val(contact.name);
                     } else {
@@ -71,7 +93,7 @@ jQuery(document).ready(function($) {
                     }
                     // Sorted by name
                     for (var i = 0; i < self.contacts.length; i++) {
-                        if (self.contacts[i].name > contact.name) {
+                        if (self.contacts[i].name.toLowerCase() > contact.name.toLowerCase()) {
                             $('#contacts .content > div').eq(i).before($contact);
                             self.contacts.splice(i, 0, contact);
                             inserted = true;
@@ -84,13 +106,14 @@ jQuery(document).ready(function($) {
                     self.persistContacts();
                 })
                 .blur(function() {
-                    if ($(this).val() === 'New contact') {
+                    if ($(this).val() === self.text.newContact) {
                         $(this).trigger('change');
                     }
                 });
             var $number = $('<input class="number" value="' + contact.number + '" title="Edit number" />').appendTo($contact)
+                .trigger('blur')
                 .change(function() {
-                    var val = $(this).val();
+                    var val = $.trim($(this).val());
                     if (val === '') {
                         $(this).val(contact.number);
                     } else {
@@ -186,8 +209,8 @@ jQuery(document).ready(function($) {
             return $call;
         },
         persistCalls: function() {
-            if (this.calls.length > this.maxCallLogLength) {
-                this.calls.splice(0, this.calls.length - this.maxCallLogLength);
+            if (this.calls.length > this.maxCallLogs) {
+                this.calls.splice(0, this.calls.length - this.maxCallLogs);
             }
             this.db.calls = JSON.stringify(this.calls);
         },
@@ -228,9 +251,6 @@ jQuery(document).ready(function($) {
         });
         settings.qthandler.registerJsCallbackHandler("window.li.phone" + app.phone.getHandlerName());
         
-        if (!settings.host) {
-            app.exec();
-        }
         app.phone.addListener('onRegister', function() {
             $('#sound .ui-slider').slider('value', this.getSoundLevel());
             $('#micro .ui-slider').slider('value', this.getMicroLevel());
@@ -306,7 +326,7 @@ jQuery(document).ready(function($) {
         $('#number').val('').trigger('change').focus();
     });
     $('#addNumber').click(function() {
-        app.addContact({ name: 'New contact', number: $.trim($('#number').val()) });
+        app.addContact({ name: app.text.newContact, number: $.trim($('#number').val()) });
         app.selectTab('contacts');
         $('#contacts .name').first().focus();
         $('#contacts').tinyscrollbar_update();
@@ -319,6 +339,7 @@ jQuery(document).ready(function($) {
                 var call = app.phone.makeCall({ number: number });
                 if (call) {
                     app.addCall(call);
+                    app.selectTab('calls');
                 }
             } catch (e) {
                 li.errorHandler.add(li.errorType.PHONE_ERROR, { exception: e, output: e } );
@@ -367,6 +388,20 @@ jQuery(document).ready(function($) {
             $(this).toggleClass('mute');
             app.phone.mutePhoneMicro($(this).hasClass('mute'));
         });
+    
+    $('#contacts .name, #contacts .number').live('focus', function() {
+            $(this).css('width', '100%');
+        }).live('blur', function() {
+            var $ruler = jQuery("<div>" + $(this).val() + "</div>")
+                .addClass($(this).attr("class")).css('visibility', 'hidden').css('width', 'auto').css('display', 'inline-block')
+                .appendTo('#contacts');
+            $(this).css('width', $ruler[0].offsetWidth);
+            $ruler.remove();
+        });
+    
+    if (!settings.host) {
+        app.exec();
+    }
     
     var cols = 0;
     $(window).resize(function() {

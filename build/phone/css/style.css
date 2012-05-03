@@ -80,7 +80,7 @@ input, .ui-state-focus { outline:none; }
     color:#ccc;
 }
 #contacts .name, #contacts .number {
-    width:100%;
+    display:block;
     background:transparent;
     border:none;
     color:inherit;
