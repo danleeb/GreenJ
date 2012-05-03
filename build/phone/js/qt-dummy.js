@@ -17,6 +17,8 @@ if (typeof window.qt_handler === 'undefined')
  * @namespace QtHandler dummy object.
  */
 window.qt_handler = {
+    display: true,
+    
     _registered: false,
     
     incomingNumber:     '123456789',
@@ -300,11 +302,13 @@ jQuery(document).ready(function($) {
     content += 'Duration: <span id="dummyDuration"></span><br />';
     content += 'Recent log message: <br /><span id="dummyLog" style="font-size:9px;">N/A</span><br />';
     content += '</div>';
-    $('<div style="z-index:10101; position:absolute; bottom:0px; right:0px; width:230px; background:#f80; padding:5px; -moz-border-radius:4px; border-radius:4px; -moz-box-shadow:3px 3px 3px black; -webkit-box-shadow:3px 3px 3px black; box-shadow:3px 3px 3px black;"></div>')
+    var $debug = $('<div style="z-index:10101; position:absolute; bottom:0px; right:0px; width:210px; background:#f80; padding:5px; -moz-border-radius:4px; border-radius:4px; -moz-box-shadow:3px 3px 3px black; -webkit-box-shadow:3px 3px 3px black; box-shadow:3px 3px 3px black;"></div>')
             .html(content)
             .draggable()
-            .appendTo('body')
-            .hide();
+            .appendTo('body');
+    if (!window.qt_handler.display) {
+        $debug.hide();
+    }
     $('#dummyCallNumber').val(window.qt_handler.incomingNumber)
         .change(function() {
             window.qt_handler.incomingNumber = jQuery(this).val();
