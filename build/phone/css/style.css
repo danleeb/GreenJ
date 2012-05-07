@@ -344,6 +344,52 @@ input, .ui-state-focus { outline:none; }
 }
 #log div { border-bottom:1px solid #ccc; }
 
+.ui-dialog { padding:0; background:#000; border:2px solid #17a; font-family:Helvetica; border-radius:0; }
+.ui-dialog .ui-dialog-titlebar { 
+    background:-webkit-gradient(linear, left 0%, left 50%, from(#2ae), to(#18b)); 
+    color:#fff; 
+    border:none;
+    font-size:18px;
+    font-weight:bold;
+    border-radius:0;
+}
+.ui-dialog .ui-dialog-content { padding:0; font-size:12px; color:#3be; }
+.ui-dialog.error { border-color:#a21; }
+.ui-dialog.error .ui-dialog-titlebar { background:-webkit-gradient(linear, left 0%, left 50%, from(#e42), to(#b31)); }
+.ui-dialog.error .ui-dialog-content { font-size:15px; color:#f44; padding:5px; }
+.ui-dialog .item { position:relative; padding:5px 23px 5px 20px; border-bottom:1px solid #333; }
+.ui-dialog .category { background:#222; padding-left:18px; font-size:14px; color:#ccc; }
+.ui-dialog label { display:block; margin-bottom:2px; font-size:13px; color:#ddd; }
+.ui-dialog span { font-size:18px; color:#ddd; }
+.ui-dialog input[type="text"], .ui-dialog input[type="password"] {
+    width:98%;
+    background:#eee;
+    border:none;
+    font-size:15px;
+    padding:4px 1%;
+    border-radius:4px;
+    margin-bottom:3px;
+}
+.ui-dialog input:focus { box-shadow:0 0 0px 3px #18d; background:#fff; }
+.ui-dialog input[type="checkbox"] { position:absolute; right:30px; top:10px; }
+.ui-dialog button {
+    width:86%;
+    height:35px;
+    margin:2px 0 4px 5%;
+    background:-webkit-gradient(linear, left top, left bottom, from(#c81), to(#960));
+    border:none;
+    border-top:1px solid #f73;
+    border-bottom:1px solid #e62;
+    color:#eee;
+    border-radius:4px;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+}
+.ui-dialog button:hover { background:-webkit-gradient(linear, left top, left bottom, from(#ea2), to(#b81)); color:#fff; }
+
+.ui-widget-overlay { background-color:#000; opacity:0.5; }
+
 .viewport { position:relative; width:100%; height:100%; overflow:hidden; }
 .overview { position:absolute; top:0; left:0; right:0; list-style:none; }
 .thumb .end, .thumb { background-color:#fff; }
@@ -353,6 +399,6 @@ input, .ui-state-focus { outline:none; }
 .thumb .end { width:16px; height:5px; overflow:hidden; }
 .disable { display:none; }
 .scrollbar { opacity:0.15; }
-#calls .scrollbar { left:auto; right:0; }
-#contacts:hover .scrollbar, #calls:hover .scrollbar { opacity:0.3; }
-#contacts:hover .scrollbar:hover, #calls .scrollbar:hover { opacity:0.8; }
+#calls .scrollbar, #settingsDialog .scrollbar { left:auto; right:0; }
+#contacts:hover .scrollbar, #calls:hover .scrollbar, #settingsDialog:hover .scrollbar { opacity:0.3; }
+#contacts:hover .scrollbar:hover, #calls .scrollbar:hover, #settingsDialog .scrollbar:hover { opacity:0.8; }

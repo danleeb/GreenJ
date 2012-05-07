@@ -1,9 +1,8 @@
 jQuery(document).ready(function($) {
-    var settings = {
+    var defaultSettings = {
         host:           null,   // 'localhost',
         sipaccount:     'user',
         sipsecret:      'pw',
-        qthandler:      window.qt_handler,
         //forceOutgoing:  null,
         mode:           li.Phone.MODE_IO
     };
@@ -11,11 +10,11 @@ jQuery(document).ready(function($) {
     /**
      * Todo:
      * - Improve persisting of calls (accepted, missed, times, data?)
+     * - better css for buttons (colors; one class; etc.)
      * - settings panel
-     *      - change host/username/password (save in localStorage)
-     *      - change phone mode (MODE_IO, MODE_IN, MODE_OUT)
+     *      + change host/username/password (save in localStorage)
      *      - set forceOutgoingNumber
-     *      - clear log history
+     *      + clear log history
      *      - set maxCallLogs value
      *      - debug settings (errorHandler, phone log level)
      *      - show/hide log
@@ -48,8 +47,25 @@ jQuery(document).ready(function($) {
         db: window.localStorage,
         contacts: [],
         calls: [],
+        settings: {},
         
-        exec: function() {
+        loadSettings: function(defaults) {
+            //this.db.settings = "";
+            var self = this;
+            $.extend(this.settings, defaults);
+            if (this.db.settings) {
+                $.extend(this.settings, JSON.parse(this.db.settings));
+            }
+            var keys = ['host', 'sipaccount', 'sipsecret'];
+            $.each(keys, function(i, val) {
+                $('#settingsDialog input[name=settings-' + val + ']').val(self.settings[val])
+                    .change(function() { 
+                        self.settings[val] = $(this).val();
+                        self.persistSettings();
+                    });
+            });
+        },
+        start: function() {
             if (this.db.contacts) {
                 var contacts = JSON.parse(this.db.contacts), i;
                 for (i = contacts.length - 1; i >= 0; i--) {
@@ -62,14 +78,24 @@ jQuery(document).ready(function($) {
                     this.addCallLog(calls[i], true);
                 }
             }
+            if (!this.settings.host || $.trim(this.settings.host) === '') {
+                this.connected();
+            }
+        },
+        connected: function() {
+            //alert('connected');
+        },
+        disconnected: function() {
+            alert('disconnected');
         },
         exit: function() {
         },
         registerPhone: function() {
+            this.phone.unregister();
             this.phone.register({
-                host:   settings.host,
-                name:   settings.sipaccount,
-                secret: settings.sipsecret
+                host:   this.settings.host,
+                name:   this.settings.sipaccount,
+                secret: this.settings.sipsecret
             });
         },
         addContact: function(contact, skipPersist) {
@@ -224,7 +250,10 @@ jQuery(document).ready(function($) {
                     $('#nav' + tab).addClass('active').siblings('#navphone, #navcontacts').removeClass('active');
                 }
             }
-        }
+        },
+        persistSettings: function() {
+            this.db.settings = JSON.stringify(this.settings);
+        },
     };
     $.extend(app, li.BaseObject.prototype);
     
@@ -244,12 +273,14 @@ jQuery(document).ready(function($) {
     //-------------------------------------------------------------------------
     // Phone
     try {
+        app.loadSettings(defaultSettings);
+        
         li.phone = app.phone = new li.Phone({
-            qthandler: 				settings.qthandler,
-            forceOutgoingNumber:	settings.forceOutgoing,
-            mode:					settings.mode
+            qthandler: 				window.qt_handler,
+            forceOutgoingNumber:	app.settings.forceOutgoing,
+            mode:					app.settings.mode
         });
-        settings.qthandler.registerJsCallbackHandler("window.li.phone" + app.phone.getHandlerName());
+        app.phone.getQtHandler().registerJsCallbackHandler("window.li.phone" + app.phone.getHandlerName());
         
         app.phone.addListener('onRegister', function() {
             $('#sound .ui-slider').slider('value', this.getSoundLevel());
@@ -263,7 +294,7 @@ jQuery(document).ready(function($) {
         });
         app.phone.addListener('onAccountState', function(data) {
             if (data.state < li.Phone.SIP_SC_BAD_REQUEST) {
-                app.exec();
+                app.connected();
             } else {
                 app.exit();
                 this.unregister();
@@ -358,8 +389,6 @@ jQuery(document).ready(function($) {
     $('#navphone').click(function() { app.selectTab('phone'); });
     $('#navcalls').click(function() { app.selectTab('calls'); });
     
-    $('#contacts').tinyscrollbar();
-    $('#calls').tinyscrollbar();
     $('<div class="slider"><div></div></div>').appendTo('#sound, #micro').hide().find('div')
         .slider({
 			orientation: "vertical",
@@ -388,6 +417,40 @@ jQuery(document).ready(function($) {
             $(this).toggleClass('mute');
             app.phone.mutePhoneMicro($(this).hasClass('mute'));
         });
+    $('#settings .button').click(function() {
+        $('#settingsDialog').dialog('open');
+        $('#settingsDialog').tinyscrollbar_update();
+    });
+    
+    $('#settingsDialog').dialog({
+        autoOpen: true,
+        height: 400,
+        width: 350,
+        modal: true,
+        resizable: false,
+        draggable: false,
+        open: function(event, ui) {
+            $(".ui-widget-overlay").click(function () { $(event.target).dialog("close"); });
+        }
+    });
+    
+    $('#contacts').tinyscrollbar();
+    $('#calls').tinyscrollbar();
+    $('#settingsDialog').tinyscrollbar();
+    
+    $('#settingsConnect').click(function() {
+        if (app.phone.hasCalls()) {
+            li.errorHandler.add(li.errorType.PHONE_ERROR, { output: "Still active calls" });
+        } else {
+            app.registerPhone();
+        }
+    });
+    $('#settingsClearCalllog').click(function() {
+        $('#calls .closed').remove();
+        app.calls = [];
+        app.persistCalls();
+        $('#calls').tinyscrollbar_update();
+    });
     
     $('#contacts .name, #contacts .number').live('focus', function() {
             $(this).css('width', '100%');
@@ -399,9 +462,7 @@ jQuery(document).ready(function($) {
             $ruler.remove();
         });
     
-    if (!settings.host) {
-        app.exec();
-    }
+    app.start();
     
     var cols = 0;
     $(window).resize(function() {
@@ -428,6 +489,11 @@ jQuery(document).ready(function($) {
         }
         $('#contacts').tinyscrollbar_update('relative');
         $('#calls').tinyscrollbar_update('relative');
+        
+        $('.ui-dialog').each(function() {
+            $(this).css('top', (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop() + 'px');
+            $(this).css('left', (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft() + 'px');
+        });
     }).trigger('resize');
     
     $(document).keydown(function(event) {
@@ -435,6 +501,6 @@ jQuery(document).ready(function($) {
             $('#number').focus();
         }
     });
-
+    
     app.registerPhone();
 });
