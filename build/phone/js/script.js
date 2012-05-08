@@ -7,36 +7,6 @@ jQuery(document).ready(function($) {
         mode:           li.Phone.MODE_IO
     };
     
-    /**
-     * Todo:
-     * - Improve persisting of calls (accepted, missed, times, data?)
-     * - better css for buttons (colors; one class; etc.)
-     * - settings panel
-     *      + change host/username/password (save in localStorage)
-     *      + clear log history
-     *      - set forceOutgoingNumber
-     *      - set maxCallLogs value
-     *      - show/hide log
-     *      - debug settings (errorHandler, phone log level)
-     * - log:
-     *      - show list of log files: getLogFileList
-     *      - show content of log file: getLogFileContent
-     *      - delete log file: deleteLogFile
-     * - connection to server / server-less calls
-     *      - show registration/account status
-     * - compact/detailed list switchers (contacts, calls)
-     *      - compact list: auto-switch if col is too small
-     * - show contact in call log and "add contact" if number matches
-     * - statistics (in settings?)
-     *      - avg. call time / call
-     *      - total call time
-     *      - total calls (incoming/outgoing)
-     *  - contact search
-     *  [- print contact list]
-     *  - run JSLint
-     *  - minimized versions
-     */
-    
     //-------------------------------------------------------------------------
     // Application
     var app = {
@@ -149,11 +119,11 @@ jQuery(document).ready(function($) {
                     }
                     self.persistContacts();
                 });
-            var $select = $('<button class="select">Select</button>').appendTo($contact)
+            var $select = $('<button class="btn select">Select</button>').appendTo($contact)
                 .click(function() {
                     $('#number').val(contact.number).trigger('change');
                 });
-            var $delete = $('<button class="delete" title="Double-click to delete contact">X</button>').appendTo($contact)
+            var $delete = $('<button class="btn delete" title="Double-click to delete contact">X</button>').appendTo($contact)
                 .dblclick(function() {
                     for (var i = 0; i < self.contacts.length; i++) {
                         if (self.contacts[i] === contact) {
@@ -180,13 +150,13 @@ jQuery(document).ready(function($) {
                 }).removeClass('closed');
             var $accept = null;
             if (call.isIncoming()) {
-                $accept = $('<button class="accept">Accept</button>').appendTo($call)
+                $accept = $('<button class="btn accept">Accept</button>').appendTo($call)
                     .click(function() {
                         $('#number').val(call.getNumber()).trigger('change');
                         call.accept();
                     });
             }
-            var $close = $('<button class="close">HangUp</button>').appendTo($call)
+            var $close = $('<button class="btn hangup">HangUp</button>').appendTo($call)
                 .click(function() {
                     call.hangUp();
                 });
@@ -226,7 +196,7 @@ jQuery(document).ready(function($) {
             }
             $call.append('<dt title="' + date.format('Y-m-j G:i:s') + '">' + date.format(format + 'G:i') + ' - ' + (call.outgoing ? 'Outgoing' : 'Incoming') + '</dt>');
             $call.append('<dd title="' + call.fullnumber + '">' + call.number + '</dd>');
-            var $select = $('<button class="select">Select</button>').appendTo($call)
+            var $select = $('<button class="btn select">Select</button>').appendTo($call)
                 .click(function() {
                     $('#number').val(call.number).trigger('change');
                 });
@@ -425,7 +395,7 @@ jQuery(document).ready(function($) {
     });
     
     $('#settingsDialog').dialog({
-        autoOpen: true,
+        autoOpen: false,
         height: 400,
         width: 350,
         modal: true,
