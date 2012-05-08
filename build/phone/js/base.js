@@ -32,7 +32,7 @@ if (typeof window.console.log === 'undefined') {
     window.console.log = function(v) {};
 }
 
-(function(li) {
+(function(li, $) {
 
     /**
      * Simulates PHP's date function,
@@ -56,13 +56,10 @@ if (typeof window.console.log === 'undefined') {
         return new Date();
     };
 
-    /** jQuery version */
-    li.jquery = jQuery().jquery;
-
     /**
      * li extend base functionality
      */
-    jQuery.extend(li, /** @lends li */ {
+    $.extend(li, /** @lends li */ {
         /**
          * This method adds all properties from supertype.prototype to child.prototype,
          * but does not override existing properties in child.
@@ -123,8 +120,8 @@ if (typeof window.console.log === 'undefined') {
         addListener: function(eventName, listenerCallback) {
             this.__listeners = this.defaults(this.__listeners, {});
             eventName = eventName.split(' ');
-            var i,l = eventName.length, ret = [];
-            for (i=0;i < l;i++) {
+            var i, l = eventName.length, ret = [];
+            for (i = 0; i < l; i++) {
                 var listenerObj = new li.EventListener();
                 this.__listeners[eventName[i]] = this.defaults(this.__listeners[eventName[i]], []);
                 this.__listeners[eventName[i]].push({
@@ -282,12 +279,12 @@ if (typeof window.console.log === 'undefined') {
 
     };
 
-    jQuery.extend(li, li.BaseObject.prototype);
+    $.extend(li, li.BaseObject.prototype);
 
     /**
      * li extend errorHandler
      */
-    jQuery.extend(li, /** @lends li */ {
+    $.extend(li, /** @lends li */ {
         /** Object with error types as name->code pairs */
         errorType: {
             OK:                         0,
@@ -337,7 +334,7 @@ if (typeof window.console.log === 'undefined') {
              * Init errorHandler and set options
              */
             init: function(options) {
-                jQuery.extend(this.options, options);
+                $.extend(this.options, options);
                 var name;
                 for (name in li.errorType) {
                     if (li.errorType.hasOwnProperty(name)) {
@@ -385,8 +382,8 @@ if (typeof window.console.log === 'undefined') {
             add: function(code, options) {
                 code = this.defaults(code, li.errorType.DEFAULT);
                 options = this.defaults(options, {});
-                var cloneOptions = jQuery.extend({}, this.options);
-                jQuery.extend(cloneOptions, options);
+                var cloneOptions = $.extend({}, this.options);
+                $.extend(cloneOptions, options);
                 var output = (cloneOptions.output === null) ? '' : cloneOptions.output;
                 if (cloneOptions.exception !== null && this._isCode(cloneOptions.exception)) {
                     code = cloneOptions.exception;
@@ -494,14 +491,14 @@ if (typeof window.console.log === 'undefined') {
                 if (typeof options.output !== 'undefined' && options.output !== null && typeof options.output.XMLHttpRequest !== 'undefined') {
                     message += '<br /><br /><button id="__showResponseButton__">Show response</button>';
                     try {
-                        var json = jQuery.parseJSON(options.output.XMLHttpRequest.responseText);
+                        var json = $.parseJSON(options.output.XMLHttpRequest.responseText);
                         stack = json.stack;
                         message += '<br /><button id="__showStackButton__">Show stack</button>';
                     } catch (ex) {
                     }
                 }
 
-                var element = jQuery('<div></div>').html(message);
+                var element = $('<div></div>').html(message);
                 element.dialog({
                         autoOpen:    true,
                         title:       'Error',
@@ -510,19 +507,18 @@ if (typeof window.console.log === 'undefined') {
                         close: function(event, ui) {
                             element.dialog('destroy');
                             element.remove();
-                            jQuery('#__showResponseLayer__').remove();
-                            jQuery('#__showStackLayer__').remove();
+                            $('#__showResponseLayer__, #__showStackLayer__').remove();
                         }
                     });
 
                 if (typeof options.output !== 'undefined' && options.output !== null && typeof options.output.XMLHttpRequest !== 'undefined') {
                     var requestObj = options.output.XMLHttpRequest;
-                    jQuery('#__showResponseButton__').click(function() {
-                        jQuery('<div id="__showResponseLayer__" style="position:absolute; left:0px; top:0px; z-index:11111; width:100%; height:700px; overflow:scroll; background:#ddd;"></div>').html(requestObj.responseText).appendTo('body').click(function() { jQuery(this).remove(); });
+                    $('#__showResponseButton__').click(function() {
+                        $('<div id="__showResponseLayer__" style="position:absolute; left:0px; top:0px; z-index:11111; width:100%; height:700px; overflow:scroll; background:#ddd;"></div>').html(requestObj.responseText).appendTo('body').click(function() { $(this).remove(); });
                     });
-                    jQuery('#__showStackButton__').click(function() {
+                    $('#__showStackButton__').click(function() {
                         if (stack) {
-                            jQuery('<div id="__showStackLayer__" style="position:absolute; left:0px; top:0px; z-index:11111; width:100%; height:700px; overflow:scroll; background:#ddd;"></div>').html(stack).appendTo('body').click(function() { jQuery(this).remove(); });
+                            $('<div id="__showStackLayer__" style="position:absolute; left:0px; top:0px; z-index:11111; width:100%; height:700px; overflow:scroll; background:#ddd;"></div>').html(stack).appendTo('body').click(function() { $(this).remove(); });
                         }
                     });
                 }
@@ -532,11 +528,11 @@ if (typeof window.console.log === 'undefined') {
                 if (selector === null || selector === '') {
                     return;
                 }
-                jQuery(selector).append('<p>'+v+'</p>')
-                    .attr({ scrollTop: jQuery(selector).attr("scrollHeight") });
+                $(selector).append('<p>'+v+'</p>')
+                    .attr({ scrollTop: $(selector).attr("scrollHeight") });
             }
         }
     });
-    jQuery.extend(li.errorHandler, li.BaseObject.prototype);
+    $.extend(li.errorHandler, li.BaseObject.prototype);
 
-}(window.li));
+}(window.li, jQuery));

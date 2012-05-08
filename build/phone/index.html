@@ -26,8 +26,8 @@
         </div>
         <div id="phone">
             <input type="text" id="number" maxlength="50" />
-            <div id="clearNumber">X</div>
-            <div id="addNumber">Add contact</div>
+            <div id="clearNumber"><div class="ui-icon ui-icon-closethick">X</div></div>
+            <div id="addNumber" class="btn">Add contact</div>
             <div id="numblock">
                 <button>1</button><button>2</button><button>3</button>
                 <button>4</button><button>5</button><button>6</button>
@@ -35,8 +35,8 @@
                 <button>+</button><button>0</button><button>&lt;</button>
             </div>
             <div id="phoneControls">
-                <button id="buttonCall">Call</button>
-                <button id="buttonHangUpAll">End All</button>
+                <button id="buttonCall" class="btn accept">Call</button>
+                <button id="buttonHangUpAll" class="btn hangup">End All</button>
             </div>
             <div id="settingsControls">
                 <div>
@@ -53,5 +53,23 @@
         </div>
     </div>
     <div id="log"></div>
+    <div id="settingsDialog" title="Settings">
+        <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+        <div class="viewport"><div class="overview"><div class="content">
+            <div class="item category">General</div>
+            <div class="item"><label for="settings-host">Host</label><input type="text" name="settings-host" placeholder="IP or Hostname" /></div>
+            <div class="item"><label for="settings-sipaccount">Account</label><input type="text" name="settings-sipaccount" placeholder="Name" /></div>
+            <div class="item"><label for="settings-sipsecret">Secret</label><input type="password" name="settings-sipsecret" /></div>
+            <div class="item"><button id="settingsConnect" class="btn select">Connect</button></div>
+            <div class="item category">CallLog</div>
+            <div class="item"><button id="settingsClearCalllog" class="btn">Clear CallLog</button></div>
+            <div class="item"><label for="settings-maxcalllogs">Number of CallLogs (max)</label><input type="text" name="settings-maxcalllogs" placeholder="Enter a Number" /></div>
+            <div class="item category">Debug</div>
+            <div class="item"><span>Show Log</span><input type="checkbox" name="settings-log" /></div>
+            <div class="item"><label for="settings-forcenumber">Force Number</label><input type="text" name="settings-forcenumber" placeholder="e.g. 127.0.0.1" />
+                Set a number which will be dialed for all outgoing calls.
+            </div>
+        </div></div></div>
+    </div>
 </body>
 </html>
