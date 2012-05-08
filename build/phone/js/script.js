@@ -13,11 +13,11 @@ jQuery(document).ready(function($) {
      * - better css for buttons (colors; one class; etc.)
      * - settings panel
      *      + change host/username/password (save in localStorage)
-     *      - set forceOutgoingNumber
      *      + clear log history
+     *      - set forceOutgoingNumber
      *      - set maxCallLogs value
-     *      - debug settings (errorHandler, phone log level)
      *      - show/hide log
+     *      - debug settings (errorHandler, phone log level)
      * - log:
      *      - show list of log files: getLogFileList
      *      - show content of log file: getLogFileContent
@@ -33,6 +33,8 @@ jQuery(document).ready(function($) {
      *      - total calls (incoming/outgoing)
      *  - contact search
      *  [- print contact list]
+     *  - run JSLint
+     *  - minimized versions
      */
     
     //-------------------------------------------------------------------------
@@ -487,13 +489,19 @@ jQuery(document).ready(function($) {
             $('#contacts, #phone, #calls').show();
             $('#navcontacts, #navphone, #navcalls').addClass('active');
         }
+        
+        var windoww = $(window).width(),
+            windowh = $(window).height()
+        $('.ui-dialog').each(function() {
+            $(this).css('top', ((windowh - $(this).outerHeight()) / 2) + $(window).scrollTop() + 'px');
+            $(this).css('left', ((windoww - $(this).outerWidth()) / 2) + $(window).scrollLeft() + 'px');
+        });
+        $('#settingsDialog').dialog('option', 'height', (windowh > 625) ? 500 : (windowh * (windowh < 360 ? 1.0 : 0.8)))
+                            .dialog('option', 'width', (windoww > 560) ? 450 : (windoww * (windoww < 360 ? 1.0 : 0.8)));
+                            
         $('#contacts').tinyscrollbar_update('relative');
         $('#calls').tinyscrollbar_update('relative');
-        
-        $('.ui-dialog').each(function() {
-            $(this).css('top', (($(window).height() - $(this).outerHeight()) / 2) + $(window).scrollTop() + 'px');
-            $(this).css('left', (($(window).width() - $(this).outerWidth()) / 2) + $(window).scrollLeft() + 'px');
-        });
+        $('#settingsDialog').tinyscrollbar_update('relative');
     }).trigger('resize');
     
     $(document).keydown(function(event) {

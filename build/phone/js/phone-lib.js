@@ -346,13 +346,13 @@ li.Phone.prototype = {
             return false;
         }
         if (!conditions) {
-            for (i=0;i < l;i++) {
+            for (i = 0; i < l; i++) {
                 if (this.isset(this.calls[i])) {
                     return true;
                 }
             }
         } else {
-            for (i=0;i < l;i++) {
+            for (i = 0; i < l; i++) {
                 if (this.isset(this.calls[i])) {
                     var call = this.calls[i], name, skip = false;
                     for (name in conditions) {
@@ -392,7 +392,7 @@ li.Phone.prototype = {
      */
     eachCall: function(callback) {
         var i, l = this.calls.length;
-        for (i=0;i < l;i++) {
+        for (i = 0; i < l; i++) {
             if (this.isset(this.calls[i])) {
                 callback.call(this.calls[i]);
             }
