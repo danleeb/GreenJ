@@ -14,6 +14,7 @@
 #include <QApplication>
 #include <QWebFrame>
 #include <QWebInspector>
+#include <QFileInfo>
 
 #include "config_file_handler.h"
 
@@ -84,9 +85,18 @@ Gui::Gui(QWidget *parent, Qt::WFlags flags)
             this,
             SLOT(updateWebPage()));
 
-    const QUrl &server_url = config.getServerUrl();
-    if (!server_url.isEmpty())
-    {
+    QUrl server_url = config.getServerUrl();
+    if (server_url.isRelative()) {
+        QFileInfo fileinfo = QFileInfo(server_url.toString());
+        if (fileinfo.exists()) {
+            if (fileinfo.isRelative()) {
+                server_url = QUrl::fromLocalFile(fileinfo.absoluteFilePath());
+            } else {
+                server_url = QUrl::fromLocalFile(fileinfo.fileName());
+            }
+        }
+    }
+    if (!server_url.isEmpty() && server_url.isValid()) {
         ui_.webview->setUrl(server_url);
     }
 
