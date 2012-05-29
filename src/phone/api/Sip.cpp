@@ -174,8 +174,8 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
     cfg.id = pj_str(cid);
     cfg.reg_uri = pj_str(curi);
     cfg.cred_count = 1;
-    //cfg.cred_info[0].realm = pj_str((char*)"*");
-    cfg.cred_info[0].realm = pj_str(cdomain);
+    cfg.cred_info[0].realm = pj_str((char*)"*");
+    //cfg.cred_info[0].realm = pj_str(cdomain);
     cfg.cred_info[0].scheme = pj_str("digest");
     cfg.cred_info[0].username = pj_str(cuser);
     cfg.cred_info[0].data_type = PJSIP_CRED_DATA_PLAIN_PASSWD;
@@ -187,7 +187,14 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
         return -1;
     }
     signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, 
-                      "Registered user with account-id " + QString::number(account_id_)));
+                      "Registering user with account-id " + QString::number(account_id_)));
+    
+    signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, 
+                      "Registration details: user:'" + QString(cuser)
+                                        + "' domain:'" + QString(cdomain)
+                                        + "' realm:'*"
+                                        + "' uri:'" + QString(curi)
+                                        + "' id:'" + QString(cid)));
 
     return account_id_;
 }
