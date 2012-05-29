@@ -1,3 +1,15 @@
+___News: GreenJ has been nominated in the category "Open-Source" at the [Constantinus Award](http://www.constantinus.net/award/en/constantinus-award/introduction/) (Austrian IT Award). We also participate in the "Audience Award" and would be very happy if you could vote for us to support our ongoing development of GreenJ:___
+
+- Click "Like" on the [Constantinus Award Facebook voting page](http://www.facebook.com/constantinusaward?sk=app_219232341506272)
+- Search for "Lorem Ipsum" and click "Vote"
+- You can vote every 60 minutes until May 31st
+
+___Thank you for your support!___
+
+______
+
+___GreenJ is currently under revision, see [branch 1.1](https://github.com/danleeb/GreenJ/tree/1.1). The code base has been improved and a new HTML/JavaScript phone is under development. The master branch still contains the stable 1.0 release.___
+
 # About GreenJ
 
 GreenJ is an open source Voice-over-IP phone software using pjsip and Qt. It can easily be used to build your own VoIP phone system. Our approach was not to build a complete phone with user interface, but instead provide an application that handles only the communication. The program logic and user interface are separated from the application by using an integrated browser. We use webkit as browser engine, which is well integrated into Qt (QWebView). A Javascript interface handles all communications between application and webpage. This means that you can use GreenJ as it is and create your VoIP phone entirely in HTML and JavaScript.
@@ -10,7 +22,9 @@ For a complete overview, see [building GreenJ under Windows or Linux](http://www
 
 In addition, I want to give a step by step guide on how GreenJ can be compiled under Ubuntu.
 
-## Ubuntu (11.10 32-bit)
+## Ubuntu (12.04 32-bit Desktop)
+
+_Note: Also tested under Ubuntu 11.10 32-bit Desktop with the exact same steps._
 
 Install dependencies:
 
@@ -20,7 +34,7 @@ Install dependencies:
     $ sudo apt-get install libasound2-dev
     $ sudo apt-get install libphonon-dev
 
-Download PJSIP (e.g. pjproject-1.12.tar.bz2) and extract it somewhere.
+[Download PJSIP](http://www.pjsip.org/download.htm) (e.g. pjproject-1.14.tar.bz2) and extract it somewhere.
 
     $ cd path/to/pjsip
     $ ./configure
