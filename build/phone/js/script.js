@@ -3,14 +3,13 @@ jQuery(document).ready(function($) {
         host:           null,   // 'localhost',
         sipaccount:     'user',
         sipsecret:      'pw',
-        //forceOutgoing:  null,
+        //forceOutgoing:  false,
         mode:           li.Phone.MODE_IO
     };
     
     //-------------------------------------------------------------------------
     // Application
     var app = {
-        maxCallLogs: 30,
         text: {
             newContact: 'New contact'
         },
@@ -19,7 +18,9 @@ jQuery(document).ready(function($) {
         db: window.localStorage,
         contacts: [],
         calls: [],
-        settings: {},
+        settings: {
+            maxCallLogs: 30
+        },
         
         loadSettings: function(defaults) {
             //this.db.settings = "";
@@ -28,14 +29,33 @@ jQuery(document).ready(function($) {
             if (this.db.settings) {
                 $.extend(this.settings, JSON.parse(this.db.settings));
             }
-            var keys = ['host', 'sipaccount', 'sipsecret'];
-            $.each(keys, function(i, val) {
-                $('#settingsDialog input[name=settings-' + val + ']').val(self.settings[val])
-                    .change(function() { 
+            $.each(['host', 'sipaccount', 'sipsecret'], function(i, val) {
+                $('input[name=settings-' + val + ']').change(function() { 
                         self.settings[val] = $(this).val();
                         self.persistSettings();
-                    });
+                    }).val(self.settings[val]);
             });
+            $('input[name=settings-maxcalllogs]').change(function() {
+                    self.settings['maxCallLogs'] = parseInt($(this).val());
+                    self.persistSettings();
+                }).val(self.settings['maxCallLogs']);
+            $('input[name=settings-forcenumber]').change(function() {
+                    var val = $.trim($(this).val());
+                    self.settings['forceOutgoing'] = (val === '') ? false : val;
+                    self.phone.setOptions({ forceOutgoingNumber: self.settings['forceOutgoing'] });
+                    self.persistSettings();
+                }).val(self.settings['forceOutgoing'] ? self.settings['forceOutgoing']: '');
+            $('input[name=settings-log]').change(function() {
+                    if ($(this).is(':checked')) {
+                        $('#log').show();
+                        $('#container').css('bottom', $('#log').height());
+                    } else {
+                        $('#log').hide();
+                        $('#container').css('bottom', 0);
+                    }
+                    $('#contacts').tinyscrollbar_update('relative');
+                    $('#calls').tinyscrollbar_update('relative');
+                });
         },
         start: function() {
             if (this.db.contacts) {
@@ -54,15 +74,21 @@ jQuery(document).ready(function($) {
                 this.connected();
             }
         },
+        status: function(msg) {
+            $('#status').text(msg).animate({ 'opacity': 0.25 }, 3000);
+        },
         connected: function() {
-            //alert('connected');
+            this.status('connected');
         },
         disconnected: function() {
-            alert('disconnected');
-        },
-        exit: function() {
+            this.status('disconnected');
         },
         registerPhone: function() {
+            if (!this.settings.host || $.trim(this.settings.host) === '') {
+                this.status('not connected');
+            } else {
+                this.status('connecting...');
+            }
             this.phone.unregister();
             this.phone.register({
                 host:   this.settings.host,
@@ -77,20 +103,20 @@ jQuery(document).ready(function($) {
             var $name = $('<input class="name" value="' + contact.name + '" title="Edit name" />').appendTo($contact)
                 .trigger('blur')
                 .change(function() {
-                    var val = $.trim($(this).val()), inserted = false;
+                    var val = $.trim($(this).val()), inserted = false, i;
                     if (val === '') {
                         $(this).val(contact.name);
                     } else {
                         contact.name = val;
                     }
                     $contact.appendTo('#contacts .content');
-                    for (var i = 0; i < self.contacts.length; i++) {
+                    for (i = 0; i < self.contacts.length; i++) {
                         if (self.contacts[i] === contact) {
                             self.contacts.splice(i, 1);
                         }
                     }
                     // Sorted by name
-                    for (var i = 0; i < self.contacts.length; i++) {
+                    for (i = 0; i < self.contacts.length; i++) {
                         if (self.contacts[i].name.toLowerCase() > contact.name.toLowerCase()) {
                             $('#contacts .content > div').eq(i).before($contact);
                             self.contacts.splice(i, 0, contact);
@@ -222,6 +248,9 @@ jQuery(document).ready(function($) {
                     $('#nav' + tab).addClass('active').siblings('#navphone, #navcontacts').removeClass('active');
                 }
             }
+            if (tab === 'contacts' || tab === 'calls') {
+                $('#' + tab).tinyscrollbar_update('relative');
+            }
         },
         persistSettings: function() {
             this.db.settings = JSON.stringify(this.settings);
@@ -268,7 +297,7 @@ jQuery(document).ready(function($) {
             if (data.state < li.Phone.SIP_SC_BAD_REQUEST) {
                 app.connected();
             } else {
-                app.exit();
+                app.disconnected();
                 this.unregister();
                 li.errorHandler.add(li.errorType.PHONE_ERROR, { output: data.state });
             }
@@ -282,14 +311,14 @@ jQuery(document).ready(function($) {
         });
         // Listeners to print log and error messages
         app.phone.addListener('onLogMessage', function(obj) {
-            $('#log').append('<div>' + obj.time + ': (' + obj.status + ') <' + obj.domain + '> [' 
-                                     + obj.code + '] ' + obj.message + '</div>');
+            $('#log ul').append('<li>' + obj.time + ': (' + obj.status + ') <' + obj.domain + '> [' 
+                                       + obj.code + '] ' + obj.message + '</li>');
         });
         li.errorHandler.addListener('onError', function(data) {
-            $('#log').append('<div>' + data.errorMessage + ': ' + data.errorData + '</div>');
+            $('#log ul').append('<li>' + data.errorMessage + ': ' + data.errorData + '</li>');
         });
         li.errorHandler.addListener('onLog', function(data) {
-            $('#log').append('<div>' + data.message + '</div>');
+            $('#log ul').append('<li>' + data.message + '</li>');
         });
         
         // Check, if there are some errors from the last execution of GreenJ
@@ -304,7 +333,6 @@ jQuery(document).ready(function($) {
     
     //-------------------------------------------------------------------------
     // Elements
-    $('#log').hide();
     $('#numblock button').click(function() {
         var button = $(this).text(),
             val = $('#number').val();
@@ -329,8 +357,8 @@ jQuery(document).ready(function($) {
         $('#number').val('').trigger('change').focus();
     });
     $('#addNumber').click(function() {
-        app.addContact({ name: app.text.newContact, number: $.trim($('#number').val()) });
         app.selectTab('contacts');
+        app.addContact({ name: app.text.newContact, number: $.trim($('#number').val()) });
         $('#contacts .name').first().focus();
         $('#contacts').tinyscrollbar_update();
     });
@@ -434,6 +462,23 @@ jQuery(document).ready(function($) {
             $ruler.remove();
         });
     
+    $('#log').hide();
+    var startheight = 0;
+    $('#logDrag').draggable({
+            containment: 'body',
+            helper: 'clone',
+            appendTo: 'body',
+            axis: 'y',
+            cursor: 'n-resize',
+            start: function(event, ui) {
+                startheight = $('#log').height() + ui.position.top;
+            },
+            drag: function(event, ui) {
+                $('#log').height(startheight - ui.position.top);
+                $('#container').css('bottom', startheight - ui.position.top);
+            }
+        });
+    
     app.start();
     
     var cols = 0;
@@ -466,9 +511,9 @@ jQuery(document).ready(function($) {
             $(this).css('top', ((windowh - $(this).outerHeight()) / 2) + $(window).scrollTop() + 'px');
             $(this).css('left', ((windoww - $(this).outerWidth()) / 2) + $(window).scrollLeft() + 'px');
         });
-        $('#settingsDialog').dialog('option', 'height', (windowh > 625) ? 500 : (windowh * (windowh < 360 ? 1.0 : 0.8)))
+        $('#settingsDialog').dialog('option', 'height', (windowh > 625) ? 500 : (windowh * (windowh < 450 ? 1.0 : 0.8)))
                             .dialog('option', 'width', (windoww > 560) ? 450 : (windoww * (windoww < 360 ? 1.0 : 0.8)));
-                            
+        
         $('#contacts').tinyscrollbar_update('relative');
         $('#calls').tinyscrollbar_update('relative');
         $('#settingsDialog').tinyscrollbar_update('relative');

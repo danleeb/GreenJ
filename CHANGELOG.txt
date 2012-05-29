@@ -9,19 +9,19 @@ Qt Application:
 
 JavaScript Phone:
 - Improve persisting of calls (accepted, missed, times, data?)
-- settings panel
++ settings panel
     + change host/username/password (save in localStorage)
     + clear log history
-    - set forceOutgoingNumber
-    - set maxCallLogs value
-    - show/hide log
-    - debug settings (errorHandler, phone log level)
+    + set forceOutgoingNumber
+    + set maxCallLogs value
+    + show/hide log
+    + debug settings (errorHandler, phone log level)
 - log:
-    - show list of log files: getLogFileList
-    - show content of log file: getLogFileContent
-    - delete log file: deleteLogFile
-- connection to server / server-less calls
-    - show registration/account status
+    / show list of log files: getLogFileList
+    / show content of log file: getLogFileContent
+    / delete log file: deleteLogFile
++ connection to server / server-less calls
+    + show registration/account status
 - compact/detailed list switchers (contacts, calls)
     - compact list: auto-switch if col is too small
 - show contact in call log and "add contact"-field if number matches
@@ -30,6 +30,9 @@ JavaScript Phone:
     - total call time
     - total calls (incoming/outgoing)
 - contact search
+- resize issue with tinyscrollbar (contacts panel)
+    possible solution: call update on panel switch
+- resize phone controls when height < ~460
 [- print contact list]
 - run JSLint
 - minimized versions

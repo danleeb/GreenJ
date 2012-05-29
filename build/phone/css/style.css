@@ -40,6 +40,7 @@ input, .ui-state-focus { outline:none; }
     font-size:21px;
     font-weight:bold;
     line-height:10px;
+    text-shadow:-1px -1px 0px #444;
     cursor:pointer;
 }
 .btn:hover, #numblock button:hover {
@@ -64,6 +65,7 @@ input, .ui-state-focus { outline:none; }
     background:-webkit-gradient(linear, left top, left bottom, from(#181), to(#070));
     border-top:1px solid #292;
     border-bottom:1px solid #181;
+    text-shadow:-1px -1px 0px #464;
     color:#ddd;
 }
 .btn.accept:hover {
@@ -76,6 +78,7 @@ input, .ui-state-focus { outline:none; }
     background:-webkit-gradient(linear, left top, left bottom, from(#a22), to(#911));
     border-top:1px solid #c33;
     border-bottom:1px solid #b22;
+    text-shadow:-1px -1px 0px #522;
     color:#eaa;
 }
 .btn.hangup:hover {
@@ -101,7 +104,8 @@ input, .ui-state-focus { outline:none; }
     padding-top:17px;
     color:#18b;
 	text-align:center;
-    font-size:17px;
+    line-height:18px;
+    font-size:20px;
 }
 #nav li.active div { color:#fff; }
 #navcontacts div { border-right:1px solid #036; }
@@ -117,10 +121,10 @@ input, .ui-state-focus { outline:none; }
     border-top:3px solid #18b;
 }
 #contacts, #phone, #calls {
-    min-height:410px;
     background:#000;
     height:100%;
 }
+#phone { min-height:410px; }
 #contacts .content { height:100%; border-right:1px solid #333; }
 #calls .content { height:100%; border-left:1px solid #333; }
 .bg {
@@ -180,7 +184,8 @@ input, .ui-state-focus { outline:none; }
     right:0;
     width:30px;
     color:#000;
-    line-height:10px;
+    text-shadow:none;
+    opacity:0.5;
 }
 
 /*************** Phone ***************/
@@ -231,8 +236,14 @@ input, .ui-state-focus { outline:none; }
     text-align:center;
 }
 #numblock { padding-top:10px; }
-#numblock button, #phoneControls .btn { height:40px; margin:4px; }
+#numblock button, #phoneControls .btn { height:37px; margin:4px; }
 #numblock button { width:65px; }
+#status {
+    color:#aaa;
+    font-size:16px;
+    font-weight:bold;
+    text-shadow:-1px -1px 1px #000;
+}
 .accept { width:90px; }
 .hangup { width:110px; }
 #settingsControls {
@@ -335,14 +346,35 @@ input, .ui-state-focus { outline:none; }
     position:fixed;
     bottom:0; left:0; right:0;
     height:100px;
+}
+#logDrag {
+    position:absolute;
+    bottom:100%; left:50%; margin-left:-30px;
+    width:60px;
+    height:8px;
+    background:#444;
+    border-top:1px solid #666;
+    border-top-left-radius:4px;
+    border-top-right-radius:4px;
+    cursor:n-resize;
+    color:#222;
+    text-align:center;
+    line-height:0px;
+    font-family:"Times New Roman";
+    font-size:21px;
+    font-weight:bold;
+    text-shadow:1px 1px 1px #666;
+}
+#log ul {
     overflow-y:scroll;
-    background-color:#ddd;
-    border-top:5px solid #777;
-    color:#444;
+    height:100%;
+    background-color:#111;
+    border-top:2px solid #444;
+    color:#777;
     font-family:Courier;
     font-size:11px;
 }
-#log div { border-bottom:1px solid #ccc; }
+#log ul li { padding:1px; border-bottom:1px solid #222; }
 
 /*************** Dialogs ***************/
 .ui-dialog { padding:0; background:#000; border:2px solid #17a; font-family:Helvetica; border-radius:0; }
@@ -360,9 +392,9 @@ input, .ui-state-focus { outline:none; }
 .ui-dialog.error .ui-dialog-content { font-size:15px; color:#f44; padding:5px; }
 .ui-dialog .ui-dialog-titlebar-close.ui-state-hover { background:#fff; opacity:0.9; border-color:#fff; }
 .ui-dialog .item { position:relative; padding:6px 28px 6px 20px; border-bottom:1px solid #333; }
-.ui-dialog .item.category { padding-left:10px; background:#222; color:#ccc; font-size:14px; }
+.ui-dialog .item.category { padding-left:10px; background:#222; color:#ccc; font-size:13px; font-weight:bold; }
 .ui-dialog label { display:block; margin-bottom:2px; font-size:13px; color:#ddd; }
-.ui-dialog span { font-size:18px; color:#ddd; }
+.ui-dialog .ui-dialog-content span { font-size:16px; color:#eee; }
 .ui-dialog input[type="text"], .ui-dialog input[type="password"] {
     width:98%;
     background:#d6d6d6;
