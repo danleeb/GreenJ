@@ -13,7 +13,6 @@
 #include <QWebFrame>
 #include <QWebInspector>
 #include "Config.h"
-#include "LogInfo.h"
 #include "LogHandler.h"
 #include "phone/Phone.h"
 #include "WebPage.h"

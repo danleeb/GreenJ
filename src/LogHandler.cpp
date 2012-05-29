@@ -12,7 +12,6 @@
 #include <QDateTime>
 #include <QTextStream>
 #include <QDir>
-#include "LogInfo.h"
 #include "Config.h"
 #include "LogHandler.h"
 
