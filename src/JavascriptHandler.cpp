@@ -14,7 +14,6 @@
 #include "phone/Account.h"
 #include "phone/Call.h"
 #include "phone/Phone.h"
-#include "LogInfo.h"
 #include "LogHandler.h"
 #include "Config.h"
 #include "JavascriptHandler.h"
