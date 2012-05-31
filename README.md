@@ -1,13 +1,3 @@
-___News: GreenJ has been nominated in the category "Open-Source" at the [Constantinus Award](http://www.constantinus.net/award/en/constantinus-award/introduction/) (Austrian IT Award). We also participate in the "Audience Award" and would be very happy if you could vote for us to support our ongoing development of GreenJ:___
-
-- Click "Like" on the [Constantinus Award Facebook voting page](http://www.facebook.com/constantinusaward?sk=app_219232341506272)
-- Search for "Lorem Ipsum" and click "Vote"
-- You can vote every 60 minutes until May 31st
-
-___Thank you for your support!___
-
-______
-
 ___GreenJ is currently under revision, see [branch 1.1](https://github.com/danleeb/GreenJ/tree/1.1). The code base has been improved and a new HTML/JavaScript phone is under development. The master branch still contains the stable 1.0 release.___
 
 # About GreenJ
