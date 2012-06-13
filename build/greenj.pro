@@ -137,7 +137,6 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/Gui.h \
     $$SOURCEDIR/JavascriptHandler.h \
     $$SOURCEDIR/LogHandler.h \ 
-    $$SOURCEDIR/LogInfo.h \
     $$SOURCEDIR/PrintHandler.h \
     $$SOURCEDIR/Sound.h \
     $$SOURCEDIR/WebPage.h
@@ -150,7 +149,6 @@ SOURCES += $$SOURCEDIR/main.cpp \
     $$SOURCEDIR/Gui.cpp \
     $$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
-    $$SOURCEDIR/LogInfo.cpp \
     $$SOURCEDIR/PrintHandler.cpp \
     $$SOURCEDIR/Sound.cpp
 FORMS += $$SOURCEDIR/gui.ui
