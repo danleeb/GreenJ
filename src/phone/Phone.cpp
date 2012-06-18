@@ -195,6 +195,20 @@ QVariantMap Phone::getSignalLevels() const
 }
 
 //-----------------------------------------------------------------------------
+void Phone::setCodecPriority(const QString &codec, int new_priority)
+{
+    api_->setCodecPriority(codec, new_priority);
+}
+
+//-----------------------------------------------------------------------------
+QVariantMap Phone::getCodecPriorities() const
+{
+    QVariantMap codecs;
+    api_->getCodecPriorities(codecs);
+    return codecs;
+}
+
+//-----------------------------------------------------------------------------
 void Phone::unregister()
 {
     api_->unregister();

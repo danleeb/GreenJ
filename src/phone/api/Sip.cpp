@@ -101,6 +101,7 @@ bool Sip::_initPjsua(const QString &stun)
         signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "pjsua initialization failed"));
         return false;
     }
+
     return true;
 }
 
@@ -491,6 +492,36 @@ void Sip::getSignalLevels(QVariantMap &levels, const int call_id)
     pjsua_conf_get_signal_level(slot, &tx_level, &rx_level);
     levels.insert("sound", rx_level);
     levels.insert("micro", tx_level);
+}
+
+//-----------------------------------------------------------------------------
+void Sip::setCodecPriority(const QString &codec, int new_priority)
+{
+    pj_str_t id;
+    pj_status_t status;
+
+    if (new_priority < 0) {
+        new_priority = 0;
+    } else if (new_priority > PJMEDIA_CODEC_PRIO_HIGHEST) {
+        new_priority = PJMEDIA_CODEC_PRIO_HIGHEST;
+    }
+
+    status = pjsua_codec_set_priority(pj_cstr(&id, codec.toLocal8Bit().data()), (pj_uint8_t)new_priority);
+    if (status != PJ_SUCCESS) {
+        signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, "Error " + QString::number(status) + " setting codec priority"));
+    }
+}
+
+//-----------------------------------------------------------------------------
+void Sip::getCodecPriorities(QVariantMap &codecs)
+{
+    pjsua_codec_info codec[32];
+    unsigned i, codec_count = PJ_ARRAY_SIZE(codec);
+
+    pjsua_enum_codecs(codec, &codec_count);
+    for (i=0; i < codec_count; i++) {
+        codecs.insert(QString(codec[i].codec_id.ptr), codec[i].priority);
+    }
 }
 
 }} // phone::api::

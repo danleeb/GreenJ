@@ -141,6 +141,19 @@ public:
      */
     virtual void getSignalLevels(QVariantMap &levels, const int call_id = -1) = 0;
 
+    /**
+     * Set priority of codec to new_priority
+     * @param codec Name of Codec
+     * @param new_priority Range 0...PJMEDIA_CODEC_PRIO_HIGHEST
+     */
+    virtual void setCodecPriority(const QString &codec, int new_priority) = 0;
+
+    /**
+     * Return all codecs and priorities
+     * @param codecs Map of codecs with priorities
+     */
+    virtual void getCodecPriorities(QVariantMap &codecs) = 0;
+
 signals:
     /**
      * Send signal when account status changed

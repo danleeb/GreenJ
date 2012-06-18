@@ -144,6 +144,19 @@ public:
      * @param Map with 'sound' and 'micro' signal levels (floats)
      */
     QVariantMap getSignalLevels() const;
+    
+    /**
+     * Set priority of codec to new_priority
+     * @param codec Name of Codec
+     * @param new_priority Range 0...PJMEDIA_CODEC_PRIO_HIGHEST
+     */
+    void setCodecPriority(const QString &codec, int new_priority);
+
+    /**
+     * Return all codecs and priorities
+     * @return Map of codecs with priorities
+     */
+    QVariantMap getCodecPriorities() const;
 
     /**
      * Hangup all active calls and unregister account
