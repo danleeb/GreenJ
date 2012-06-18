@@ -372,6 +372,18 @@ QVariantMap JavascriptHandler::getSignalInformation() const
 }
 
 //-----------------------------------------------------------------------------
+void JavascriptHandler::setCodecPriority(const QString &codec, int new_priority) const
+{
+    phone_.setCodecPriority(codec, new_priority);
+}
+
+//-----------------------------------------------------------------------------
+QVariantMap JavascriptHandler::getCodecPriorities() const
+{
+    return phone_.getCodecPriorities();
+}
+
+//-----------------------------------------------------------------------------
 QVariant JavascriptHandler::getOption(const QString &name) const
 {
     return Config::getInstance().getOption(name);

@@ -57,6 +57,29 @@ public:
     virtual void getSignalLevels(QVariantMap &levels, const int call_id = -1);
     
     /**
+     * Set priority of codec to new_priority
+     * Codecs examples (priority: codec name):
+     * 130: speex/16000/1
+     * 129: speex/8000/1
+     * 128: speex/32000/1
+     * 128: iLBC/8000/1
+     * 128: GSM/8000/1
+     * 128: PCMU/8000/1
+     * 128: PCMA/8000/1
+     * 128: G722/16000/1
+     * 0: L16/44100/1
+     * 0: L16/44100/2
+     * 0: L16/8000/1
+     * 0: L16/8000/2
+     * 0: L16/16000/1
+     * 0: L16/16000/2
+     * @param codec Name of Codec
+     * @param new_priority Range 0...PJMEDIA_CODEC_PRIO_HIGHEST
+     */
+    virtual void setCodecPriority(const QString &codec, int new_priority);
+    virtual void getCodecPriorities(QVariantMap &codecs);
+
+    /**
      * Get the sip-address of a given call
      * @param call_id int, the id of the call
      * @return QString the sip-address
