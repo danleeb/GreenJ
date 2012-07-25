@@ -77,6 +77,7 @@ bool Sip::_initPjsua(const QString &stun)
     // * max_calls
     // * nameserver_count, nameserver (instead of default pj_gethostbyname)
     // * outbound_proxy_cnt, outbound_proxy
+    // * add/remove codecs
 
     if (stun.size()) {
         if (stun.size() > 99) {
