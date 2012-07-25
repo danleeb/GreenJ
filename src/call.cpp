@@ -121,11 +121,10 @@ void Call::getCallInfo(QVariantMap &call_info)
     call_info.insert("name", name_);
     call_info.insert("type", (int)type_);
     call_info.insert("status", (int)status_);
-    call_info.insert("callTime", start_time_.toMSecsSinceEpoch());
-    call_info.insert("acceptTime", accept_time_.toMSecsSinceEpoch());
-    call_info.insert("closeTime", close_time_.toMSecsSinceEpoch());
+    call_info.insert("callTime", (qint64)start_time_.toTime_t() * 1000 + (qint64)start_time_.time().msec());
+    call_info.insert("acceptTime", (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec());
+    call_info.insert("closeTime", (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec());
     call_info.insert("userData", user_data_);
-    
 }
 
 //----------------------------------------------------------------------
