@@ -88,9 +88,9 @@ QVariantMap Call::getInfo() const
     info.insert("name", name_);
     info.insert("type", (int)type_);
     info.insert("status", (int)status_);
-    info.insert("callTime", start_time_.toMSecsSinceEpoch());
-    info.insert("acceptTime", accept_time_.toMSecsSinceEpoch());
-    info.insert("closeTime", close_time_.toMSecsSinceEpoch());
+    info.insert("callTime", (qint64)start_time_.toTime_t() * 1000 + (qint64)start_time_.time().msec());
+    info.insert("acceptTime", (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec());
+    info.insert("closeTime", (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec());
     info.insert("userData", user_data_);
     return info;
 }
