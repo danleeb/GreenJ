@@ -572,6 +572,24 @@ li.Phone.prototype = {
     getMicroLevel: function() {
         return this.options.microLevel;
     },
+    
+    /**
+     * Set codec priority
+     * @param {string} codec (e.g. "PCMA" or "PCMA/8000" or "PCMA/8000/1" for codec G.711a)
+     * @param {int} priority 0...254
+     * @return this
+     */
+    setCodecPriority: function(codec, priority) {
+        this.getQtHandler().setCodecPriority(codec, priority);
+        return this;
+    },
+    /**
+     * Get list of codecs
+     * @return List of codecs (codecName: priority)
+     */
+    getCodecs: function() {
+        return this.getQtHandler().getCodecPriorities();
+    },
 
     /**
      * Get applications error log data
