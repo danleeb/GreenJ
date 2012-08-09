@@ -266,6 +266,8 @@ public slots:
      */
     void setSoundDevice(const int input, const int output) const;
 
+    QVariantList getSoundDevices() const;
+
     /**
      * Get data of an option
      * @param name The name of the option

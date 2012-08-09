@@ -80,6 +80,7 @@ public:
     virtual void getCodecPriorities(QVariantMap &codecs);
     
     virtual bool setSoundDevice(const int input, const int output);
+    virtual void getSoundDevices(QVariantList &device_list);
 
     /**
      * Get the sip-address of a given call
