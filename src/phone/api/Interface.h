@@ -147,6 +147,13 @@ public:
      * @param new_priority Range 0...PJMEDIA_CODEC_PRIO_HIGHEST
      */
     virtual void setCodecPriority(const QString &codec, int new_priority) = 0;
+    
+    /**
+     * Select or change sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     */
+    virtual bool setSoundDevice(const int input, const int output) = 0;
 
     /**
      * Return all codecs and priorities

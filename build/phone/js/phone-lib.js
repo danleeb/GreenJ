@@ -592,6 +592,15 @@ li.Phone.prototype = {
     },
 
     /**
+     * Select or change sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     */
+    setSoundDevice: function(input, output) {
+        this.getQtHandler().setSoundDevice(input, output);
+    },
+
+    /**
      * Get applications error log data
      * @return {array} list of error log objects
      */

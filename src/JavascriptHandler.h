@@ -260,6 +260,13 @@ public slots:
     QVariantMap getCodecPriorities() const;
 
     /**
+     * Select or change sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     */
+    void setSoundDevice(const int input, const int output) const;
+
+    /**
      * Get data of an option
      * @param name The name of the option
      * @return The option data
