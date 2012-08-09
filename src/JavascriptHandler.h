@@ -266,6 +266,10 @@ public slots:
      */
     void setSoundDevice(const int input, const int output) const;
 
+    /**
+     * Return a list of all available sound devices
+     * @return list of QVariantMaps with device information
+     */
     QVariantList getSoundDevices() const;
 
     /**

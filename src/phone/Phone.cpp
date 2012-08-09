@@ -207,7 +207,7 @@ void Phone::setSoundDevice(const int input, const int output)
 }
     
 //-----------------------------------------------------------------------------
-QVariantList Phone::getSoundDevices()
+QVariantList Phone::getSoundDevices() const
 {
     QVariantList device_list;
     api_->getSoundDevices(device_list);
