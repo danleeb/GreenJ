@@ -4,12 +4,12 @@
 
 TEMPLATE = app
 TARGET = GreenJ
-QT += core gui webkit network phonon
+QT += core gui webkit network
 win32 {
 	DESTDIR = ../bin/win32
 	LIBDIR = ../lib/win32
 	BUILDDIR = ../build/win32
-	QT += qtmain
+	QT += qtmain phonon
 	PJSIP_DIR = ../lib/win32/pjsip
 	PJSIP_TARGET = i386-Win32-vc8-Release
 }
@@ -20,17 +20,20 @@ unix {
 	PJSIP_DIR = ../lib/linux/pjsip
 	PJSIP_TARGET = i686-pc-linux-gnu
 }
+unix:!mac {
+	QT += phonon
+}
 mac {
 	DESTDIR = ../bin/mac
 	LIBDIR = ../lib/mac
 	BUILDDIR = ../build/mac
 	PJSIP_DIR = ../lib/mac
-	PJSIP_TARGET = i686-pc-mac
+	PJSIP_TARGET = i386-apple-darwin11.3.0
 }
 SOURCEDIR = ../src
 RESOURCEDIR = ../res
 
-CONFIG += debug
+#CONFIG += debug
 CONFIG += ordered
 
 #DEFINES += QT_LARGEFILE_SUPPORT
@@ -79,13 +82,12 @@ unix: LIBS += -L/usr/lib/ \
 	-lportaudio-$$PJSIP_TARGET  \
 	-lpj-$$PJSIP_TARGET \
 	-lm \
-	-lnsl \
-	-lrt \
 	-lpthread \
-	-lasound
 	#-luuid \
 	#-lcrypto \
 	#-lssl
+
+unix:!mac LIBS += -lnsl -lrt -lasound
 
 win32: LIBS += -lIphlpapi \
     -ldsound \
@@ -118,6 +120,8 @@ win32: LIBS += -lIphlpapi \
     -llibspeex-$$PJSIP_TARGET \
     -llibsrtp-$$PJSIP_TARGET
 
+mac: LIBS += -lssl -lcrypto -framework CoreAudio -framework AudioUnit -framework AudioToolbox -framework Cocoa
+
 DEPENDPATH += $$SOURCEDIR
 MOC_DIR += $$SOURCEDIR/GeneratedFiles/debug
 OBJECTS_DIR += $$BUILDDIR
@@ -133,7 +137,6 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/Gui.h \
     $$SOURCEDIR/JavascriptHandler.h \
     $$SOURCEDIR/LogHandler.h \ 
-    $$SOURCEDIR/LogInfo.h \
     $$SOURCEDIR/PrintHandler.h \
     $$SOURCEDIR/Sound.h \
     $$SOURCEDIR/WebPage.h
@@ -146,7 +149,6 @@ SOURCES += $$SOURCEDIR/main.cpp \
     $$SOURCEDIR/Gui.cpp \
     $$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
-    $$SOURCEDIR/LogInfo.cpp \
     $$SOURCEDIR/PrintHandler.cpp \
     $$SOURCEDIR/Sound.cpp
 FORMS += $$SOURCEDIR/gui.ui

@@ -201,6 +201,12 @@ void Phone::setCodecPriority(const QString &codec, int new_priority)
 }
 
 //-----------------------------------------------------------------------------
+void Phone::setSoundDevice(const int input, const int output)
+{
+    api_->setSoundDevice(input, output);
+}
+
+//-----------------------------------------------------------------------------
 QVariantMap Phone::getCodecPriorities() const
 {
     QVariantMap codecs;

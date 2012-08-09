@@ -78,6 +78,8 @@ public:
      */
     virtual void setCodecPriority(const QString &codec, int new_priority);
     virtual void getCodecPriorities(QVariantMap &codecs);
+    
+    virtual bool setSoundDevice(const int input, const int output);
 
     /**
      * Get the sip-address of a given call

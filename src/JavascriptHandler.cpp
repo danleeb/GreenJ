@@ -384,6 +384,12 @@ QVariantMap JavascriptHandler::getCodecPriorities() const
 }
 
 //-----------------------------------------------------------------------------
+void JavascriptHandler::setSoundDevice(const int input, const int output) const
+{
+    phone_.setSoundDevice(input, output);
+}
+
+//-----------------------------------------------------------------------------
 QVariant JavascriptHandler::getOption(const QString &name) const
 {
     return Config::getInstance().getOption(name);
