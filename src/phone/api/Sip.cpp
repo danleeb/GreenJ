@@ -524,5 +524,11 @@ void Sip::getCodecPriorities(QVariantMap &codecs)
         codecs.insert(QString(codec[i].codec_id.ptr), codec[i].priority);
     }
 }
+        
+//-----------------------------------------------------------------------------
+bool Sip::setSoundDevice(const int input, const int output) {
+    pj_status_t status = pjsua_set_snd_dev(input, output);
+    return (status = PJ_SUCCESS);
+}
 
 }} // phone::api::
