@@ -531,4 +531,29 @@ bool Sip::setSoundDevice(const int input, const int output) {
     return (status = PJ_SUCCESS);
 }
 
+//-----------------------------------------------------------------------------
+void Sip::getSoundDevices(QVariantList &device_list)
+{
+    unsigned dev_count = pjmedia_aud_dev_count();
+    pj_status_t status;
+    
+    for (unsigned i=0; i<dev_count; ++i) {
+        QVariantMap device_info;
+        
+        pjmedia_aud_dev_info info;
+        
+        status = pjmedia_aud_dev_get_info(i, &info);
+        
+        if (status != PJ_SUCCESS)
+            continue;
+
+        device_info.insert("index", i);
+        device_info.insert("name", info.name);
+        device_info.insert("input_count", info.input_count);
+        device_info.insert("output_count", info.output_count);
+        
+        device_list.append(device_info);
+    }
+}
+
 }} // phone::api::
