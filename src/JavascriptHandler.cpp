@@ -135,6 +135,18 @@ void JavascriptHandler::unregisterFromServer() const
 }
 
 //-----------------------------------------------------------------------------
+int JavascriptHandler::makeCall(const QString &number, const QVariantMap &header_map) const
+{
+    Call *call = phone_.makeCall(number, header_map);
+    if (!call) {
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "makeCall: failed"));
+        return -1;
+    }
+    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "calling " + number));
+    return call->getId();
+}
+
+//-----------------------------------------------------------------------------
 int JavascriptHandler::makeCall(const QString &number) const
 {
     Call *call = phone_.makeCall(number);

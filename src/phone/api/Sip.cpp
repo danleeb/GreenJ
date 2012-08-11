@@ -309,9 +309,17 @@ void Sip::registerStateCb(pjsua_acc_id acc_id)
     }
     self_->signalAccountState(acc_info.status);
 }
-
+                
 //-----------------------------------------------------------------------------
 int Sip::makeCall(const QString &url)
+{
+    QVariantMap header_map;
+    return makeCall(url, header_map);
+}
+
+
+//-----------------------------------------------------------------------------
+int Sip::makeCall(const QString &url, const QVariantMap &header_map)
 {
     if (url.size() > 149) {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error making call: url too long"));
@@ -324,12 +332,44 @@ int Sip::makeCall(const QString &url)
     strcpy(ch_url, url.toLocal8Bit().constData());
     pj_str_t uri = pj_str(ch_url);
     pjsua_call_id call_id;
+    pjsua_msg_data msg_data;
+    pjsua_msg_data_init(&msg_data);
+    
+    pj_pool_t *pool = pjsua_pool_create("tmp", 512, 512);
+    
+    if (header_map.size()) {
+        QMapIterator<QString, QVariant> it(header_map);
+        
+        pj_list_init(&msg_data.hdr_list);
+        
+        while (it.hasNext()) {
+            it.next();
+            
+            pjsip_generic_string_hdr *hdr;
+            
+            pj_str_t hname, hvalue;
+            
+            QByteArray name = it.key().toUtf8(), value = it.value().toString().toUtf8();
+            hname.ptr = name.data();
+            hname.slen = name.size();
+            
+            hvalue.ptr = value.data();
+            hvalue.slen = value.size();
+            
+            hdr = pjsip_generic_string_hdr_create(pool, &hname, &hvalue);
+            
+            pj_list_push_back(&msg_data.hdr_list, hdr);
+        }        
+    }
 
-    pj_status_t status = pjsua_call_make_call(account_id_, &uri, 0, NULL, NULL, &call_id);
+    pj_status_t status = pjsua_call_make_call(account_id_, &uri, 0, NULL, &msg_data, &call_id);
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error making call"));
         return -1;
     }
+    
+    pj_pool_release(pool);
+    
     return (int)call_id;
 }
 

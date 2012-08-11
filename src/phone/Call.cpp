@@ -39,6 +39,19 @@ int Call::makeCall(const QString &url)
     }
     return id_;
 }
+    
+//-----------------------------------------------------------------------------
+int Call::makeCall(const QString &url, const QVariantMap &header_map)
+{
+    url_ = url;
+    id_ = phone_->getApi()->makeCall(url_, header_map);
+    active_ = true;
+    
+    if (id_ >= 0) {
+        Sound::getInstance().startDial();
+    }
+    return id_;
+}
 
 //-----------------------------------------------------------------------------
 void Call::answerCall() const

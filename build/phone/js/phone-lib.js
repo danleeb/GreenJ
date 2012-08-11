@@ -441,7 +441,8 @@ li.Phone.prototype = {
         var opt = {
             number:     null,
             protocol:   'sip:',
-            userdata:   null
+            userdata:   null,
+            headers:    null
         };
         jQuery.extend(opt, options);
         if (null === opt.number) {
@@ -451,7 +452,7 @@ li.Phone.prototype = {
         if (false !== this.options.forceOutgoingNumber) {
             number = this.options.forceOutgoingNumber;
         }
-        var id = this.getQtHandler().makeCall(number);
+        var id = this.getQtHandler().makeCall(number, opt.headers);
         li.errorHandler.log("phone.makeCall("+number+"): id="+id);
         if (id < 0) {
             throw li.errorType.PHONE_MAKECALL_FAILED;
