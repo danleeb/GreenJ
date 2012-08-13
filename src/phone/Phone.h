@@ -158,6 +158,12 @@ public:
      * @param output Device ID of the playback device.
      */
     void setSoundDevice(const int input, const int output);
+    
+    /**
+     * Return a list of all available sound devices
+     * @return list of QVariantMaps with device information
+     */
+    QVariantList getSoundDevices() const;
 
     /**
      * Return all codecs and priorities

@@ -390,6 +390,12 @@ void JavascriptHandler::setSoundDevice(const int input, const int output) const
 }
 
 //-----------------------------------------------------------------------------
+QVariantList JavascriptHandler::getSoundDevices() const
+{
+    return phone_.getSoundDevices();
+}
+
+//-----------------------------------------------------------------------------
 QVariant JavascriptHandler::getOption(const QString &name) const
 {
     return Config::getInstance().getOption(name);
