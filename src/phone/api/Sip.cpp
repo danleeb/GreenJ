@@ -335,10 +335,12 @@ int Sip::makeCall(const QString &url, const QVariantMap &header_map)
     pjsua_msg_data msg_data;
     pjsua_msg_data_init(&msg_data);
     
-    pj_pool_t *pool = pjsua_pool_create("tmp", 512, 512);
+    pj_pool_t *pool = NULL;
     
     if (header_map.size()) {
         QMapIterator<QString, QVariant> it(header_map);
+        
+        pool = pjsua_pool_create("tmp", 512, 512);
         
         pj_list_init(&msg_data.hdr_list);
         
@@ -368,7 +370,9 @@ int Sip::makeCall(const QString &url, const QVariantMap &header_map)
         return -1;
     }
     
-    pj_pool_release(pool);
+    if (pool) {
+        pj_pool_release(pool);
+    }
     
     return (int)call_id;
 }
