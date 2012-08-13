@@ -136,6 +136,17 @@ Call *Phone::makeCall(const QString &url)
     }
     return call;
 }
+    
+//-----------------------------------------------------------------------------
+Call *Phone::makeCall(const QString &url, const QVariantMap &header_map)
+{
+    Call *call = new Call(this, Call::TYPE_OUTGOING);
+    if (call->makeCall(url, header_map) < 0 || !addToCallList(call)) {
+        delete call;
+        call = NULL;
+    }
+    return call;
+}
 
 //-----------------------------------------------------------------------------
 void Phone::hangUpAll()

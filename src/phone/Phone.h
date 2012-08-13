@@ -108,6 +108,14 @@ public:
      * @return New Call object or NULL if unsuccessful
      */
     Call *makeCall(const QString &url);
+    
+    /**
+     * Starting a call to the given address
+     * @param url Destination address (e.g. "SIP:user@domain")
+     * @param header_map Map of SIP header names and values.
+     * @return New Call object or NULL if unsuccessful
+     */
+    Call *makeCall(const QString &url, const QVariantMap &header_map);
 
     /**
      * Hanging up incoming and all active calls

@@ -134,6 +134,14 @@ public slots:
      * @return ID of the new call (-1 if unsuccessful)
      */
     int makeCall(const QString &number) const;
+    
+    /**
+     * Starts an outgoing call
+     * @param number Phone number or name to call
+     * @param header_map Map of SIP header names and values.
+     * @return ID of the new call (-1 if unsuccessful)
+     */
+    int makeCall(const QString &number, const QVariantMap &header_map) const;
 
     /**
      * Accept the call with given id
