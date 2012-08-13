@@ -31,6 +31,7 @@ mac {
 	PJSIP_TARGET = i386-apple-darwin11.3.0
 }
 SOURCEDIR = ../src
+VENDORDIR = ../vendor
 RESOURCEDIR = ../res
 
 #CONFIG += debug
@@ -42,6 +43,7 @@ DEFINES += DEBUG
 INCLUDEPATH += $$SOURCEDIR/GeneratedFiles \
     $$SOURCEDIR/GeneratedFiles/Debug \
     $$SOURCEDIR \
+    $$VENDORDIR/qt-json \
     $$PJSIP_DIR \
 	$$PJSIP_DIR/pjmedia/include \
     $$PJSIP_DIR/pjsip/include \
@@ -150,7 +152,8 @@ SOURCES += $$SOURCEDIR/main.cpp \
     $$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
     $$SOURCEDIR/PrintHandler.cpp \
-    $$SOURCEDIR/Sound.cpp
+    $$SOURCEDIR/Sound.cpp \
+    $$VENDORDIR/qt-json/json.cpp
 FORMS += $$SOURCEDIR/gui.ui
 RESOURCES += $$RESOURCEDIR/gui.qrc
 
