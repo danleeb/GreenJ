@@ -41,6 +41,7 @@ public:
     virtual void getAccountInfo(QVariantMap &account_info);
 
     virtual int makeCall(const QString &url);
+    virtual int makeCall(const QString &url, const QVariantMap &header_map);
     virtual void answerCall(int call_id = -1);
     virtual void hangUp(const int call_id);
     virtual void hangUpAll();

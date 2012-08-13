@@ -71,6 +71,14 @@ public:
      * @return The ID of the new call
      */
     virtual int makeCall(const QString &url) = 0;
+    
+    /**
+     * Starting a call to the given address
+     * @param url Destination address (e.g. "SIP:user@domain")
+     * @param header_map Map of SIP header names and values.
+     * @return The ID of the new call
+     */
+    virtual int makeCall(const QString &url, const QVariantMap &header_map) = 0;
 
     /**
      * Answering an incoming call

@@ -72,6 +72,14 @@ public:
      * @return CallId of the new call
      */
     int makeCall(const QString &url);
+    
+    /**
+     * Starts a SIP call to the stored address
+     * @param url Destination address for the outgoing call
+     * @param header_map Map of SIP header names and values.
+     * @return CallId of the new call
+     */
+    int makeCall(const QString &url, const QVariantMap &header_map);
 
     /**
      * Answers the call
