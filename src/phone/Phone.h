@@ -189,7 +189,7 @@ public slots:
      * This slot gets called on incoming calls
      * @param call Call*, the call handler class
      */
-    void slotIncomingCall(int call_id, const QString &url, const QString &name);
+    void slotIncomingCall(int call_id, const QString &url, const QString &name, const QVariantMap &header_map);
 
     /**
      * This slot gets called when the state of a call has changed
@@ -234,7 +234,7 @@ public slots:
     void slotStopSound();
 
 signals:
-    void signalIncomingCall(const QString &call);
+    void signalIncomingCall(const QString &call, const QVariantMap &header_map);
 
 private:
     api::Interface *api_;

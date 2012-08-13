@@ -256,6 +256,18 @@ public:
     void setCloseTime(const QDateTime &close_time);
     void setDuration(const int duration);
 
+    /**
+     * Set SIP call headers
+     * @param Map with call headers
+     */
+    void setHeaders(const QVariantMap &header_map);
+
+    /**
+     * Get SIP call headers
+     * @param Map with call headers
+     */
+    QVariantMap getHeaders() const;
+
 private:
     QDateTime start_time_;
     QDateTime accept_time_;
@@ -274,6 +286,8 @@ private:
     QString url_;
     QString name_;
     QString user_data_;
+
+    QVariantMap headers_;
 };
 
 } // phone::

@@ -702,6 +702,8 @@ li.Phone.Call = function(options, data) {
         acceptTime:         0,
         closeTime:          0,
 
+        headers:            null,
+
         userdata:           null
     };
     if (null === this.phone) {
@@ -757,6 +759,8 @@ li.Phone.Call.prototype = {
     callTime:           null,       // Date object;
     acceptTime:         null,
     closeTime:          null,
+
+    headers:            null,
 
     /**
      * Update call data.
@@ -1056,10 +1060,11 @@ li.Phone.Handler.prototype = {
      *  li.Phone.'onError' with { message: string, exception: e }.
      * @param {integer} call_id
      * @param {string} number       incoming number
-     * @param {string} callee       the number/identifier, that has been called
+     * @param {string} callee       the number/identifier that has been called
+     * @param {Object} headers      custom SIP headers for the incoming call
      * @return {boolean} true, if successful
      */
-    incomingCall: function(call_id, number, callee) {
+    incomingCall: function(call_id, number, callee, headers) {
         li.errorHandler.log("phone.Handler.incomingCall("+call_id+",'"+number+"','"+callee+"')");
         var opt = {
                 id:     call_id,
@@ -1068,7 +1073,8 @@ li.Phone.Handler.prototype = {
             data = {
                 type:   li.Phone.Call.TYPE_INCOMING,
                 number: number,
-                callee: callee
+                callee: callee,
+                headers: headers
             };
         try {
             var c = new li.Phone.Call(opt, data);

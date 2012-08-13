@@ -292,6 +292,18 @@ void Call::setDuration(const int duration)
     duration_ = duration;
 }
 
+//-----------------------------------------------------------------------------
+QVariantMap Call::getHeaders() const
+{
+    return headers_;
+}
+
+//-----------------------------------------------------------------------------
+void Call::setHeaders(const QVariantMap &header_map)
+{
+    headers_ = header_map;
+}
+
 } // phone::
 
 //-----------------------------------------------------------------------------
