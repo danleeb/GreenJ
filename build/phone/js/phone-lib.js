@@ -797,10 +797,14 @@ li.Phone.Call.prototype = {
      * Accepts an incoming call.
      * @return this
      */
-    accept: function() {
+    accept: function(code) {
         this.acceptTime = Date.now();
         this.data.status = li.Phone.Call.STATUS_ACCEPTED;
-        this.phone.getQtHandler().callAccept(this.id);
+        if (code) {
+            this.phone.getQtHandler().callAccept(this.id, code);
+        } else {
+            this.phone.getQtHandler().callAccept(this.id);
+        }
         return this;
     },
     /**

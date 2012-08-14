@@ -162,12 +162,12 @@ int JavascriptHandler::makeCall(const QString &number) const
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::callAccept(const int call_id) const
+void JavascriptHandler::callAccept(const int call_id, const int code) const
 {
     Call *call = phone_.getCall(call_id);
     if (call) {
         LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "js_handler", 0, "accepting call " + QString::number(call_id)));
-        call->answerCall();
+        call->answerCall(code);
     } else {
         LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "callAccept: Call doesn't exist!"));
     }

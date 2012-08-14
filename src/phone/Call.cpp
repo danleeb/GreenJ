@@ -54,10 +54,10 @@ int Call::makeCall(const QString &url, const QVariantMap &header_map)
 }
 
 //-----------------------------------------------------------------------------
-void Call::answerCall() const
+void Call::answerCall(const int code) const
 {
     if (id_ != -1) {
-        phone_->getApi()->answerCall(id_);
+        phone_->getApi()->answerCall(id_, code);
     }
 }
 

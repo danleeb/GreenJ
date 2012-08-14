@@ -398,13 +398,13 @@ int Sip::makeCall(const QString &url, const QVariantMap &header_map)
 }
 
 //-----------------------------------------------------------------------------
-void Sip::answerCall(int call_id)
+void Sip::answerCall(int call_id, int code)
 {
     pjsua_call_info ci;
     pjsua_call_get_info(call_id, &ci);
 
     if (ci.state == PJSIP_INV_STATE_INCOMING) {
-        pjsua_call_answer((pjsua_call_id)call_id, 200, NULL, NULL);
+        pjsua_call_answer((pjsua_call_id)call_id, code, NULL, NULL);
         signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", ci.state, 
                           "Call " + QString::number(call_id) + " answered"));
     } else {
