@@ -52,7 +52,8 @@ void JavascriptHandler::incomingCall(const Call &call) const
 {
     evaluateJavaScript("incomingCall(" + QString::number(call.getId()) + ",'" 
                                        + call.getUrl() + "','" 
-                                       + call.getName() + "')");
+                                       + call.getName() + "',"
+                                       + Json::serialize(call.getHeaders()) + ")");
 }
 
 //-----------------------------------------------------------------------------

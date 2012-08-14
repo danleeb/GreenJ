@@ -29,8 +29,8 @@ Phone::Phone(api::Interface *api) : api_(api), js_handler_(NULL)
 {
     connect(api_, SIGNAL(signalAccountState(const int)),
             this, SLOT(slotAccountState(const int)));
-    connect(api_, SIGNAL(signalIncomingCall(int, QString, QString)),
-            this, SLOT(slotIncomingCall(int, QString, QString)));
+    connect(api_, SIGNAL(signalIncomingCall(int, QString, QString, QVariantMap)),
+            this, SLOT(slotIncomingCall(int, QString, QString, QVariantMap)));
     connect(api_, SIGNAL(signalCallState(int,int,int)),
             this, SLOT(slotCallState(int,int,int)));
     connect(api_, SIGNAL(signalSoundLevel(int)),
@@ -240,12 +240,13 @@ void Phone::unregister()
 }
 
 //-----------------------------------------------------------------------------
-void Phone::slotIncomingCall(int call_id, const QString &url, const QString &name)
+void Phone::slotIncomingCall(int call_id, const QString &url, const QString &name, const QVariantMap &header_map)
 {
     Call *call = new Call(this, Call::TYPE_INCOMING);
     call->setId(call_id);
     call->setUrl(url);
     call->setName(name);
+    call->setHeaders(header_map);
 
     if (!addToCallList(call)) {
         delete call;
@@ -255,7 +256,7 @@ void Phone::slotIncomingCall(int call_id, const QString &url, const QString &nam
         js_handler_->incomingCall(*call);
     }
 
-    signalIncomingCall(call->getUrl());
+    signalIncomingCall(call->getUrl(), header_map);
 }
 
 //-----------------------------------------------------------------------------

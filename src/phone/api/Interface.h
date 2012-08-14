@@ -186,7 +186,7 @@ signals:
      * Send signal on incoming calls
      * @param call Incoming call object
      */
-    void signalIncomingCall(int call_id, const QString &url, const QString &name);
+    void signalIncomingCall(int call_id, const QString &url, const QString &name, const QVariantMap &header_map);
 
     /**
      * Send signal on changing call state
