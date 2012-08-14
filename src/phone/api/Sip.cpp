@@ -239,9 +239,27 @@ void Sip::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
     pjsua_call_info ci;
 
     PJ_UNUSED_ARG(acc_id);
-    PJ_UNUSED_ARG(rdata);
 
     pjsua_call_get_info(call_id, &ci);
+    
+    const pjsip_msg *msg = rdata->msg_info.msg;
+    const pjsip_hdr *hdr = msg->hdr.next, *end = &msg->hdr;
+    
+    QVariantMap header_map;
+    
+    for (; hdr!=end; hdr = hdr->next) {
+        if (hdr->name.slen > 2 && pj_strnicmp2(&hdr->name, "x-", 2) == 0) {
+            pjsip_generic_string_hdr *string_hdr = (pjsip_generic_string_hdr *)hdr;
+            
+            QByteArray key_bytes(hdr->name.ptr, hdr->name.slen);
+            QByteArray value_bytes(string_hdr->hvalue.ptr, string_hdr->hvalue.slen);
+            
+            QString key(key_bytes);
+            QString value(value_bytes);
+            
+            header_map.insert(key, value);
+        }
+    }
 
     if (pjsua_call_get_count() <= 1) {
         self_->signalRingSound();
@@ -249,7 +267,7 @@ void Sip::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
     self_->signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Incoming call from " +
                              QString(ci.remote_contact.ptr)));
 
-    self_->signalIncomingCall(call_id, QString(ci.remote_contact.ptr), QString(ci.remote_info.ptr));
+    self_->signalIncomingCall(call_id, QString(ci.remote_contact.ptr), QString(ci.remote_info.ptr), header_map);
 }
 
 //-----------------------------------------------------------------------------

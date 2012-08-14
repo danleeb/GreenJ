@@ -17,10 +17,12 @@
 #include "LogHandler.h"
 #include "Config.h"
 #include "JavascriptHandler.h"
+#include "json.h"
 
 using phone::Phone;
 using phone::Call;
 using phone::Account;
+using QtJson::Json;
 
 const QString JavascriptHandler::OBJECT_NAME = "qt_handler";
 
@@ -50,7 +52,8 @@ void JavascriptHandler::incomingCall(const Call &call) const
 {
     evaluateJavaScript("incomingCall(" + QString::number(call.getId()) + ",'" 
                                        + call.getUrl() + "','" 
-                                       + call.getName() + "')");
+                                       + call.getName() + "',"
+                                       + Json::serialize(call.getHeaders()) + ")");
 }
 
 //-----------------------------------------------------------------------------
@@ -476,11 +479,11 @@ void JavascriptHandler::deleteLogFile(const QString &file_name) const
 //-----------------------------------------------------------------------------
 void JavascriptHandler::slotLogMessage(const LogInfo &info) const
 {
-    QString json = "{'time':'" + info.time_.toString("dd.MM.yyyy hh:mm:ss")
-                 + "','status':" + QString::number(info.status_) 
-                 + ",'domain':'" + info.domain_
-                 + "','code':" + QString::number(info.code_) 
-                 + ",'message':'" + info.msg_ + "'}";
-
-    evaluateJavaScript("logMessage(" + json + ")");
+    QVariantMap map;
+    map["time"] = info.time_.toString("dd.MM.yyyy hh:mm:ss");
+    map["status"] = QString::number(info.status_);
+    map["domain"] = info.domain_;
+    map["code"] = QString::number(info.code_);
+    map["message"] = info.msg_;
+    evaluateJavaScript("logMessage(" + Json::serialize(map) + ")");
 }
