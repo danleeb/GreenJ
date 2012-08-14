@@ -84,7 +84,7 @@ public:
      * Answering an incoming call
      * @param call_id ID of the incoming call
      */
-    virtual void answerCall(int call_id = -1) = 0;
+    virtual void answerCall(int call_id = -1, int code = 200) = 0;
 
     /**
      * Hanging up a specific call

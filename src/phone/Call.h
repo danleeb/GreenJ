@@ -84,7 +84,7 @@ public:
     /**
      * Answers the call
      */
-    void answerCall() const;
+    void answerCall(const int code = 200) const;
 
     /**
      * Hanging up the call
