@@ -146,8 +146,9 @@ public slots:
     /**
      * Accept the call with given id
      * @param call_id ID of the call to accept
+     * @param code SIP status code
      */
-    void callAccept(const int call_id) const;
+    void callAccept(const int call_id, const int code = 200) const;
 
     /**
      * Finish call with given id
