@@ -196,7 +196,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
                                         + "' domain:'" + QString(cdomain)
                                         + "' realm:'*"
                                         + "' uri:'" + QString(curi)
-                                        + "' id:'" + QString(cid)));
+                                        + "' id:'" + QString(cid) + "'"));
 
     return account_id_;
 }
