@@ -452,7 +452,7 @@ li.Phone.prototype = {
         if (false !== this.options.forceOutgoingNumber) {
             number = this.options.forceOutgoingNumber;
         }
-        var id = this.getQtHandler().makeCall(number, opt.headers);
+        var id = this.getQtHandler().makeCall(number, opt.headers || undefined);
         li.errorHandler.log("phone.makeCall("+number+"): id="+id);
         if (id < 0) {
             throw li.errorType.PHONE_MAKECALL_FAILED;
