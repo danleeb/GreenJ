@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-codec&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-audiodev&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\include&quot;;..\src\GeneratedFiles;&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;.\"
+				AdditionalIncludeDirectories="&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-codec&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-audiodev&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\include&quot;;..\src\GeneratedFiles;&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;.\;&quot;$(VENDOR_DIR)\qt-json&quot;"
 				PreprocessorDefinitions="DEBUG,UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;QT_DLL"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
@@ -704,6 +704,22 @@
 					/>
 				</FileConfiguration>
 			</File>
+		</Filter>
+		<Filter
+			Name="Vendor Files"
+			>
+			<Filter
+				Name="qt-json"
+				>
+				<File
+					RelativePath="..\vendor\qt-json\json.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\vendor\qt-json\json.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
