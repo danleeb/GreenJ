@@ -118,7 +118,13 @@ bool Phone::addToCallList(Call *call)
             return true;
         }
         if (calls_[i]->getId() == call->getId()) {
-            return false;
+            if (calls_[i]->isActive()) {
+                return false;
+            } else {
+                delete calls_[i];
+                calls_[i] = call;
+                return true;
+            }
         }
     }
 
