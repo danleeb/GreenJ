@@ -323,4 +323,14 @@ void Phone::slotStopSound()
     Sound::getInstance().stop();
 }
 
+//-----------------------------------------------------------------------------
+void Phone::sendDTMFDigits(int call_id, const QString &digits)
+{
+    Call *call = getCall(call_id);
+    if (call) {
+        call->sendDTMFDigits(digits);
+    }
+}
+
+    
 } // phone::

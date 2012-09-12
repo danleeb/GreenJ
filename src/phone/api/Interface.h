@@ -175,6 +175,14 @@ public:
      * @param codecs Map of codecs with priorities
      */
     virtual void getCodecPriorities(QVariantMap &codecs) = 0;
+    
+    /**
+     * Send DTMF digits.
+     * @param call_id ID of call
+     * @param digit The DTMF digits that should be sent.
+     * @return true, if successful
+     */
+    virtual bool sendDTMFDigits(int call_id, const QString &digits) = 0;
 
 signals:
     /**
@@ -224,6 +232,7 @@ signals:
      * Send signal to stop sounds
      */
     void signalStopSound();
+
 };
 
 }} // phone::api::

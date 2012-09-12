@@ -303,6 +303,12 @@ void Call::setHeaders(const QVariantMap &header_map)
 {
     headers_ = header_map;
 }
+    
+bool Call::sendDTMFDigits(const QString &digits)
+{
+    return phone_->getApi()->sendDTMFDigits(id_, digits);
+}
+
 
 } // phone::
 

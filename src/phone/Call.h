@@ -268,6 +268,14 @@ public:
      */
     QVariantMap getHeaders() const;
 
+    /**
+     * Send DTMF digits.
+     * @param digit The DTMF digits that should be sent.
+     * @return true if successful
+     */
+    bool sendDTMFDigits(const QString &digits);
+
+
 private:
     QDateTime start_time_;
     QDateTime accept_time_;
