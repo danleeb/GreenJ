@@ -233,6 +233,11 @@ public slots:
      */
     void slotStopSound();
 
+    /**
+     * Send signal of an recieved text message
+     */
+    void slotIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body);
+
 signals:
     void signalIncomingCall(const QString &call, const QVariantMap &header_map);
 
