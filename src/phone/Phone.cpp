@@ -325,6 +325,7 @@ void Phone::slotStopSound()
     Sound::getInstance().stop();
 }
 
+//-----------------------------------------------------------------------------
 void Phone::slotIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body)
 {
     if (js_handler_) {
@@ -332,4 +333,14 @@ void Phone::slotIncomingTextMessage(int call_id, const QString &from, const QStr
     }
 }
 
+//-----------------------------------------------------------------------------
+void Phone::sendDTMFDigits(int call_id, const QString &digits)
+{
+    Call *call = getCall(call_id);
+    if (call) {
+        call->sendDTMFDigits(digits);
+    }
+}
+
+    
 } // phone::

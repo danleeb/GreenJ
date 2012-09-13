@@ -82,6 +82,9 @@ public:
     
     virtual bool setSoundDevice(const int input, const int output);
     virtual void getSoundDevices(QVariantList &device_list);
+    
+    virtual bool sendDTMFDigits(int call_id, const QString &digits);
+
 
     /**
      * Get the sip-address of a given call

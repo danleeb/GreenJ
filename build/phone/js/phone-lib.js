@@ -895,6 +895,13 @@ li.Phone.Call.prototype = {
     //TODO: Implement setSoundLevel and setMicroLevel for calls
 
     /**
+     * Send DTMF digits
+     */
+    sendDTMFDigits: function(digits) {
+        this.phone.getQtHandler().sendDTMFDigits(this.id, digits);
+    },
+
+    /**
      * Get time from call to accept.
      * @param {boolean} millisecs   [optional] if true, returns time in milliseconds (defaults to false)
      * @return {integer} time in seconds [optional: milliseconds] from call to accept

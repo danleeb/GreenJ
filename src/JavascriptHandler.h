@@ -328,6 +328,13 @@ public slots:
      */
     void deleteLogFile(const QString &file_name) const;
 
+    /**
+     * Send DTMF digits.
+     * @param call_id ID of call
+     * @param digit String with the digits that should be sent.
+     */
+    void sendDTMFDigits(const int call_id, const QString &digits) const;
+
 private slots:
     /**
      * Prints errors, warning and debug messages
