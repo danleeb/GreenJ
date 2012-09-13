@@ -329,7 +329,7 @@ void Phone::slotStopSound()
 void Phone::slotIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body)
 {
     if (js_handler_) {
-        js_handler_->recievedIncomingTextMessage(call_id,from,to,contact,mime_type,body);
+        js_handler_->receivedIncomingTextMessage(call_id,from,to,contact,mime_type,body);
     }
 }
 

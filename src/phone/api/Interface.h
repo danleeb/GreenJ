@@ -234,7 +234,7 @@ signals:
     void signalStopSound();
 
     /**
-     * Send signal of an recieved text message
+     * Send signal of an received text message
      */
     void signalIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body);
 };

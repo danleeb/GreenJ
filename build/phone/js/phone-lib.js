@@ -1141,13 +1141,13 @@ li.Phone.Handler.prototype = {
         }
     },
     /**
-     * We have recieved a MESSAGE
-     *  Triggers li.Phone.'onRecievedIncomingTextMessage' with {id: call_id,message: body}
+     * We have received a MESSAGE
+     *  Triggers li.Phone.'onReceivedIncomingTextMessage' with {id: call_id,message: body}
      * @param {integer} call_id
      * @param {string}  message content
      */
-    recievedIncomingTextMessage: function(call_id,from,to,contact,mime_type,body) {
-        this.phone.trigger( 'onRecievedIncomingTextMessage',{ id: call_id,message: body } )
+    receivedIncomingTextMessage: function(call_id,from,to,contact,mime_type,body) {
+        this.phone.trigger( 'onReceivedIncomingTextMessage',{ id: call_id,message: body } )
     },
     /**
      * The account state has been updated.

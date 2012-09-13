@@ -32,9 +32,9 @@ JavascriptHandler::JavascriptHandler(QWebView *web_view, Phone &phone) :
 {
 }
 
-void JavascriptHandler::recievedIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body) const
+void JavascriptHandler::receivedIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body) const
 {
-    evaluateJavaScript("recievedIncomingTextMessage("
+    evaluateJavaScript("receivedIncomingTextMessage("
                                                     + QString::number(call_id) + ","
                                                     + "'" + from + "',"
                                                     + "'" + to + "',"
