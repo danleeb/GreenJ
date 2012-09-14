@@ -232,6 +232,13 @@ public slots:
      * Slot to stop sounds
      */
     void slotStopSound();
+    
+    /**
+     * Send DTMF digits.
+     * @param call_id ID of call
+     * @param digits The DTMF digits that should be sent.
+     */
+    void sendDTMFDigits(int call_id, const QString &digits);
 
 signals:
     void signalIncomingCall(const QString &call, const QVariantMap &header_map);

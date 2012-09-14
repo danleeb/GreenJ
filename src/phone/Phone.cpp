@@ -118,7 +118,13 @@ bool Phone::addToCallList(Call *call)
             return true;
         }
         if (calls_[i]->getId() == call->getId()) {
-            return false;
+            if (calls_[i]->isActive()) {
+                return false;
+            } else {
+                delete calls_[i];
+                calls_[i] = call;
+                return true;
+            }
         }
     }
 
@@ -317,4 +323,13 @@ void Phone::slotStopSound()
     Sound::getInstance().stop();
 }
 
+//-----------------------------------------------------------------------------
+void Phone::sendDTMFDigits(int call_id, const QString &digits)
+{
+    Call *call = getCall(call_id);
+    if (call) {
+        call->sendDTMFDigits(digits);
+    }
+}
+    
 } // phone::

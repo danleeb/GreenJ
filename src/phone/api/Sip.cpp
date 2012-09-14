@@ -588,7 +588,8 @@ void Sip::getCodecPriorities(QVariantMap &codecs)
 }
         
 //-----------------------------------------------------------------------------
-bool Sip::setSoundDevice(const int input, const int output) {
+bool Sip::setSoundDevice(const int input, const int output)
+{
     pj_status_t status = pjsua_set_snd_dev(input, output);
     return (status = PJ_SUCCESS);
 }
@@ -616,6 +617,33 @@ void Sip::getSoundDevices(QVariantList &device_list)
         
         device_list.append(device_info);
     }
+}
+
+//-----------------------------------------------------------------------------
+bool Sip::sendDTMFDigits(int call_id, const QString &digits)
+{
+    pj_status_t status;
+    pj_str_t pjDigits = pj_str(digits.toUtf8().data());
+    
+    // Try to send RFC2833 DTMF first.
+    status = pjsua_call_dial_dtmf(call_id, &pjDigits);
+    
+    if (status != PJ_SUCCESS) {
+        const pj_str_t kSIPINFO = pj_str((char *)"INFO");
+        
+        for (int i = 0; i < digits.length(); ++i) {
+            pjsua_msg_data messageData;
+            pjsua_msg_data_init(&messageData);
+            messageData.content_type = pj_str((char *)"application/dtmf-relay");
+            messageData.msg_body = pj_str((char *)QString("Signal=%1\r\nDuration=300").arg(digits[i]).toUtf8().data());
+            
+            status = pjsua_call_send_request(call_id,
+                                             &kSIPINFO,
+                                             &messageData);
+        }
+    }
+    
+    return (status == PJ_SUCCESS);
 }
 
 }} // phone::api::
