@@ -331,9 +331,10 @@ void Sip::registerStateCb(pjsua_acc_id acc_id)
     self_->signalAccountState(acc_info.status);
 }
 
-
-//####################################################################################################
-void Sip::incomingTextMessageCb(pjsua_call_id call_id, const pj_str_t *from, const pj_str_t *to, const pj_str_t *contact, const pj_str_t *mime_type, const pj_str_t *body)
+//-----------------------------------------------------------------------------
+void Sip::incomingTextMessageCb(pjsua_call_id call_id,
+                                const pj_str_t *from, const pj_str_t *to, const pj_str_t *contact, 
+                                const pj_str_t *mime_type, const pj_str_t *body)
 {
     pjsua_call_info ci;
 
@@ -345,10 +346,11 @@ void Sip::incomingTextMessageCb(pjsua_call_id call_id, const pj_str_t *from, con
                             + "\n<contact> " + QString(contact->ptr)
                             + "\n<mime_type> " + QString(mime_type->ptr)
                             + "\n<body> " + QString(body->ptr)));
-    self_->signalIncomingTextMessage(call_id,QString(from->ptr),QString(to->ptr),QString(contact->ptr),QString(mime_type->ptr),QString(body->ptr));
+    self_->signalIncomingTextMessage(call_id,
+                                     QString(from->ptr), QString(to->ptr), QString(contact->ptr),
+                                     QString(mime_type->ptr), QString(body->ptr));
 }
-//#####################################################################################################
-                
+
 //-----------------------------------------------------------------------------
 int Sip::makeCall(const QString &url)
 {
