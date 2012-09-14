@@ -37,6 +37,7 @@
  *      onSoundLevelChanged integer level
  *      onMicroLevelChanged integer level
  *      onPrintUrl
+ *      onReceivedIncomingTextMessage { id: call id, message: body }
  * </pre>
  * @class Phone class that handles and controls phone functionality.
  * @augments li.BaseObject
@@ -91,6 +92,12 @@ li.Phone = function(options) {
                 return;
             }
             this.getCallById(data.id).trigger('onClose', data);
+        });
+    this.addListener('onReceivedIncomingTextMessage', function(data) {
+            if (!this.hasCallById(data.id)) {
+                return;
+            }
+            this.getCallById(data.id).trigger('onTextMessage', data);
         });
     this.addListener('onRegister', function() {
             var obj = self.getQtHandler().getSignalInformation();
@@ -663,6 +670,7 @@ li.inherit(li.Phone, li.BaseObject);
  *      onAccept            { id: call id }     when callee accepted: same as 'onCallAccept' (see {@link li.Phone})
  *      onClose             { id: call id }     when destination closed call: same as 'onCallClose' (see {@link li.Phone})
  *      onUpdate            {}                  after update()
+ *      onTextMessage       { id: call id, message: body }
  * </pre>
  * @class Class that represents a call in the phone application.
  * @augments li.BaseObject
@@ -1139,6 +1147,15 @@ li.Phone.Handler.prototype = {
                 this.phone.trigger('onCallClose', { id: call_id } );
                 break;
         }
+    },
+    /**
+     * We have received a MESSAGE
+     *  Triggers li.Phone.'onReceivedIncomingTextMessage' with {id: call_id, message: body}
+     * @param {integer} call_id
+     * @param {string}  message content
+     */
+    receivedIncomingTextMessage: function(call_id, from, to, contact, mime_type, body) {
+        this.phone.trigger('onReceivedIncomingTextMessage', { id: call_id, message: body } );
     },
     /**
      * The account state has been updated.

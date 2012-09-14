@@ -57,6 +57,22 @@ void JavascriptHandler::incomingCall(const Call &call) const
 }
 
 //-----------------------------------------------------------------------------
+void JavascriptHandler::receivedIncomingTextMessage(int call_id, 
+                                                    const QString &from, const QString &to, 
+                                                    const QString &contact, 
+                                                    const QString &mime_type, 
+                                                    const QString &body) const
+{
+    evaluateJavaScript("receivedIncomingTextMessage("
+                                                    + QString::number(call_id) + ","
+                                                    + "'" + from + "',"
+                                                    + "'" + to + "',"
+                                                    + "'" + contact + "',"
+                                                    + "'" + mime_type + "',"
+                                                    + "'" + body + "')");
+}
+
+//-----------------------------------------------------------------------------
 QUrl JavascriptHandler::getPrintUrl() const
 {
     QVariant url = evaluateJavaScript("getPrintUrl();");

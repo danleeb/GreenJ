@@ -144,6 +144,17 @@ private:
      * @param acc The id of the account which changed
      */
     static void registerStateCb(pjsua_acc_id acc);
+
+    /**
+     * Callback for incoming text messages
+     * @param call_id Containts the ID of the call where the IM was sent, or PJSUA_INVALID_ID if the IM was sent outside call context.
+     * @param from URI of the sender.
+     * @param to URI of the destination message.
+     * @param contact The Contact URI of the sender, if present.
+     * @param mime_type MIME type of the message.
+     * @param body The message content.
+     */
+    static void incomingTextMessageCb(pjsua_call_id call_id, const pj_str_t *from, const pj_str_t *to, const pj_str_t *contact, const pj_str_t *mime_type, const pj_str_t *body);
 };
 
 }} // phone::api::

@@ -233,6 +233,18 @@ signals:
      */
     void signalStopSound();
 
+    /**
+     * Send signal of an received text message
+     * @param call_id Containts the ID of the call where the IM was sent, or PJSUA_INVALID_ID if the IM was sent outside call context.
+     * @param from URI of the sender.
+     * @param to URI of the destination message.
+     * @param contact The Contact URI of the sender, if present.
+     * @param mime_type MIME type of the message.
+     * @param body The message content.
+     */
+    void signalIncomingTextMessage(int call_id, const QString &from, const QString &to,
+                                   const QString &contact, const QString &mime_type,
+                                   const QString &body);
 };
 
 }} // phone::api::
