@@ -240,6 +240,11 @@ public slots:
      */
     void sendDTMFDigits(int call_id, const QString &digits);
 
+    /**
+     * Send signal of an received text message
+     */
+    void slotIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body);
+
 signals:
     void signalIncomingCall(const QString &call, const QVariantMap &header_map);
 

@@ -43,6 +43,8 @@ Phone::Phone(api::Interface *api) : api_(api), js_handler_(NULL)
             this, SLOT(slotRingSound()));
     connect(api_, SIGNAL(signalStopSound()),
             this, SLOT(slotStopSound()));
+    connect(api_, SIGNAL(signalIncomingTextMessage(int,QString,QString,QString,QString,QString)),
+            this, SLOT(slotIncomingTextMessage(int,QString,QString,QString,QString,QString)));
 }
 
 //-----------------------------------------------------------------------------
@@ -321,6 +323,14 @@ void Phone::slotRingSound()
 void Phone::slotStopSound()
 {
     Sound::getInstance().stop();
+}
+
+//-----------------------------------------------------------------------------
+void Phone::slotIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body)
+{
+    if (js_handler_) {
+        js_handler_->receivedIncomingTextMessage(call_id,from,to,contact,mime_type,body);
+    }
 }
 
 //-----------------------------------------------------------------------------

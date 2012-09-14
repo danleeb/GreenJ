@@ -93,6 +93,7 @@ bool Sip::_initPjsua(const QString &stun)
     cfg.cb.on_call_state = &callStateCb;
     cfg.cb.on_call_media_state = &callMediaStateCb;
     cfg.cb.on_reg_state = &registerStateCb;
+    cfg.cb.on_pager = &incomingTextMessageCb;
 
     pjsua_logging_config_default(&log_cfg);
     log_cfg.console_level = 4;
@@ -329,6 +330,24 @@ void Sip::registerStateCb(pjsua_acc_id acc_id)
     }
     self_->signalAccountState(acc_info.status);
 }
+
+
+//####################################################################################################
+void Sip::incomingTextMessageCb(pjsua_call_id call_id, const pj_str_t *from, const pj_str_t *to, const pj_str_t *contact, const pj_str_t *mime_type, const pj_str_t *body)
+{
+    pjsua_call_info ci;
+
+    pjsua_call_get_info(call_id, &ci);
+    self_->signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip",0,
+                            "MESSAGE for call=" + QString::number(call_id)
+                            + "\n<from> " + QString(from->ptr)
+                            + "\n<to> " + QString(to->ptr)
+                            + "\n<contact> " + QString(contact->ptr)
+                            + "\n<mime_type> " + QString(mime_type->ptr)
+                            + "\n<body> " + QString(body->ptr)));
+    self_->signalIncomingTextMessage(call_id,QString(from->ptr),QString(to->ptr),QString(contact->ptr),QString(mime_type->ptr),QString(body->ptr));
+}
+//#####################################################################################################
                 
 //-----------------------------------------------------------------------------
 int Sip::makeCall(const QString &url)

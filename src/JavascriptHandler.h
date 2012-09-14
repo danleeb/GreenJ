@@ -42,6 +42,8 @@ public:
      */
     JavascriptHandler(QWebView *web_view, phone::Phone &phone);
 
+    void receivedIncomingTextMessage(int call_id, const QString &from, const QString &to, const QString &contact, const QString &mime_type, const QString &body) const;
+
     /**
      * Send current account state
      * @param state

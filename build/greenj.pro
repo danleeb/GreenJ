@@ -85,9 +85,10 @@ unix: LIBS += -L/usr/lib/ \
 	-lpj-$$PJSIP_TARGET \
 	-lm \
 	-lpthread \
+	-lasound \
+	-lssl \
 	#-luuid \
 	#-lcrypto \
-	#-lssl
 
 unix:!mac LIBS += -lnsl -lrt -lasound
 
