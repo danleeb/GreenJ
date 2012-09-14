@@ -331,6 +331,5 @@ void Phone::sendDTMFDigits(int call_id, const QString &digits)
         call->sendDTMFDigits(digits);
     }
 }
-
     
 } // phone::

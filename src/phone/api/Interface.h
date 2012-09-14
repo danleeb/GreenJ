@@ -179,7 +179,7 @@ public:
     /**
      * Send DTMF digits.
      * @param call_id ID of call
-     * @param digit The DTMF digits that should be sent.
+     * @param digits The DTMF digits that should be sent.
      * @return true, if successful
      */
     virtual bool sendDTMFDigits(int call_id, const QString &digits) = 0;

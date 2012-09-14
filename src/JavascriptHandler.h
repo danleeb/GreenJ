@@ -329,7 +329,7 @@ public slots:
     /**
      * Send DTMF digits.
      * @param call_id ID of call
-     * @param digit String with the digits that should be sent.
+     * @param digits String with the digits that should be sent.
      */
     void sendDTMFDigits(const int call_id, const QString &digits) const;
 

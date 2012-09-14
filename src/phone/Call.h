@@ -270,7 +270,7 @@ public:
 
     /**
      * Send DTMF digits.
-     * @param digit The DTMF digits that should be sent.
+     * @param digits The DTMF digits that should be sent.
      * @return true if successful
      */
     bool sendDTMFDigits(const QString &digits);

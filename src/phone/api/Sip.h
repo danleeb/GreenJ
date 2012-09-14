@@ -85,7 +85,6 @@ public:
     
     virtual bool sendDTMFDigits(int call_id, const QString &digits);
 
-
     /**
      * Get the sip-address of a given call
      * @param call_id int, the id of the call
