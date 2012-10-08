@@ -107,7 +107,7 @@ private:
      * Initialize pjsua
      * @return true, if successful
      */
-    bool _initPjsua(const QString &stun);
+    bool _initPjsua(const Settings &settings);
 
     /**
      * Add UDP transport

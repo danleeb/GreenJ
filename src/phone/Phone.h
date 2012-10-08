@@ -33,11 +33,44 @@ namespace phone
  */
 struct Settings
 {
+    enum Srtp {
+        SRTP_DISABLED = 0,
+        SRTP_OPTIONAL,
+        SRTP_MANDATORY
+    };
+    enum SrtpSignaling {
+        SRTP_SIGNALING_NOTREQUIRED = 0,
+        SRTP_SIGNALING_TLS,
+        SRTP_SIGNALING_ENDTOEND
+    };
+
     unsigned int port_;
+
     QString stun_server_;
 
     float sound_level_;
     float micro_level_;
+
+    /**
+     * SRTP usage
+     * SRTP_DISABLED (0): SRTP is disabled, and incoming call with RTP/SAVP 
+     *    transport will be rejected with 488/Not Acceptable Here response.
+     * SRTP_OPTIONAL (1): SRTP will be used if  remote supports it, but the
+     *    call may fall back to unsecure media. Incoming call with RTP/SAVP
+     *    is accepted and responded with RTP/SAVP too.
+     * SRTP_MANDATORY (2): Secure media is mandatory, and the call can only
+     *    proceed if secure media can be established.
+     */
+    Srtp srtp;
+
+    /**
+     * SRTP secure signaling; valid values:
+     * SRTP_SIGNALING_NOTREQUIRED (0): SRTP does not require secure signaling
+     * SRTP_SIGNALING_TLS (1): SRTP requires secure transport such as TLS.
+     * SRTP_SIGNALING_ENDTOEND (2): SRTP requires secure end-to-end transport
+     *    (sips: URI scheme).
+     */
+    SrtpSignaling srtp_signaling;
 };
 
 /**

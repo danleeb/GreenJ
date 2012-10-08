@@ -44,6 +44,8 @@ public:
     const QString getPhoneStunServer() const;
     const float getPhoneSoundLevel() const;
     const float getPhoneMicroLevel() const;
+    const uint getPhoneSrtp() const;
+    const uint getPhoneSrtpSignaling() const;
 
     const QString getSoundRingfile() const;
     const QString getSoundDialfile() const;

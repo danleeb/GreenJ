@@ -11,6 +11,7 @@
 
 #include <QDir>
 #include "LogHandler.h"
+#include "phone/Phone.h"
 #include "Config.h"
 
 const QString Config::SETTINGS_FILE = "/.greenj/settings.conf";
@@ -62,6 +63,8 @@ void Config::setDefaults()
     settings_.setValue("stun_server", "");
     settings_.setValue("sound_level", 1.f);
     settings_.setValue("micro_level", 1.f);
+    settings_.setValue("srtp", phone::Settings::SRTP_DISABLED);
+    settings_.setValue("srtp_signaling", phone::Settings::SRTP_SIGNALING_TLS);
     settings_.endGroup();
 }
 
@@ -142,6 +145,18 @@ const float Config::getPhoneSoundLevel() const
 const float Config::getPhoneMicroLevel() const
 {
     return settings_.value("phone/micro_level", QVariant(1.f)).toFloat();
+}
+
+//-----------------------------------------------------------------------------
+const uint Config::getPhoneSrtp() const
+{
+    return settings_.value("phone/srtp", QVariant(phone::Settings::SRTP_DISABLED)).toUInt();
+}
+
+//-----------------------------------------------------------------------------
+const uint Config::getPhoneSrtpSignaling() const
+{
+    return settings_.value("phone/srtp_signaling", QVariant(phone::Settings::SRTP_SIGNALING_TLS)).toUInt();
 }
 
 //-----------------------------------------------------------------------------
