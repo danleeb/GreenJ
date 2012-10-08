@@ -44,7 +44,7 @@ bool Sip::init(const Settings &settings)
     }
 
     // Init pjsua
-    if (!_initPjsua(settings.stun_server_)) {
+    if (!_initPjsua(settings)) {
         return false;
     }
 
@@ -67,7 +67,7 @@ bool Sip::init(const Settings &settings)
 }
 
 //-----------------------------------------------------------------------------
-bool Sip::_initPjsua(const QString &stun)
+bool Sip::_initPjsua(const Settings &settings)
 {
     pjsua_config cfg;
     pjsua_logging_config log_cfg;
@@ -79,13 +79,13 @@ bool Sip::_initPjsua(const QString &stun)
     // * outbound_proxy_cnt, outbound_proxy
     // * add/remove codecs
 
-    if (stun.size()) {
-        if (stun.size() > 99) {
+    if (settings.stun_server_.size()) {
+        if (settings.stun_server_.size() > 99) {
             signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Couldn't initialize pjsip: Stun server string too long"));
             return false;
         }
         char ch_stun[100];
-        strcpy(ch_stun, stun.toLocal8Bit().data());
+        strcpy(ch_stun, settings.stun_server_.toLocal8Bit().data());
         cfg.stun_srv[cfg.stun_srv_cnt++] = pj_str(ch_stun);
     }
     cfg.enable_unsolicited_mwi = PJ_FALSE;
@@ -94,6 +94,17 @@ bool Sip::_initPjsua(const QString &stun)
     cfg.cb.on_call_media_state = &callMediaStateCb;
     cfg.cb.on_reg_state = &registerStateCb;
     cfg.cb.on_pager = &incomingTextMessageCb;
+
+    switch (settings.srtp) {
+        case Settings::SRTP_DISABLED:  cfg.use_srtp = PJMEDIA_SRTP_DISABLED; break;
+        case Settings::SRTP_OPTIONAL:  cfg.use_srtp = PJMEDIA_SRTP_OPTIONAL; break;
+        case Settings::SRTP_MANDATORY: cfg.use_srtp = PJMEDIA_SRTP_MANDATORY; break;
+    }
+    switch (settings.srtp_signaling) {
+        case Settings::SRTP_SIGNALING_NOTREQUIRED: cfg.srtp_secure_signaling = 0; break;
+        case Settings::SRTP_SIGNALING_TLS:         cfg.srtp_secure_signaling = 1; break;
+        case Settings::SRTP_SIGNALING_ENDTOEND:    cfg.srtp_secure_signaling = 2; break;
+    }
 
     pjsua_logging_config_default(&log_cfg);
     log_cfg.console_level = 4;
