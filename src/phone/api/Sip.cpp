@@ -655,7 +655,8 @@ void Sip::getSoundDevices(QVariantList &device_list)
 bool Sip::sendDTMFDigits(int call_id, const QString &digits)
 {
     pj_status_t status;
-    pj_str_t pjDigits = pj_str(digits.toUtf8().data());
+    QByteArray arr = digits.toUtf8();
+    pj_str_t pjDigits = pj_str(arr.data());
     
     // Try to send RFC2833 DTMF first.
     status = pjsua_call_dial_dtmf(call_id, &pjDigits);
@@ -667,7 +668,8 @@ bool Sip::sendDTMFDigits(int call_id, const QString &digits)
             pjsua_msg_data messageData;
             pjsua_msg_data_init(&messageData);
             messageData.content_type = pj_str((char *)"application/dtmf-relay");
-            messageData.msg_body = pj_str((char *)QString("Signal=%1\r\nDuration=300").arg(digits[i]).toUtf8().data());
+            QByteArray bodyArr = QString("Signal=%1\r\nDuration=300").arg(digits[i]).toUtf8();
+            messageData.msg_body = pj_str((char *)bodyArr.data());
             
             status = pjsua_call_send_request(call_id,
                                              &kSIPINFO,
