@@ -40,7 +40,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-codec&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-audiodev&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\include&quot;;..\src\GeneratedFiles;&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;.\"
+				AdditionalIncludeDirectories="&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-codec&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-audiodev&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\include&quot;;..\src\GeneratedFiles;&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;.\;&quot;$(VENDOR_DIR)\qt-json&quot;"
 				PreprocessorDefinitions=",UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_NO_DEBUG,NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_DLL"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="false"
@@ -238,7 +238,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 					/>
@@ -392,7 +392,7 @@
 						>
 						<Tool
 							Name="VCCustomBuildTool"
-							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;$(InputPath)&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 							Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 						/>
@@ -419,7 +419,7 @@
 							>
 							<Tool
 								Name="VCCustomBuildTool"
-								CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+								CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;$(InputPath)&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 								AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
 								Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
 							/>
@@ -447,9 +447,9 @@
 							>
 							<Tool
 								Name="VCCustomBuildTool"
-								CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-								AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-								Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+								CommandLine=""
+								AdditionalDependencies=""
+								Outputs=""
 							/>
 						</FileConfiguration>
 						<FileConfiguration
