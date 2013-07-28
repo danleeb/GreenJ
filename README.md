@@ -1,4 +1,8 @@
-___GreenJ is currently under revision, see [branch 1.1](https://github.com/danleeb/GreenJ/tree/1.1). The code base has been improved and a new HTML/JavaScript phone is under development. The master branch still contains the stable 1.0 release.___
+### Versions
+
+Current version: **1.1**
+
+Old versions: see branches
 
 # About GreenJ
 
