@@ -4,12 +4,12 @@
 
 TEMPLATE = app
 TARGET = GreenJ
-QT += core gui webkit network phonon
+QT += core gui webkit network
 win32 {
 	DESTDIR = ../bin/win32
 	LIBDIR = ../lib/win32
 	BUILDDIR = ../build/win32
-	QT += qtmain
+	QT += qtmain phonon
 	PJSIP_DIR = ../lib/win32/pjsip
 	PJSIP_TARGET = i386-Win32-vc8-Release
 }
@@ -20,17 +20,21 @@ unix {
 	PJSIP_DIR = ../lib/linux/pjsip
 	PJSIP_TARGET = i686-pc-linux-gnu
 }
+unix:!mac {
+	QT += phonon
+}
 mac {
 	DESTDIR = ../bin/mac
 	LIBDIR = ../lib/mac
 	BUILDDIR = ../build/mac
 	PJSIP_DIR = ../lib/mac
-	PJSIP_TARGET = i686-pc-mac
+	PJSIP_TARGET = i386-apple-darwin11.3.0
 }
 SOURCEDIR = ../src
+VENDORDIR = ../vendor
 RESOURCEDIR = ../res
 
-CONFIG += debug
+#CONFIG += debug
 CONFIG += ordered
 
 #DEFINES += QT_LARGEFILE_SUPPORT
@@ -39,6 +43,7 @@ DEFINES += DEBUG
 INCLUDEPATH += $$SOURCEDIR/GeneratedFiles \
     $$SOURCEDIR/GeneratedFiles/Debug \
     $$SOURCEDIR \
+    $$VENDORDIR/qt-json \
     $$PJSIP_DIR \
 	$$PJSIP_DIR/pjmedia/include \
     $$PJSIP_DIR/pjsip/include \
@@ -79,13 +84,13 @@ unix: LIBS += -L/usr/lib/ \
 	-lportaudio-$$PJSIP_TARGET  \
 	-lpj-$$PJSIP_TARGET \
 	-lm \
-	-lnsl \
-	-lrt \
 	-lpthread \
-	-lasound
+	-lasound \
+	-lssl \
 	#-luuid \
 	#-lcrypto \
-	#-lssl
+
+unix:!mac LIBS += -lnsl -lrt -lasound
 
 win32: LIBS += -lIphlpapi \
     -ldsound \
@@ -118,39 +123,38 @@ win32: LIBS += -lIphlpapi \
     -llibspeex-$$PJSIP_TARGET \
     -llibsrtp-$$PJSIP_TARGET
 
+mac: LIBS += -lssl -lcrypto -framework CoreAudio -framework AudioUnit -framework AudioToolbox -framework Cocoa
+
 DEPENDPATH += $$SOURCEDIR
 MOC_DIR += $$SOURCEDIR/GeneratedFiles/debug
 OBJECTS_DIR += $$BUILDDIR
 UI_DIR += $$SOURCEDIR/GeneratedFiles
 RCC_DIR += $$SOURCEDIR/GeneratedFiles
 
-HEADERS += $$SOURCEDIR/gui.h \
-    $$SOURCEDIR/call.h \
-    $$SOURCEDIR/gui_window_handler.h \
-    $$SOURCEDIR/phone_api.h \
-    $$SOURCEDIR/phone.h \
-    $$SOURCEDIR/sound.h \
-    $$SOURCEDIR/account.h \
-    $$SOURCEDIR/sip_phone.h \
-    $$SOURCEDIR/config_file_handler.h \
-    $$SOURCEDIR/javascript_handler.h \
-    $$SOURCEDIR/print_handler.h \
-    $$SOURCEDIR/log_handler.h \ 
-    $$SOURCEDIR/log_info.h \
-    $$SOURCEDIR/web_page.h
+HEADERS += $$SOURCEDIR/phone/api/Interface.h \
+    $$SOURCEDIR/phone/api/Sip.h \
+    $$SOURCEDIR/phone/Account.h \
+    $$SOURCEDIR/phone/Call.h \
+    $$SOURCEDIR/phone/Phone.h \
+    $$SOURCEDIR/Config.h \
+    $$SOURCEDIR/Gui.h \
+    $$SOURCEDIR/JavascriptHandler.h \
+    $$SOURCEDIR/LogHandler.h \ 
+    $$SOURCEDIR/PrintHandler.h \
+    $$SOURCEDIR/Sound.h \
+    $$SOURCEDIR/WebPage.h
 SOURCES += $$SOURCEDIR/main.cpp \
-    $$SOURCEDIR/call.cpp \
-    $$SOURCEDIR/gui.cpp \
-    $$SOURCEDIR/gui_window_handler.cpp \
-    $$SOURCEDIR/phone.cpp \
-    $$SOURCEDIR/sound.cpp \
-    $$SOURCEDIR/account.cpp \
-    $$SOURCEDIR/sip_phone.cpp \
-    $$SOURCEDIR/config_file_handler.cpp \
-    $$SOURCEDIR/javascript_handler.cpp \
-    $$SOURCEDIR/print_handler.cpp \
-    $$SOURCEDIR/log_handler.cpp \
-    $$SOURCEDIR/log_info.cpp
+    $$SOURCEDIR/phone/api/Sip.cpp \
+    $$SOURCEDIR/phone/Account.cpp \
+    $$SOURCEDIR/phone/Call.cpp \
+    $$SOURCEDIR/phone/Phone.cpp \
+    $$SOURCEDIR/Config.cpp \
+    $$SOURCEDIR/Gui.cpp \
+    $$SOURCEDIR/JavascriptHandler.cpp \
+    $$SOURCEDIR/LogHandler.cpp \
+    $$SOURCEDIR/PrintHandler.cpp \
+    $$SOURCEDIR/Sound.cpp \
+    $$VENDORDIR/qt-json/json.cpp
 FORMS += $$SOURCEDIR/gui.ui
 RESOURCES += $$RESOURCEDIR/gui.qrc
 

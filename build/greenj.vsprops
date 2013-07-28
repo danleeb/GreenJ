@@ -8,4 +8,8 @@
 		Name="PJSIP_INCLUDE_DIR"
 		Value="../lib/win32/pjsip"
 	/>
+	<UserMacro
+		Name="VENDOR_DIR"
+		Value="../vendor"
+	/>
 </VisualStudioPropertySheet>

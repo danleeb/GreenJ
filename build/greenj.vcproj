@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-codec&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-audiodev&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\include&quot;;..\src\GeneratedFiles;&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;.\"
+				AdditionalIncludeDirectories="&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjsip\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjnath\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-codec&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia-audiodev&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjmedia\include\pjmedia&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib-util\include&quot;;&quot;$(PJSIP_INCLUDE_DIR)\pjlib\include&quot;;..\src\GeneratedFiles;&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot;;&quot;$(QTDIR)\include&quot;;&quot;$(QTDIR)\include\qtmain&quot;;&quot;$(QTDIR)\include\QtCore&quot;;&quot;$(QTDIR)\include\QtGui&quot;;&quot;$(QTDIR)\include\QtWebKit&quot;;.\;&quot;$(VENDOR_DIR)\qt-json&quot;"
 				PreprocessorDefinitions="DEBUG,UNICODE,WIN32,QT_LARGEFILE_SUPPORT;QT_THREAD_SUPPORT;QT_CORE_LIB;QT_GUI_LIB;QT_DLL"
 				RuntimeLibrary="3"
 				TreatWChar_tAsBuiltInType="false"
@@ -162,77 +162,139 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;cxx;c;def"
+			Filter="cpp;cxx;c;def;h"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\src\account.cpp"
+				RelativePath="..\src\Config.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\call.cpp"
+				RelativePath="..\src\Config.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Performing Custom Build Step"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\src\Gui.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\config_file_handler.cpp"
+				RelativePath="..\src\Gui.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\src\JavascriptHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\gui.cpp"
+				RelativePath="..\src\JavascriptHandler.h"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\src\LogHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\gui_window_handler.cpp"
+				RelativePath="..\src\LogHandler.h"
 				>
-			</File>
-			<File
-				RelativePath="..\src\javascript_handler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\log_handler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\log_info.cpp"
-				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing $(InputFileName)..."
+						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\src\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\phone.cpp"
+				RelativePath="..\src\PrintHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\print_handler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\sip_phone.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\sound.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath="..\src\account.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\call.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\config_file_handler.h"
+				RelativePath="..\src\PrintHandler.h"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -258,17 +320,20 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\src\gui.h"
+				RelativePath="..\src\Sound.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Sound.h"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -276,199 +341,14 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						CommandLine=""
+						AdditionalDependencies=""
+						Outputs=""
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\src\gui_window_handler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\javascript_handler.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\log_handler.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\log_info.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\phone.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\phone_api.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\print_handler.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing $(InputFileName)..."
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\sip_phone.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\sound.h"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
-						AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
-						Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\src\web_page.h"
+				RelativePath="..\src\WebPage.h"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -481,6 +361,110 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<Filter
+				Name="phone"
+				>
+				<File
+					RelativePath="..\src\phone\Account.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\phone\Account.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\phone\Call.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\phone\Call.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\phone\Phone.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\src\phone\Phone.h"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+							Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;$(InputPath)&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+							AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+							Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+						/>
+					</FileConfiguration>
+				</File>
+				<Filter
+					Name="api"
+					>
+					<File
+						RelativePath="..\src\phone\api\Interface.h"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+								AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+								Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;$(InputPath)&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+								AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+								Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\src\phone\api\Sip.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\src\phone\api\Sip.h"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								CommandLine="&quot;$(QTDIR)\bin\moc.exe&quot;   -D -DUNICODE -DWIN32 -DQT_LARGEFILE_SUPPORT -DQT_THREAD_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_DLL  -I&quot;.\..\pjmedia\include&quot; -I&quot;.\..\pjsip\include&quot; -I&quot;.\..\pjnath\include&quot; -I&quot;.\..\pjmedia\include\pjmedia-codec&quot; -I&quot;.\..\pjmedia\include\pjmedia-audiodev&quot; -I&quot;.\..\pjmedia\include\pjmedia&quot; -I&quot;.\..\pjlib-util\include&quot; -I&quot;.\..\pjlib\include&quot; -I&quot;..\src\GeneratedFiles&quot; -I&quot;$(QTDIR)\include&quot; -I&quot;..\src\GeneratedFiles\$(ConfigurationName)&quot; -I&quot;$(QTDIR)\include\qtmain&quot; -I&quot;$(QTDIR)\include\QtCore&quot; -I&quot;$(QTDIR)\include\QtGui&quot; -I&quot;$(QTDIR)\include\QtWebKit&quot; -I&quot;.&quot; &quot;..\src\$(InputName).h&quot; -o &quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;&#x0D;&#x0A;"
+								AdditionalDependencies="&quot;$(QTDIR)\bin\moc.exe&quot;;$(InputPath)"
+								Outputs="&quot;..\src\GeneratedFiles\$(ConfigurationName)\moc_$(InputName).cpp&quot;"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCustomBuildTool"
+								CommandLine=""
+								AdditionalDependencies=""
+								Outputs=""
+							/>
+						</FileConfiguration>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Form Files"
@@ -534,7 +518,7 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_config_file_handler.cpp"
+					RelativePath="..\src\GeneratedFiles\Release\moc_Gui.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -546,7 +530,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_gui.cpp"
+					RelativePath="..\src\GeneratedFiles\Release\moc_Interface.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -558,7 +542,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_javascript_handler.cpp"
+					RelativePath="..\src\GeneratedFiles\Release\moc_JavascriptHandler.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -570,7 +554,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_log_handler.cpp"
+					RelativePath="..\src\GeneratedFiles\Release\moc_LogHandler.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -582,7 +566,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_phone.cpp"
+					RelativePath="..\src\GeneratedFiles\Release\moc_Phone.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -594,43 +578,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_phone_api.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_print_handler.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_sip_phone.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Release\moc_sound.cpp"
+					RelativePath="..\src\GeneratedFiles\Release\moc_PrintHandler.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -648,7 +596,7 @@
 				SourceControlFiles="false"
 				>
 				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_config_file_handler.cpp"
+					RelativePath="..\src\GeneratedFiles\Debug\moc_Gui.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -660,7 +608,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_gui.cpp"
+					RelativePath="..\src\GeneratedFiles\Debug\moc_Interface.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -672,7 +620,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_javascript_handler.cpp"
+					RelativePath="..\src\GeneratedFiles\Debug\moc_JavascriptHandler.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -684,7 +632,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_log_handler.cpp"
+					RelativePath="..\src\GeneratedFiles\Debug\moc_LogHandler.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -696,7 +644,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_phone.cpp"
+					RelativePath="..\src\GeneratedFiles\Debug\moc_Phone.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -708,43 +656,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_phone_api.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_print_handler.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_sip_phone.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\src\GeneratedFiles\Debug\moc_sound.cpp"
+					RelativePath="..\src\GeneratedFiles\Debug\moc_PrintHandler.cpp"
 					>
 					<FileConfiguration
 						Name="Release|Win32"
@@ -792,6 +704,22 @@
 					/>
 				</FileConfiguration>
 			</File>
+		</Filter>
+		<Filter
+			Name="Vendor Files"
+			>
+			<Filter
+				Name="qt-json"
+				>
+				<File
+					RelativePath="..\vendor\qt-json\json.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\vendor\qt-json\json.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

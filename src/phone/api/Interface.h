@@ -1,0 +1,252 @@
+/****************************************************************************
+**
+** Copyright (C) 2012 Lorem Ipsum Mediengesellschaft m.b.H.
+**
+** GNU General Public License
+** This file may be used under the terms of the GNU General Public License
+** version 3 as published by the Free Software Foundation and
+** appearing in the file LICENSE.GPL included in the packaging of this file.
+**
+****************************************************************************/
+
+#ifndef PHONEAPI_INCLUDE_H
+#define PHONEAPI_INCLUDE_H
+
+#include <QObject>
+#include <QString>
+#include <QVariantMap>
+
+class LogInfo;
+
+namespace phone
+{
+    class Settings;
+
+    namespace api
+    {
+
+/**
+ * Interface for phone implementations.
+ */
+class Interface : public QObject
+{
+    Q_OBJECT
+
+public:
+    /**
+     * Initializing the phone
+     */
+    virtual bool init(const Settings &settings) = 0;
+
+    /**
+     * Registers the account
+     * @param user
+     * @param password
+     * @param domain
+     * @return Account id or -1 if unsuccessful
+     */
+    virtual int registerUser(const QString &user, const QString &password, const QString &domain) = 0;
+
+    /**
+     * Checks if account is valid
+     * @return true, if account is valid
+     */
+    virtual bool checkAccountStatus() = 0;
+
+    /**
+     * Hangs up all active calls, unregisters the account
+     * and shuts down the phone
+     */
+    virtual void unregister() = 0;
+
+    /**
+     * Get information about the account
+     * @param account_info Map to store account information
+     */
+    virtual void getAccountInfo(QVariantMap &account_info) = 0;
+
+    /**
+     * Starting a call to the given address
+     * @param url Destination address (e.g. "SIP:user@domain")
+     * @return The ID of the new call
+     */
+    virtual int makeCall(const QString &url) = 0;
+    
+    /**
+     * Starting a call to the given address
+     * @param url Destination address (e.g. "SIP:user@domain")
+     * @param header_map Map of SIP header names and values.
+     * @return The ID of the new call
+     */
+    virtual int makeCall(const QString &url, const QVariantMap &header_map) = 0;
+
+    /**
+     * Answering an incoming call
+     * @param call_id ID of the incoming call
+     * @param code SIP status code
+     */
+    virtual void answerCall(int call_id = -1, int code = 200) = 0;
+
+    /**
+     * Hanging up a specific call
+     * @param call_id int, The callID to hang up.
+     */
+    virtual void hangUp(const int call_id) = 0;
+
+    /**
+     * Hanging up incoming and all active calls
+     */
+    virtual void hangUpAll() = 0;
+
+    /**
+     * Connecting the callee of one specific call with another.
+     * @param call_src CallID of the first callee.
+     * @param call_dest CallID of the second callee.
+     * @return true, if successful
+     */
+    virtual bool addCallToConference(const int call_src, const int call_dest) = 0;
+
+    /**
+     * Remove one call from the conference
+     * @param call_src CallID of the first callee.
+     * @param call_dest CallID of the second callee.
+     * @return true, if successful
+     */
+    virtual bool removeCallFromConference(const int call_src, const int call_dest) = 0;
+
+    /**
+     * Redirecting an active call to a new destination.
+     * @param call_id CallID of the call to be redirected.
+     * @param dest_uri Address of the new destination
+     * @return success code
+     */
+    virtual int redirectCall(const int call_id, const QString &dest_uri) = 0;
+
+    /**
+     * Get information about a call
+     * @param call_id ID of the call
+     * @param call_info Map, to store information in
+     */
+    virtual void getCallInfo(const int call_id, QVariantMap &call_info) = 0;
+
+    /**
+     * Set sound level
+     * @param soundLevel 0.0f (mute) to 1.0f (full)
+     * @param call_id ID of a specific call, or -1 for general soundLevel
+     */
+    virtual void setSoundSignal(const float soundLevel, const int call_id = -1) = 0;
+    
+    /**
+     * Switch microphone on/off
+     * @param microLevel 0.0f (mute) to 1.0f (full)
+     * @param call_id ID of a specific call, or -1 for general microLevel
+     */
+    virtual void setMicroSignal(const float microLevel, const int call_id = -1) = 0;
+    
+    /**
+     * Get information about signal levels of sound and microphone (0...255)
+     * @param signal_info Map to save sound and micro signal levels in
+     * @param call_id ID of a specific call, or -1 for general signal levels
+     */
+    virtual void getSignalLevels(QVariantMap &levels, const int call_id = -1) = 0;
+
+    /**
+     * Set priority of codec to new_priority
+     * @param codec Name of Codec
+     * @param new_priority Range 0...PJMEDIA_CODEC_PRIO_HIGHEST
+     */
+    virtual void setCodecPriority(const QString &codec, int new_priority) = 0;
+    
+    /**
+     * Select or change sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     */
+    virtual bool setSoundDevice(const int input, const int output) = 0;
+    
+    /**
+     * Return a list of all available sound devices
+     * @return list of QVariantMaps with device information
+     */
+    virtual void getSoundDevices(QVariantList &device_list) = 0;
+
+    /**
+     * Return all codecs and priorities
+     * @param codecs Map of codecs with priorities
+     */
+    virtual void getCodecPriorities(QVariantMap &codecs) = 0;
+    
+    /**
+     * Send DTMF digits.
+     * @param call_id ID of call
+     * @param digits The DTMF digits that should be sent.
+     * @return true, if successful
+     */
+    virtual bool sendDTMFDigits(int call_id, const QString &digits) = 0;
+
+signals:
+    /**
+     * Send signal when account status changed
+     * @param state The new state of the account
+     */
+    void signalAccountState(const int state);
+
+    /**
+     * Send signal on incoming calls
+     * @param call Incoming call object
+     */
+    void signalIncomingCall(int call_id, const QString &url, const QString &name, const QVariantMap &header_map);
+
+    /**
+     * Send signal on changing call state
+     * @param call_id ID of the call
+     * @param state New call state
+     * @param state Old call state
+     */
+    void signalCallState(int call_id, int state, int last_status);
+
+    /**
+     * Send signal to handle log data
+     * @param LogInfo The log data
+     */
+    void signalLog(const LogInfo&);
+
+    /**
+     * Send a signal when the sound signal level changed
+     * @param level New sound signal level (0...off, 255...full)
+     */
+    void signalSoundLevel(int level);
+
+    /**
+     * Send a signal when the microphone signal level changed
+     * @param level New microphone signal level (0...off, 255...full)
+     */
+    void signalMicroLevel(int level);
+    
+    /**
+     * Send signal to stop sounds
+     */
+    void signalRingSound();
+
+    /**
+     * Send signal to stop sounds
+     */
+    void signalStopSound();
+
+    /**
+     * Send signal of an received text message
+     * @param call_id Containts the ID of the call where the IM was sent, or PJSUA_INVALID_ID if the IM was sent outside call context.
+     * @param from URI of the sender.
+     * @param to URI of the destination message.
+     * @param contact The Contact URI of the sender, if present.
+     * @param mime_type MIME type of the message.
+     * @param body The message content.
+     */
+    void signalIncomingTextMessage(int call_id, const QString &from, const QString &to,
+                                   const QString &contact, const QString &mime_type,
+                                   const QString &body);
+};
+
+}} // phone::api::
+
+#endif // PHONEAPI_INCLUDE_H

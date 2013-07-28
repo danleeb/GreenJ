@@ -1,0 +1,69 @@
+-------------------------------------------------------------------------------
+GreenJ Change Log
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+Todo v1.1:
+
+Qt Application:
+
+JavaScript Phone:
+- Improve persisting of calls (accepted, missed, times, data?)
++ settings panel
+    + change host/username/password (save in localStorage)
+    + clear log history
+    + set forceOutgoingNumber
+    + set maxCallLogs value
+    + show/hide log
+    + debug settings (errorHandler, phone log level)
+- log:
+    / show list of log files: getLogFileList
+    / show content of log file: getLogFileContent
+    / delete log file: deleteLogFile
++ connection to server / server-less calls
+    + show registration/account status
+- compact/detailed list switchers (contacts, calls)
+    - compact list: auto-switch if col is too small
+- show contact in call log and "add contact"-field if number matches
+- statistics (in settings?)
+    - avg. call time / call
+    - total call time
+    - total calls (incoming/outgoing)
+- contact search
+- resize issue with tinyscrollbar (contacts panel)
+    possible solution: call update on panel switch
+- resize phone controls when height < ~460
+[- print contact list]
+- run JSLint
+- minimized versions
+
+-------------------------------------------------------------------------------
+Changelog 1.1:
+
+Backwards compatibility issues (from 1.0):
+- settings.conf has changed
+- JavaScript handler: getSignalInformation now returns int values (0..255; instead of float)
+- 
+
+Qt Application:
+- Removed unnecessary classes
+- Removed class extends from QObject where possible
+- Moved window settings into Gui.cpp (will be stored via QSettings)
+- Phone framework and SIP wrapper moved to src/phone and src/phone/api respectively
+- Coding standard adjustments
+- Changed configuration settings
+- Updated so it works with Qt 4.8 and PJSIP 1.14
+- Enabled QWebViews localStorage (path: ~/.greenj/)
+- Overall code revision
+
+JavaScript Phone:
+- Developed a completely new JavaScript phone (see build/phone/)
+- Dependencies: jQuery 1.7.2, jQuery UI 1.8.18, jQuery plugin "tinyscrollbar"
+- Uses localStorage to persist data (call log, contacts, settings, etc.)
+- Renamed lilib.js to base.js
+- Small improvements in phone-lib.js and base.js
+
+-------------------------------------------------------------------------------
+Changelog 1.0:
+
+- Initial stable release

@@ -1,7 +1,7 @@
 /**
  * @package    Javascript
  * @subpackage Phone
- * @copyright  Copyright (c) 2011 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
+ * @copyright  Copyright (c) 2012 Lorem Ipsum Mediengesellschaft m.b.H. (http://www.loremipsum.at)
  *
  * GNU General Public License
  * This file may be used under the terms of the GNU General Public License
@@ -37,6 +37,7 @@
  *      onSoundLevelChanged integer level
  *      onMicroLevelChanged integer level
  *      onPrintUrl
+ *      onReceivedIncomingTextMessage { id: call id, message: body }
  * </pre>
  * @class Phone class that handles and controls phone functionality.
  * @augments li.BaseObject
@@ -55,6 +56,8 @@ li.Phone = function(options) {
         forceOutgoingNumber: false,
         mutePhoneSound:      false,             // phone sound status (if true, effects all calls)
         mutePhoneMicro:      false,             // phone micro status (if true, effects all calls)
+        soundLevel:          255,
+        microLevel:          255,
         mode:                li.Phone.MODE_IO
     };
     this.setOptions(options);
@@ -90,8 +93,16 @@ li.Phone = function(options) {
             }
             this.getCallById(data.id).trigger('onClose', data);
         });
+    this.addListener('onReceivedIncomingTextMessage', function(data) {
+            if (!this.hasCallById(data.id)) {
+                return;
+            }
+            this.getCallById(data.id).trigger('onTextMessage', data);
+        });
     this.addListener('onRegister', function() {
             var obj = self.getQtHandler().getSignalInformation();
+            self.options.soundLevel = obj.sound;
+            self.options.microLevel = obj.micro;
             self.options.mutePhoneSound = (obj.sound > 0 ? false : true);
             self.options.mutePhoneMicro = (obj.micro > 0 ? false : true);
         });
@@ -140,6 +151,8 @@ li.Phone.prototype = {
      *      forceOutgoingNumber: false: don't force number, otherwise number as string
      *      mutePhoneSound:      boolean: phone sound status (if true, effects all calls)
      *      mutePhoneMicro:      boolean: phone micro status (if true, effects all calls)
+     *      soundLevel:          int: sound level (0...255)
+     *      microLevel:          int: microphone level (0...255)
      *      mode:                li.Phone.MODE_IO (default) or
      *                                   .MODE_IN (only incoming calls) or
      *                                   .MODE_OUT (only outgoing calls)
@@ -340,13 +353,13 @@ li.Phone.prototype = {
             return false;
         }
         if (!conditions) {
-            for (i=0;i < l;i++) {
+            for (i = 0; i < l; i++) {
                 if (this.isset(this.calls[i])) {
                     return true;
                 }
             }
         } else {
-            for (i=0;i < l;i++) {
+            for (i = 0; i < l; i++) {
                 if (this.isset(this.calls[i])) {
                     var call = this.calls[i], name, skip = false;
                     for (name in conditions) {
@@ -386,7 +399,7 @@ li.Phone.prototype = {
      */
     eachCall: function(callback) {
         var i, l = this.calls.length;
-        for (i=0;i < l;i++) {
+        for (i = 0; i < l; i++) {
             if (this.isset(this.calls[i])) {
                 callback.call(this.calls[i]);
             }
@@ -435,7 +448,8 @@ li.Phone.prototype = {
         var opt = {
             number:     null,
             protocol:   'sip:',
-            userdata:   null
+            userdata:   null,
+            headers:    null
         };
         jQuery.extend(opt, options);
         if (null === opt.number) {
@@ -445,7 +459,7 @@ li.Phone.prototype = {
         if (false !== this.options.forceOutgoingNumber) {
             number = this.options.forceOutgoingNumber;
         }
-        var id = this.getQtHandler().makeCall(number);
+        var id = this.getQtHandler().makeCall(number, opt.headers || undefined);
         li.errorHandler.log("phone.makeCall("+number+"): id="+id);
         if (id < 0) {
             throw li.errorType.PHONE_MAKECALL_FAILED;
@@ -532,6 +546,75 @@ li.Phone.prototype = {
     isMutePhoneMicro: function() {
         return this.options.mutePhoneMicro;
     },
+    /**
+     * Set phone sound level
+     * @param {int} level   0...255
+     * @return this
+     */
+    setSoundLevel: function(level) {
+        this.options.soundLevel = this.defaults(level, 255);
+        this.getQtHandler().setSoundLevel(this.options.soundLevel);
+        return this;
+    },
+    /**
+     * Set phone micro level
+     * @param {int} level   0...255
+     * @return this
+     */
+    setMicroLevel: function(level) {
+        this.options.microLevel = this.defaults(level, 255);
+        this.getQtHandler().setMicrophoneLevel(this.options.microLevel);
+        return this;
+    },
+    /**
+     * Get phone sound level
+     * @return {int} 0...255
+     */
+    getSoundLevel: function() {
+        return this.options.soundLevel;
+    },
+    /**
+     * Get phone micro level
+     * @return {int} 0...255
+     */
+    getMicroLevel: function() {
+        return this.options.microLevel;
+    },
+    
+    /**
+     * Set codec priority
+     * @param {string} codec (e.g. "PCMA" or "PCMA/8000" or "PCMA/8000/1" for codec G.711a)
+     * @param {int} priority 0...254
+     * @return this
+     */
+    setCodecPriority: function(codec, priority) {
+        this.getQtHandler().setCodecPriority(codec, priority);
+        return this;
+    },
+    /**
+     * Get list of codecs
+     * @return List of codecs (codecName: priority)
+     */
+    getCodecs: function() {
+        return this.getQtHandler().getCodecPriorities();
+    },
+
+    /**
+     * Select or change sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     */
+    setSoundDevice: function(input, output) {
+        this.getQtHandler().setSoundDevice(input, output);
+    },
+
+    /**
+     * Return a list of all available sound devices
+     * @return list of objects with device information
+     */
+    getSoundDevices: function() {
+        return this.getQtHandler().getSoundDevices();
+    },
 
     /**
      * Get applications error log data
@@ -587,6 +670,7 @@ li.inherit(li.Phone, li.BaseObject);
  *      onAccept            { id: call id }     when callee accepted: same as 'onCallAccept' (see {@link li.Phone})
  *      onClose             { id: call id }     when destination closed call: same as 'onCallClose' (see {@link li.Phone})
  *      onUpdate            {}                  after update()
+ *      onTextMessage       { id: call id, message: body }
  * </pre>
  * @class Class that represents a call in the phone application.
  * @augments li.BaseObject
@@ -625,6 +709,8 @@ li.Phone.Call = function(options, data) {
         callTime:           0,
         acceptTime:         0,
         closeTime:          0,
+
+        headers:            null,
 
         userdata:           null
     };
@@ -682,6 +768,8 @@ li.Phone.Call.prototype = {
     acceptTime:         null,
     closeTime:          null,
 
+    headers:            null,
+
     /**
      * Update call data.
      *  Triggers 'onUpdate'.
@@ -717,10 +805,14 @@ li.Phone.Call.prototype = {
      * Accepts an incoming call.
      * @return this
      */
-    accept: function() {
+    accept: function(code) {
         this.acceptTime = Date.now();
         this.data.status = li.Phone.Call.STATUS_ACCEPTED;
-        this.phone.getQtHandler().callAccept(this.id);
+        if (code) {
+            this.phone.getQtHandler().callAccept(this.id, code);
+        } else {
+            this.phone.getQtHandler().callAccept(this.id);
+        }
         return this;
     },
     /**
@@ -808,6 +900,14 @@ li.Phone.Call.prototype = {
     isMuteMicro: function() {
         return this.data.muteMicro;
     },
+    //TODO: Implement setSoundLevel and setMicroLevel for calls
+
+    /**
+     * Send DTMF digits
+     */
+    sendDTMFDigits: function(digits) {
+        this.phone.getQtHandler().sendDTMFDigits(this.id, digits);
+    },
 
     /**
      * Get time from call to accept.
@@ -882,7 +982,7 @@ li.Phone.Call.prototype = {
      * @return {string} number
      */
     getNumber: function() {
-        var match = /<(.+):(.+)@(.+)>/i.exec(this.data.number);
+        var match = /<?(.+):(.+)@(.+)>?/i.exec(this.data.number);
         if (!match || match.length < 3) {
             return this.data.number;
         }
@@ -914,7 +1014,7 @@ li.Phone.Call.prototype = {
      * @return {object} { number: 'number', protocol: 'sip', host: 'ip', port: 5060, info: 'additional information' }
      */
     getNumberDetail: function() {
-        var match = /<(.+):(.+)@(.+)[:(.+)][;(.+)]>/i.exec(this.data.number), data = {};
+        var match = /<?(.+):(.+)@(.+)[:(.+)][;(.+)]>?/i.exec(this.data.number), data = {};
         if (!match) {
             return data;
         }
@@ -979,10 +1079,11 @@ li.Phone.Handler.prototype = {
      *  li.Phone.'onError' with { message: string, exception: e }.
      * @param {integer} call_id
      * @param {string} number       incoming number
-     * @param {string} callee       the number/identifier, that has been called
+     * @param {string} callee       the number/identifier that has been called
+     * @param {Object} headers      custom SIP headers for the incoming call
      * @return {boolean} true, if successful
      */
-    incomingCall: function(call_id, number, callee) {
+    incomingCall: function(call_id, number, callee, headers) {
         li.errorHandler.log("phone.Handler.incomingCall("+call_id+",'"+number+"','"+callee+"')");
         var opt = {
                 id:     call_id,
@@ -991,7 +1092,8 @@ li.Phone.Handler.prototype = {
             data = {
                 type:   li.Phone.Call.TYPE_INCOMING,
                 number: number,
-                callee: callee
+                callee: callee,
+                headers: headers
             };
         try {
             var c = new li.Phone.Call(opt, data);
@@ -1045,6 +1147,15 @@ li.Phone.Handler.prototype = {
                 this.phone.trigger('onCallClose', { id: call_id } );
                 break;
         }
+    },
+    /**
+     * We have received a MESSAGE
+     *  Triggers li.Phone.'onReceivedIncomingTextMessage' with {id: call_id, message: body}
+     * @param {integer} call_id
+     * @param {string}  message content
+     */
+    receivedIncomingTextMessage: function(call_id, from, to, contact, mime_type, body) {
+        this.phone.trigger('onReceivedIncomingTextMessage', { id: call_id, message: body } );
     },
     /**
      * The account state has been updated.

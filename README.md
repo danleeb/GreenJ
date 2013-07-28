@@ -23,6 +23,8 @@ Install dependencies:
     $ sudo apt-get install libqt4-dev
     $ sudo apt-get install libasound2-dev
     $ sudo apt-get install libphonon-dev
+    
+You may also need libssl-dev (or disable the dependency in greenj.pro, search for -lssl)
 
 [Download PJSIP](http://www.pjsip.org/download.htm) (e.g. pjproject-1.14.tar.bz2) and extract it somewhere.
 
