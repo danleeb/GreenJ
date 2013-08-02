@@ -16,7 +16,7 @@ For a complete overview, see [building GreenJ under Windows or Linux](http://www
 
 In addition, I want to give a step by step guide on how GreenJ can be compiled under Ubuntu.
 
-## Ubuntu (12.04 32-bit Desktop)
+## Ubuntu (12.10 32-bit Desktop)
 
 _Note: Also tested under Ubuntu 11.10 32-bit Desktop with the exact same steps._
 
@@ -30,7 +30,7 @@ Install dependencies:
     
 You may also need libssl-dev (or disable the dependency in greenj.pro, search for -lssl)
 
-[Download PJSIP](http://www.pjsip.org/download.htm) (e.g. pjproject-1.14.tar.bz2) and extract it somewhere.
+[Download PJSIP](http://www.pjsip.org/download.htm) (e.g. pjproject-1.16.tar.bz2) and extract it somewhere.
 
     $ cd path/to/pjsip
     $ ./configure
@@ -43,6 +43,11 @@ Now you can either install pjsip into your systemlibs or you have to set the pat
 Clone this repository or download and extract GreenJ from [greenj.org](http://www.greenj.org).
 
     $ git clone git://github.com/danleeb/GreenJ.git path/to/greenj
+    
+Initialize and fetch all submodules (QtJson).
+
+    $ git submodule init
+    $ git submodule update
 
 Open greenj.pro with an editor
 
