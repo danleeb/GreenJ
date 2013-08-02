@@ -1,10 +1,7 @@
 GeneratedFiles
 *.o
 *.log
-/bin/win32/Debug/greenj.exe
-/bin/win32/Debug/greenj.ilk
-/bin/win32/Debug/greenj.pdb
-/bin/win32/Release/greenj.exe
+/bin
 /greenj.ncb
 /greenj.suo
 /build/win32

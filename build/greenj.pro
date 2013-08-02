@@ -142,7 +142,8 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/LogHandler.h \ 
     $$SOURCEDIR/PrintHandler.h \
     $$SOURCEDIR/Sound.h \
-    $$SOURCEDIR/WebPage.h
+    $$SOURCEDIR/WebPage.h \
+    $$VENDORDIR/qt-json/json.h
 SOURCES += $$SOURCEDIR/main.cpp \
     $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/phone/Account.cpp \
